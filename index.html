@@ -3,264 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlackMarket RP - Loja Oficial</title>
+    <title>BlackMarket RP - Gestão Total</title>
     <style>
-        :root {
-            --primary: #00ff88;
-            --secondary: #bd00ff;
-            --bg: #0a0a0a;
-            --card-bg: #151515;
-            --text: #ffffff;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding-bottom: 50px;
-        }
-
-        /* Header */
-        header {
-            background: #000;
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        h1 { margin: 0; color: var(--primary); font-size: 1.4rem; text-transform: uppercase; }
-
-        .cart-btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 5px;
-        }
-
-        /* Layout */
+        :root { --primary: #00ff88; --secondary: #bd00ff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        header { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; }
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-
-        .category-title {
-            border-left: 4px solid var(--secondary);
-            padding-left: 15px;
-            margin: 40px 0 20px;
-            color: var(--primary);
-        }
-
+        .category-title { border-left: 4px solid var(--secondary); padding-left: 15px; margin: 40px 0 20px; color: var(--primary); }
+        
         /* Grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid #222;
-            transition: 0.3s;
-        }
-
-        .product-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; }
+        .product-img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
+        .price { color: var(--primary); font-size: 1.4em; font-weight: bold; }
         
-        .product-img {
-            width: 100%;
-            height: 140px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 5px rgba(0,255,136,0.2));
-            margin-bottom: 10px;
-        }
-
-        .price { color: var(--primary); font-size: 1.4em; font-weight: bold; margin: 10px 0; }
-        
-        .buy-btn {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 8px;
-            width: 100%;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .buy-btn:hover { background: var(--primary); color: #000; }
+        /* Botões */
+        .btn { padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
+        .btn-buy { background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 100%; }
+        .btn-buy:hover { background: var(--primary); color: #000; }
+        .btn-admin { background: var(--secondary); color: white; }
+        .btn-save { background: #28a745; color: white; padding: 5px 10px; }
+        .btn-del { background: #dc3545; color: white; padding: 5px 10px; }
 
         /* Admin Panel */
-        #admin-panel {
-            display: none;
-            background: #1a1a1a;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px dashed var(--secondary);
-            margin-bottom: 30px;
-        }
-
-        .admin-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        input {
-            padding: 12px;
-            background: #000;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 5px;
-        }
+        #admin-panel { display: none; background: #1a1a1a; padding: 25px; border-radius: 10px; border: 2px dashed var(--secondary); margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { background: #000; color: var(--primary); }
+        .admin-input { background: #000; border: 1px solid #444; color: white; padding: 5px; width: 80px; }
 
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #111;
-            padding: 25px;
-            width: 350px;
-            border-radius: 15px;
-            border: 1px solid var(--secondary);
-            text-align: center;
-        }
-
-        .pix-box {
-            background: #fff;
-            color: #000;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-
-        .copy-btn {
-            background: #000;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.7em;
-            cursor: pointer;
-        }
-
-        footer { text-align: center; margin-top: 50px; opacity: 0.5; font-size: 0.8em; }
-        .admin-link { cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #111; padding: 25px; width: 350px; border-radius: 15px; border: 1px solid var(--secondary); text-align: center; }
+        
+        .pix-box { background: #fff; color: #000; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 0.8em; }
+        footer { text-align: center; margin-top: 50px; opacity: 0.3; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>⚔️ BLACKMARKET RP</h1>
-    <button class="cart-btn" onclick="toggleCart()">🛒 Carrinho: <span id="cart-count">0</span></button>
+    <button class="btn btn-admin" onclick="toggleCart()">🛒 Carrinho: <span id="cart-count">0</span></button>
 </header>
 
 <div class="container">
 
     <div id="admin-panel">
-        <h2 style="margin-top:0; color:var(--secondary)">🛠 Painel Administrativo</h2>
-        <div class="admin-inputs">
-            <input type="text" id="new-name" placeholder="Nome do Item">
-            <input type="number" id="new-price" placeholder="Preço (R$)">
-            <input type="number" id="new-stock" placeholder="Estoque">
-            <input type="text" id="new-img" placeholder="Link da Imagem">
-            <button onclick="addProduct()" style="grid-column: span 2; padding:15px; background:var(--primary); border:none; font-weight:bold; cursor:pointer;">ADICIONAR PRODUTO</button>
+        <h2 style="color:var(--secondary)">🛠 Painel de Controle (srleal018@gmail.com)</h2>
+        
+        <h3>Novo Produto</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;">
+            <input type="text" id="new-name" placeholder="Nome" class="admin-input" style="width: 150px;">
+            <input type="number" id="new-price" placeholder="Preço" class="admin-input">
+            <input type="number" id="new-stock" placeholder="Estoque" class="admin-input">
+            <input type="text" id="new-img" placeholder="Link da Imagem" class="admin-input" style="width: 150px;">
+            <button class="btn btn-save" onclick="addProduct()">Adicionar</button>
+        </div>
+
+        <h3>Gerenciar Produtos</h3>
+        <table id="admin-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Preço (R$)</th>
+                    <th>Estoque</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="admin-product-list"></tbody>
+        </table>
+
+        <h3 style="margin-top: 30px;">Pedidos Pendentes (Monitor de Vendas)</h3>
+        <div id="admin-orders" style="background:#000; padding:10px; border-radius:5px; max-height: 200px; overflow-y: auto;">
+            <p style="color:#666">Nenhum pedido no momento...</p>
         </div>
     </div>
 
-    <h2 class="category-title">🔫 ARSENAL DE ELITE</h2>
+    <h2 class="category-title">🔫 ARSENAL</h2>
     <div class="products-grid" id="products-weapons"></div>
 
-    <h2 class="category-title">💰 PACOTES DE DINHEIRO</h2>
+    <h2 class="category-title">💰 DINHEIRO</h2>
     <div class="products-grid" id="products-money"></div>
 </div>
 
 <div id="cart-modal" class="modal">
     <div class="modal-content">
         <h2 style="margin-top:0">Seu Pedido</h2>
-        <div id="cart-items" style="text-align:left; margin-bottom:15px; border-bottom:1px solid #333;"></div>
-        
-        <div style="font-size: 1.4em; margin-bottom: 20px;">
-            Total: <span style="color:var(--primary)">R$ <span id="cart-total">0.00</span></span>
-        </div>
+        <div id="cart-items" style="text-align:left; margin-bottom:15px;"></div>
+        <div style="font-size: 1.4em; margin-bottom: 20px;">Total: <span style="color:var(--primary)">R$ <span id="cart-total">0.00</span></span></div>
 
         <div id="pix-area" style="display:none">
             <div class="pix-box">
-                <p style="margin:0; font-weight:bold; font-size:0.9em">CHAVE PIX (Copia e Cola):</p>
-                <p id="pix-key" style="font-size:0.7em; word-break:break-all; margin:10px 0;">9c176ab9-a6d6-4311-a0ea-21dd7481227f</p>
-                <span class="copy-btn" onclick="copyPix()">COPIAR CHAVE</span>
+                <b>CHAVE PIX:</b><br>
+                <span id="pix-key">9c176ab9-a6d6-4311-a0ea-21dd7481227f</span>
             </div>
-            <p style="color:red; font-size:0.8em">Envie o comprovante para o ADM no Discord!</p>
-            <button class="buy-btn" onclick="finishOrder()" style="background:green; border:none; color:white; margin-top:10px;">JÁ REALIZEI O PAGAMENTO</button>
+            <button class="btn btn-save" onclick="finishOrder()" style="width:100%">JÁ PAGUEI</button>
         </div>
 
-        <button id="btn-checkout" class="buy-btn" style="background:var(--secondary); color:white; border:none; margin-bottom:10px;" onclick="showPix()">PAGAR COM PIX</button>
-        <button class="buy-btn" style="border:none; color:#888;" onclick="toggleCart()">VOLTAR</button>
+        <button id="btn-checkout" class="btn" style="background:var(--secondary); color:white; width:100%; margin-bottom:10px;" onclick="showPix()">PAGAR COM PIX</button>
+        <button class="btn" style="background:none; color:#888; width:100%;" onclick="toggleCart()">VOLTAR</button>
     </div>
 </div>
 
-<footer>
-    <p>&copy; 2024 BlackMarket RP - <span class="admin-link" onclick="adminLogin()">Acesso Restrito</span></p>
-</footer>
+<footer><span onclick="adminLogin()">Acesso Admin</span></footer>
 
 <script>
-    // LISTA DE PRODUTOS COM IMAGENS REAIS DO GOOGLE/FLATICON
     const initialProducts = [
         { id: 1, type: 'weapon', name: "Glock G18", price: 2.50, stock: 50, image: "https://cdn-icons-png.flaticon.com/512/3400/3400282.png" },
         { id: 2, type: 'weapon', name: "AK-47 Tática", price: 4.50, stock: 15, image: "https://cdn-icons-png.flaticon.com/512/4119/4119853.png" },
-        { id: 3, type: 'weapon', name: "Fuzil Parafal", price: 4.00, stock: 10, image: "https://cdn-icons-png.flaticon.com/512/4119/4119827.png" },
-        { id: 4, type: 'weapon', name: "Rifle M4A1", price: 5.00, stock: 8, image: "https://cdn-icons-png.flaticon.com/512/8221/8221805.png" },
-        { id: 5, type: 'weapon', name: "C4 Explosivo", price: 3.50, stock: 5, image: "https://cdn-icons-png.flaticon.com/512/2301/2301131.png" },
-        { id: 6, type: 'weapon', name: "Munição x100", price: 1.00, stock: 100, image: "https://cdn-icons-png.flaticon.com/512/4241/4241838.png" },
-        { id: 7, type: 'money', name: "Maleta 100k", price: 3.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png" },
-        { id: 8, type: 'money', name: "Maleta 500k", price: 10.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/3135/3135706.png" },
-        { id: 9, type: 'money', name: "1 Milhão Sujo", price: 15.00, stock: 10, image: "https://cdn-icons-png.flaticon.com/512/2488/2488749.png" }
+        { id: 7, type: 'money', name: "Maleta 100k", price: 3.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png" }
     ];
 
-    let products = JSON.parse(localStorage.getItem('rp_store_data')) || initialProducts;
+    let products = JSON.parse(localStorage.getItem('rp_v3_items')) || initialProducts;
+    let orders = JSON.parse(localStorage.getItem('rp_v3_orders')) || [];
     let cart = [];
 
-    function renderProducts() {
-        const wContainer = document.getElementById('products-weapons');
-        const mContainer = document.getElementById('products-money');
-        wContainer.innerHTML = ''; mContainer.innerHTML = '';
+    function renderStore() {
+        const wCont = document.getElementById('products-weapons');
+        const mCont = document.getElementById('products-money');
+        wCont.innerHTML = ''; mCont.innerHTML = '';
         
         products.forEach(p => {
             const html = `
                 <div class="product-card">
                     <img src="${p.image}" class="product-img">
-                    <h3 style="font-size:1em; margin:5px 0;">${p.name}</h3>
-                    <p style="font-size:0.7em; color:#666;">Estoque: ${p.stock}</p>
+                    <h3 style="margin:5px 0;">${p.name}</h3>
                     <p class="price">R$ ${p.price.toFixed(2)}</p>
-                    <button class="buy-btn" onclick="addToCart(${p.id})">COMPRAR</button>
-                </div>
-            `;
-            if(p.type === 'money') mContainer.innerHTML += html;
-            else wContainer.innerHTML += html;
+                    <button class="btn btn-buy" onclick="addToCart(${p.id})">ADICIONAR</button>
+                </div>`;
+            p.type === 'money' ? mCont.innerHTML += html : wCont.innerHTML += html;
         });
+        renderAdminTable();
+        renderAdminOrders();
     }
 
+    function renderAdminTable() {
+        const list = document.getElementById('admin-product-list');
+        list.innerHTML = products.map(p => `
+            <tr>
+                <td>${p.name}</td>
+                <td><input type="number" class="admin-input" id="edit-p-${p.id}" value="${p.price.toFixed(2)}"></td>
+                <td><input type="number" class="admin-input" id="edit-s-${p.id}" value="${p.stock}"></td>
+                <td>
+                    <button class="btn btn-save" onclick="editProduct(${p.id})">Salvar</button>
+                    <button class="btn btn-del" onclick="deleteProduct(${p.id})">X</button>
+                </td>
+            </tr>`).join('');
+    }
+
+    function renderAdminOrders() {
+        const div = document.getElementById('admin-orders');
+        if(orders.length === 0) { div.innerHTML = '<p style="color:#666">Sem pedidos...</p>'; return; }
+        div.innerHTML = orders.map((o, i) => `
+            <div style="border-bottom:1px solid #333; padding:5px; font-size:0.8em;">
+                <b>Pedido #${i+1}</b>: ${o.items} - <span style="color:var(--primary)">R$ ${o.total}</span>
+                <button onclick="clearOrder(${i})" style="float:right; background:none; color:red; border:none; cursor:pointer;">Limpar</button>
+            </div>`).join('');
+    }
+
+    // ADMIN ACTIONS
     function adminLogin() {
-        const email = prompt("Digite o e-mail de acesso:");
-        if(email === "srleal018@gmail.com") {
-            document.getElementById('admin-panel').style.display = 'block';
-            window.scrollTo(0,0);
-        } else { alert("Acesso negado."); }
+        if(prompt("Email:") === "srleal018@gmail.com") document.getElementById('admin-panel').style.display = 'block';
     }
 
     function addProduct() {
@@ -268,41 +172,50 @@
         const price = parseFloat(document.getElementById('new-price').value);
         const stock = parseInt(document.getElementById('new-stock').value);
         const img = document.getElementById('new-img').value;
-
         if(name && price) {
-            products.push({
-                id: Date.now(),
-                type: name.toLowerCase().includes('milhão') || name.toLowerCase().includes('maleta') ? 'money' : 'weapon',
-                name, price, stock: stock || 1, image: img || "https://cdn-icons-png.flaticon.com/512/1043/1043424.png"
-            });
-            localStorage.setItem('rp_store_data', JSON.stringify(products));
-            renderProducts();
-            alert("Item adicionado!");
+            products.push({id: Date.now(), type: name.toLowerCase().includes('maleta') ? 'money':'weapon', name, price, stock, image: img || "https://cdn-icons-png.flaticon.com/512/1043/1043424.png"});
+            saveAndRefresh();
         }
     }
 
+    function editProduct(id) {
+        const p = products.find(x => x.id === id);
+        p.price = parseFloat(document.getElementById(`edit-p-${id}`).value);
+        p.stock = parseInt(document.getElementById(`edit-s-${id}`).value);
+        saveAndRefresh();
+        alert("Alterado!");
+    }
+
+    function deleteProduct(id) {
+        if(confirm("Excluir item?")) {
+            products = products.filter(x => x.id !== id);
+            saveAndRefresh();
+        }
+    }
+
+    function clearOrder(i) { orders.splice(i, 1); saveAndRefresh(); }
+
+    function saveAndRefresh() {
+        localStorage.setItem('rp_v3_items', JSON.stringify(products));
+        localStorage.setItem('rp_v3_orders', JSON.stringify(orders));
+        renderStore();
+    }
+
+    // CLIENT ACTIONS
     function addToCart(id) {
         const p = products.find(x => x.id === id);
-        if(p.stock > 0) {
-            cart.push(p);
-            updateCart();
-        } else { alert("Item esgotado!"); }
+        if(p.stock > 0) { cart.push(p); updateCart(); }
     }
 
     function updateCart() {
         document.getElementById('cart-count').innerText = cart.length;
-        const div = document.getElementById('cart-items');
         let total = 0;
-        div.innerHTML = cart.map((item, i) => {
+        document.getElementById('cart-items').innerHTML = cart.map((item, i) => {
             total += item.price;
-            return `<div style="display:flex; justify-content:space-between; font-size:0.9em; margin-bottom:5px;">
-                <span>${item.name}</span> <span>R$ ${item.price.toFixed(2)} <b onclick="remItem(${i})" style="color:red; cursor:pointer; margin-left:10px;">X</b></span>
-            </div>`;
+            return `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>${item.name}</span><span onclick="cart.splice(${i},1);updateCart()" style="color:red; cursor:pointer;">X</span></div>`;
         }).join('');
         document.getElementById('cart-total').innerText = total.toFixed(2);
     }
-
-    function remItem(i) { cart.splice(i, 1); updateCart(); }
 
     function toggleCart() {
         const m = document.getElementById('cart-modal');
@@ -315,22 +228,23 @@
         if(cart.length > 0) {
             document.getElementById('pix-area').style.display = 'block';
             document.getElementById('btn-checkout').style.display = 'none';
+            
+            // Registra o pedido no Admin automaticamente
+            const orderData = {
+                items: cart.map(i => i.name).join(', '),
+                total: document.getElementById('cart-total').innerText
+            };
+            orders.push(orderData);
+            saveAndRefresh();
         }
     }
 
-    function copyPix() {
-        const key = document.getElementById('pix-key').innerText;
-        navigator.clipboard.writeText(key);
-        alert("Chave Pix copiada!");
-    }
-
     function finishOrder() {
-        alert("Atenção!\nSeu pedido foi registrado. Agora envie o comprovante para o ADM no Discord para receber seus itens no jogo.");
+        alert("Comprovante necessário no Discord!");
         cart = []; updateCart(); toggleCart();
     }
 
-    renderProducts();
+    renderStore();
 </script>
-
 </body>
 </html>
