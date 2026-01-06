@@ -6,45 +6,52 @@
     <title>BlackMarket RP - Premium</title>
     <style>
         :root { --primary: #00ff88; --secondary: #bd00ff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; overflow-x: hidden; }
         header { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; }
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
         
+        /* Notificação (Toast) */
+        #notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+        .toast { background: #1a1a1a; color: white; border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s ease-out; font-weight: bold; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
         /* Botões */
         .btn { padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
         .btn-buy { background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 100%; }
         .btn-buy:hover { background: var(--primary); color: #000; }
         .btn-admin { background: var(--secondary); color: white; }
-        .btn-save { background: #28a745; color: white; }
+        .btn-save { background: #28a745; color: white; padding: 5px 10px; font-size: 0.8em; }
 
-        /* Grid */
+        /* Grid e Card */
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
         .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; }
         .product-img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
 
         /* Admin Panel */
         #admin-panel { display: none; background: #1a1a1a; padding: 25px; border-radius: 10px; border: 2px dashed var(--secondary); margin-bottom: 30px; }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { background: #333; color: #fff; padding: 10px; cursor: pointer; border-radius: 5px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
+        .tab-btn { background: #333; color: #fff; padding: 10px; cursor: pointer; border-radius: 5px; white-space: nowrap; }
         .tab-btn.active { background: var(--secondary); }
         .admin-content { display: none; }
         .admin-content.active { display: block; }
         table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
         th, td { border: 1px solid #333; padding: 8px; text-align: left; }
-        input { background: #000; border: 1px solid #444; color: white; padding: 8px; border-radius: 4px; }
+        input, textarea, select { background: #000; border: 1px solid #444; color: white; padding: 8px; border-radius: 4px; }
 
-        /* Avaliações */
-        .reviews-section { background: #111; padding: 20px; border-radius: 10px; margin-top: 50px; }
-        .review-card { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--primary); }
+        /* Reviews */
+        .review-card { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--primary); position: relative; }
         .stars { color: #ffcc00; }
+        .del-review { position: absolute; top: 10px; right: 10px; color: red; cursor: pointer; display: none; }
 
         /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: #111; padding: 25px; width: 350px; border-radius: 15px; border: 1px solid var(--secondary); text-align: center; }
-        .pix-box { background: #fff; color: #000; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 0.8em; word-break: break-all; }
+        .pix-box { background: #fff; color: #000; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 0.8em; word-break: break-all; font-family: monospace; }
     </style>
 </head>
 <body>
+
+<div id="notification-container"></div>
 
 <header>
     <h1>⚔️ BLACKMARKET RP</h1>
@@ -58,131 +65,128 @@
         <div class="admin-tabs">
             <div class="tab-btn active" onclick="openTab('tab-logs')">Logs de Vendas</div>
             <div class="tab-btn" onclick="openTab('tab-edit')">Editar Produtos</div>
+            <div class="tab-btn" onclick="openTab('tab-rev')">Moderar Avaliações</div>
         </div>
 
-        <div id="tab-logs" class="admin-content active">
-            <div id="logs-list"></div>
-        </div>
+        <div id="tab-logs" class="admin-content active"><div id="logs-list"></div></div>
 
         <div id="tab-edit" class="admin-content">
             <table>
-                <thead>
-                    <tr><th>Nome</th><th>Preço</th><th>Estoque</th><th>Imagem (URL)</th><th>Ação</th></tr>
-                </thead>
+                <thead><tr><th>Nome</th><th>R$</th><th>Est.</th><th>URL Imagem</th><th>Ação</th></tr></thead>
                 <tbody id="admin-edit-list"></tbody>
             </table>
         </div>
+
+        <div id="tab-rev" class="admin-content">
+            <p>Os botões de excluir (X) aparecerão nas avaliações abaixo.</p>
+        </div>
     </div>
 
-    <h2 style="color: var(--primary)">🔫 ARSENAL & ITENS</h2>
+    <h2 style="border-left: 4px solid var(--primary); padding-left: 15px;">🔫 ARSENAL & DINHEIRO</h2>
     <div class="products-grid" id="store-grid"></div>
 
-    <div class="reviews-section">
-        <h2 style="color: var(--secondary)">💬 AVALIAÇÕES DOS CLIENTES</h2>
+    <div class="reviews-section" style="background: #111; padding: 20px; border-radius: 10px;">
+        <h2 style="color: var(--secondary)">💬 AVALIAÇÕES</h2>
         <div id="reviews-list"></div>
-        <hr style="border: 0.5px solid #333; margin: 20px 0;">
-        <h3>Deixe sua avaliação</h3>
-        <input type="text" id="rev-name" placeholder="Seu Nick" style="width: 100%; margin-bottom: 10px;">
-        <select id="rev-stars" style="width: 100%; background: #000; color: #fff; padding: 10px; margin-bottom: 10px;">
-            <option value="5">⭐⭐⭐⭐⭐ (5 Estrelas)</option>
-            <option value="4">⭐⭐⭐⭐ (4 Estrelas)</option>
-            <option value="3">⭐⭐⭐ (3 Estrelas)</option>
-            <option value="2">⭐⭐ (2 Estrelas)</option>
-            <option value="1">⭐ (1 Estrela)</option>
+        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+        <h3>Avaliar Loja</h3>
+        <input type="text" id="rev-name" placeholder="Nick do Roblox" style="width:100%; margin-bottom:10px">
+        <select id="rev-stars" style="width:100%; margin-bottom:10px; background:#000; color:#fff; padding:8px;">
+            <option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option>
         </select>
-        <textarea id="rev-text" placeholder="Conte sua experiência..." style="width: 100%; background: #000; color: #fff; padding: 10px; height: 60px;"></textarea>
-        <button class="btn" style="background: var(--primary); margin-top: 10px;" onclick="addReview()">PUBLICAR AVALIAÇÃO</button>
+        <textarea id="rev-text" placeholder="Comente aqui..." style="width:100%; height:60px"></textarea>
+        <button class="btn" style="background:var(--primary); width:100%; margin-top:10px" onclick="addReview()">ENVIAR AVALIAÇÃO</button>
     </div>
 </div>
 
 <div id="cart-modal" class="modal">
     <div class="modal-content">
         <div id="checkout-step-1">
-            <h2>Dados para Entrega</h2>
-            <input type="text" id="nick-roblox" placeholder="Nick do Roblox" style="width: 100%; margin-bottom: 10px;">
-            <input type="text" id="nick-discord" placeholder="Seu Discord" style="width: 100%; margin-bottom: 10px;">
-            <button class="btn" style="background:var(--secondary); width: 100%" onclick="goToPix()">PAGAR AGORA</button>
+            <h2>Identificação</h2>
+            <input type="text" id="nick-roblox" placeholder="Seu Nick no Roblox" style="width:100%; margin-bottom:10px">
+            <input type="text" id="nick-discord" placeholder="Seu Usuário Discord" style="width:100%; margin-bottom:10px">
+            <button class="btn" style="background:var(--secondary); width:100%" onclick="goToPix()">PROSSEGUIR</button>
         </div>
         <div id="checkout-step-2" style="display:none">
             <h2>Pagamento PIX</h2>
             <div class="pix-box">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
-            <p style="font-size: 0.8em;">O ADM foi notificado do seu Nick!</p>
-            <button class="btn" style="background:green; width: 100%" onclick="finish()">CONCLUIR</button>
+            <p style="font-size:0.8em; color:var(--primary)">O ADM já registrou seu Nick para entrega!</p>
+            <button class="btn" style="background:green; width:100%" onclick="finish()">CONCLUIR COMPRA</button>
         </div>
-        <button class="btn" style="background:none; color:#777" onclick="toggleCart()">Fechar</button>
+        <button class="btn" style="background:none; color:#777; margin-top:10px" onclick="toggleCart()">Cancelar</button>
     </div>
 </div>
 
-<footer><center><p onclick="adminLogin()" style="cursor:pointer; opacity:0.3">Acesso Administrativo</p></center></footer>
+<footer><center><p onclick="adminLogin()" style="cursor:pointer; opacity:0.2; margin-top:50px">Painel Admin</p></center></footer>
 
 <script>
-    // Dados Iniciais
     const defaultProducts = [
         { id: 1, name: "Glock G18", price: 2.50, stock: 100, img: "https://cdn-icons-png.flaticon.com/512/3400/3400282.png" },
         { id: 2, name: "AK-47 Tática", price: 4.50, stock: 50, img: "https://cdn-icons-png.flaticon.com/512/4119/4119853.png" },
         { id: 3, name: "Maleta 100k", price: 3.00, stock: 99, img: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png" }
     ];
 
-    let products = JSON.parse(localStorage.getItem('bm_products')) || defaultProducts;
-    let logs = JSON.parse(localStorage.getItem('bm_logs')) || [];
-    let reviews = JSON.parse(localStorage.getItem('bm_reviews')) || [
-        { name: "SrLeal", stars: 5, text: "Entrega super rápida, recomendo!" }
-    ];
+    let products = JSON.parse(localStorage.getItem('bm_v6_prods')) || defaultProducts;
+    let logs = JSON.parse(localStorage.getItem('bm_v6_logs')) || [];
+    let reviews = JSON.parse(localStorage.getItem('bm_v6_revs')) || [{name:"Sistema", stars:5, text:"Loja inaugurada!"}];
     let cart = [];
+    let isAdmin = false;
+
+    function notify(msg) {
+        const container = document.getElementById('notification-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
 
     function save() {
-        localStorage.setItem('bm_products', JSON.stringify(products));
-        localStorage.setItem('bm_logs', JSON.stringify(logs));
-        localStorage.setItem('bm_reviews', JSON.stringify(reviews));
+        localStorage.setItem('bm_v6_prods', JSON.stringify(products));
+        localStorage.setItem('bm_v6_logs', JSON.stringify(logs));
+        localStorage.setItem('bm_v6_revs', JSON.stringify(reviews));
         render();
     }
 
     function render() {
-        // Renderizar Loja
-        const grid = document.getElementById('store-grid');
-        grid.innerHTML = products.map(p => `
+        // Loja
+        document.getElementById('store-grid').innerHTML = products.map(p => `
             <div class="product-card">
                 <img src="${p.img}" class="product-img">
-                <h3>${p.name}</h3>
+                <h3 style="font-size:1em">${p.name}</h3>
                 <p style="color:var(--primary); font-weight:bold">R$ ${p.price.toFixed(2)}</p>
-                <small>Estoque: ${p.stock}</small>
-                <button class="btn btn-buy" onclick="addToCart(${p.id})">ADICIONAR</button>
-            </div>
-        `).join('');
+                <button class="btn btn-buy" onclick="addToCart(${p.id})">COMPRAR</button>
+            </div>`).join('');
 
-        // Renderizar Admin - Edição
+        // Admin Edição
         document.getElementById('admin-edit-list').innerHTML = products.map(p => `
             <tr>
-                <td><input type="text" id="ed-name-${p.id}" value="${p.name}" style="width:80px"></td>
-                <td><input type="number" id="ed-price-${p.id}" value="${p.price}" style="width:50px"></td>
-                <td><input type="number" id="ed-stock-${p.id}" value="${p.stock}" style="width:40px"></td>
-                <td><input type="text" id="ed-img-${p.id}" value="${p.img}" style="width:100px"></td>
+                <td><input type="text" id="ed-n-${p.id}" value="${p.name}" style="width:70px"></td>
+                <td><input type="number" id="ed-p-${p.id}" value="${p.price}" style="width:40px"></td>
+                <td><input type="number" id="ed-s-${p.id}" value="${p.stock}" style="width:30px"></td>
+                <td><input type="text" id="ed-i-${p.id}" value="${p.img}" style="width:80px"></td>
                 <td><button class="btn-save" onclick="updateProd(${p.id})">OK</button></td>
-            </tr>
-        `).join('');
+            </tr>`).join('');
 
-        // Renderizar Logs
+        // Logs
         document.getElementById('logs-list').innerHTML = logs.map(l => `
-            <div style="background:#000; padding:10px; margin-bottom:5px; border-radius:5px; font-size:0.8em">
-                <b>${l.user}</b> comprou <b>${l.item}</b> - R$ ${l.total} <br>
-                <small>Discord: ${l.discord} | Data: ${l.date}</small>
-            </div>
-        `).join('');
+            <div style="background:#000; padding:10px; margin-bottom:5px; border-radius:5px; font-size:0.75em; border-left:2px solid var(--secondary)">
+                <b>${l.user}</b>: ${l.item} (R$ ${l.total})<br><small>${l.date} | Discord: ${l.discord}</small>
+            </div>`).join('');
 
-        // Renderizar Avaliações
-        document.getElementById('reviews-list').innerHTML = reviews.map(r => `
+        // Avaliações
+        document.getElementById('reviews-list').innerHTML = reviews.map((r, i) => `
             <div class="review-card">
+                <div class="del-review" style="display:${isAdmin?'block':'none'}" onclick="delReview(${i})">✖</div>
                 <div class="stars">${"⭐".repeat(r.stars)}</div>
-                <b>${r.name}:</b> ${r.text}
-            </div>
-        `).join('');
+                <b>${r.name}</b>: ${r.text}
+            </div>`).join('');
     }
 
-    // Funções de Loja
     function addToCart(id) {
-        const p = products.find(x => x.id === id);
-        cart.push(p);
+        cart.push(products.find(x => x.id === id));
         document.getElementById('cart-count').innerText = cart.length;
+        notify("Item adicionado ao carrinho!");
     }
 
     function toggleCart() {
@@ -195,57 +199,62 @@
     function goToPix() {
         const r = document.getElementById('nick-roblox').value;
         const d = document.getElementById('nick-discord').value;
-        if(!r || !d) return alert("Preencha os campos!");
+        if(!r || !d || cart.length === 0) return notify("Erro: Preencha os campos ou carrinho vazio!");
 
-        // Criar Log
         logs.unshift({
             date: new Date().toLocaleString(),
-            user: r,
-            discord: d,
+            user: r, discord: d,
             item: cart.map(i => i.name).join(", "),
             total: cart.reduce((a, b) => a + b.price, 0).toFixed(2)
         });
-        
         save();
         document.getElementById('checkout-step-1').style.display = 'none';
         document.getElementById('checkout-step-2').style.display = 'block';
+        notify("Log de venda registrado!");
     }
 
-    function finish() { alert("Aguardamos seu comprovante!"); cart = []; document.getElementById('cart-count').innerText = "0"; toggleCart(); }
+    function finish() {
+        notify("Pedido finalizado com sucesso!");
+        cart = []; document.getElementById('cart-count').innerText = "0"; toggleCart();
+    }
 
-    // Funções Admin
     function adminLogin() {
-        if(prompt("Senha Admin:") === "srleal018@gmail.com") document.getElementById('admin-panel').style.display = 'block';
+        if(prompt("Acesso Restrito:") === "srleal018@gmail.com") {
+            isAdmin = true;
+            document.getElementById('admin-panel').style.display = 'block';
+            notify("Modo Admin Ativado!");
+            render();
+        }
     }
+
+    function updateProd(id) {
+        const p = products.find(x => x.id === id);
+        p.name = document.getElementById(`ed-n-${id}`).value;
+        p.price = parseFloat(document.getElementById(`ed-p-${id}`).value);
+        p.stock = parseInt(document.getElementById(`ed-s-${id}`).value);
+        p.img = document.getElementById(`ed-i-${id}`).value;
+        save();
+        notify("Produto atualizado!");
+    }
+
+    function addReview() {
+        const n = document.getElementById('rev-name').value;
+        const s = document.getElementById('rev-stars').value;
+        const t = document.getElementById('rev-text').value;
+        if(!n || !t) return notify("Escreva seu nick e o comentário!");
+        reviews.unshift({name: n, stars: parseInt(s), text: t});
+        save();
+        document.getElementById('rev-name').value = ""; document.getElementById('rev-text').value = "";
+        notify("Avaliação enviada!");
+    }
+
+    function delReview(i) { reviews.splice(i, 1); save(); notify("Avaliação removida!"); }
 
     function openTab(id) {
         document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         event.currentTarget.classList.add('active');
-    }
-
-    function updateProd(id) {
-        const p = products.find(x => x.id === id);
-        p.name = document.getElementById(`ed-name-${id}`).value;
-        p.price = parseFloat(document.getElementById(`ed-price-${id}`).value);
-        p.stock = parseInt(document.getElementById(`ed-stock-${id}`).value);
-        p.img = document.getElementById(`ed-img-${id}`).value;
-        save();
-        alert("Produto Atualizado!");
-    }
-
-    // Avaliações
-    function addReview() {
-        const name = document.getElementById('rev-name').value;
-        const stars = document.getElementById('rev-stars').value;
-        const text = document.getElementById('rev-text').value;
-        if(!name || !text) return alert("Preencha sua avaliação!");
-
-        reviews.unshift({ name, stars: parseInt(stars), text });
-        save();
-        document.getElementById('rev-name').value = "";
-        document.getElementById('rev-text').value = "";
     }
 
     render();
