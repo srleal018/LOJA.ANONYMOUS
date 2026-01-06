@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox RP Store - Itens Raros</title>
+    <style>
+        :root {
+            --primary: #ff2a6d;
+            --secondary: #05d9e8;
+            --bg: #01012b;
+            --card-bg: #1a1a40;
+            --text: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(90deg, #000, #1a1a40);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        h1 { margin: 0; color: var(--secondary); text-transform: uppercase; letter-spacing: 2px; }
+
+        .cart-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        /* Layout */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Produtos Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover { transform: translateY(-5px); border-color: var(--secondary); }
+        
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            background: #000;
+        }
+
+        .price { color: var(--secondary); font-size: 1.2em; font-weight: bold; margin: 10px 0; }
+        .stock { font-size: 0.8em; color: #aaa; }
+
+        button.buy-btn {
+            background: var(--secondary);
+            border: none;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            color: #000;
+            transition: 0.3s;
+        }
+        button.buy-btn:hover { background: #fff; }
+
+        /* Avaliações */
+        .stars { color: gold; }
+
+        /* Admin Panel (Escondido por padrão) */
+        #admin-panel {
+            display: none; /* Só aparece com o email certo */
+            background: #2a2a50;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 2px dashed var(--primary);
+        }
+
+        input, textarea {
+            width: 95%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #000;
+            border: 1px solid #555;
+            color: white;
+        }
+
+        /* Modal Carrinho */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            width: 400px;
+            border-radius: 10px;
+            border: 1px solid var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            border-top: 1px solid #333;
+            font-size: 0.8em;
+        }
+        .admin-link { color: #333; cursor: pointer; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Roblox RP Store</h1>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Carrinho (<span id="cart-count">0</span>)</button>
+</header>
+
+<div class="container">
+
+    <div id="admin-panel">
+        <h2>painel Admin (Logado: srleal018@gmail.com)</h2>
+        <input type="text" id="new-name" placeholder="Nome do Item (ex: Espada Lendária)">
+        <input type="number" id="new-price" placeholder="Preço (R$)">
+        <input type="number" id="new-stock" placeholder="Quantidade em Estoque">
+        <input type="text" id="new-img" placeholder="URL da Imagem (Link)">
+        <button onclick="addProduct()" class="buy-btn" style="background: var(--primary); color: white;">Adicionar Produto</button>
+    </div>
+
+    <h2>Itens em Destaque</h2>
+    <div class="products-grid" id="products-container">
+        </div>
+</div>
+
+<div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <h2>Seu Carrinho</h2>
+        <div id="cart-items"></div>
+        <hr>
+        <h3>Total: R$ <span id="cart-total">0.00</span></h3>
+        
+        <div id="pix-area" style="display:none; text-align: center; background: white; padding: 10px; border-radius: 5px;">
+            <p style="color:black; font-weight:bold;">Escaneie para pagar:</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ExemploPagamentoPixRoblox" alt="QR Pix">
+            <p style="color:black; font-size: 0.8em;">Chave Pix: srleal018@gmail.com</p>
+            <button onclick="alert('Pagamento confirmado! Entrega no jogo em breve.')" style="background: green; color: white; padding: 10px; width: 100%; border:none; margin-top:10px; cursor:pointer;">Confirmar Pagamento</button>
+        </div>
+
+        <button id="btn-checkout" class="buy-btn" onclick="showPix()">Finalizar com PIX</button>
+        <button class="buy-btn" style="background: #333; margin-top: 10px; color: white;" onclick="toggleCart()">Fechar</button>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 Loja RP. Todos os direitos reservados.</p>
+    <span class="admin-link" onclick="adminLogin()">Acesso Restrito</span>
+</footer>
+
+<script>
+    // --- LÓGICA DO SISTEMA ---
+
+    // 1. Dados Iniciais (Simulando Banco de Dados)
+    let products = JSON.parse(localStorage.getItem('rp_products')) || [
+        { id: 1, name: "Carro Esportivo Vip", price: 25.00, stock: 5, image: "https://via.placeholder.com/200?text=Carro+VIP", reviews: 5 },
+        { id: 2, name: "Mansão Moderna", price: 50.00, stock: 2, image: "https://via.placeholder.com/200?text=Mansao", reviews: 4 },
+        { id: 3, name: "Skin Policial Elite", price: 15.00, stock: 10, image: "https://via.placeholder.com/200?text=Skin+Policia", reviews: 5 }
+    ];
+
+    let cart = [];
+
+    // 2. Renderizar Produtos
+    function renderProducts() {
+        const container = document.getElementById('products-container');
+        container.innerHTML = '';
+        
+        products.forEach(product => {
+            const stars = "★".repeat(product.reviews) + "☆".repeat(5 - product.reviews);
+            
+            container.innerHTML += `
+                <div class="product-card">
+                    <img src="${product.image}" class="product-img" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <div class="stars">${stars}</div>
+                    <p class="stock">Estoque: ${product.stock}</p>
+                    <p class="price">R$ ${product.price.toFixed(2)}</p>
+                    <button class="buy-btn" onclick="addToCart(${product.id})">Adicionar ao Carrinho</button>
+                </div>
+            `;
+        });
+    }
+
+    // 3. Sistema de Login Admin
+    function adminLogin() {
+        const email = prompt("Digite o e-mail de administrador:");
+        if (email === "srleal018@gmail.com") {
+            document.getElementById('admin-panel').style.display = 'block';
+            alert("Bem-vindo, Administrador!");
+            window.scrollTo(0, 0);
+        } else {
+            alert("Acesso negado.");
+        }
+    }
+
+    // 4. Adicionar Produto (Admin)
+    function addProduct() {
+        const name = document.getElementById('new-name').value;
+        const price = parseFloat(document.getElementById('new-price').value);
+        const stock = parseInt(document.getElementById('new-stock').value);
+        const img = document.getElementById('new-img').value || "https://via.placeholder.com/200";
+
+        if(name && price) {
+            const newProduct = {
+                id: Date.now(), // ID único baseado no tempo
+                name: name,
+                price: price,
+                stock: stock,
+                image: img,
+                reviews: 5 // Novos produtos começam com 5 estrelas
+            };
+            
+            products.push(newProduct);
+            // Salva no navegador para não sumir ao atualizar
+            localStorage.setItem('rp_products', JSON.stringify(products));
+            renderProducts();
+            alert("Produto adicionado!");
+            
+            // Limpar campos
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+        } else {
+            alert("Preencha o nome e o preço!");
+        }
+    }
+
+    // 5. Carrinho de Compras
+    function addToCart(id) {
+        const product = products.find(p => p.id === id);
+        if(product && product.stock > 0) {
+            cart.push(product);
+            updateCartUI();
+            alert(`${product.name} adicionado!`);
+        } else {
+            alert("Produto sem estoque!");
+        }
+    }
+
+    function updateCartUI() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const cartItemsDiv = document.getElementById('cart-items');
+        let total = 0;
+        
+        cartItemsDiv.innerHTML = cart.map(item => {
+            total += item.price;
+            return `<div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span>${item.name}</span>
+                        <span>R$ ${item.price.toFixed(2)}</span>
+                    </div>`;
+        }).join('');
+        
+        document.getElementById('cart-total').innerText = total.toFixed(2);
+    }
+
+    function toggleCart() {
+        const modal = document.getElementById('cart-modal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        // Esconder pix se reabrir
+        document.getElementById('pix-area').style.display = 'none';
+        document.getElementById('btn-checkout').style.display = 'block';
+    }
+
+    function showPix() {
+        if(cart.length === 0) {
+            alert("Seu carrinho está vazio!");
+            return;
+        }
+        document.getElementById('pix-area').style.display = 'block';
+        document.getElementById('btn-checkout').style.display = 'none';
+    }
+
+    // Inicializar
+    renderProducts();
+
+</script>
+
+</body>
+</html>
