@@ -3,58 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUEBREI O SISTEMA - Final Boss</title>
+    <title>QUEBREI O SISTEMA - Live Shop</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    
     <style>
         :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
         
         /* NOTIFICAÇÕES LADO ESQUERDO */
         #notif-box { position: fixed; top: 20px; left: 20px; z-index: 10000; }
-        .toast { background: #1a1a1a; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; animation: slideInLeft 0.3s forwards; font-weight: bold; font-size: 0.9em; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        @keyframes slideInLeft { from { transform: translateX(-100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
+        .toast { background: #1a1a1a; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; animation: slideIn 0.3s forwards; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-weight: bold; }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
 
-        header { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top:0; z-index: 900; }
-        .logo-text { font-weight: 900; color: var(--text); text-transform: uppercase; margin: 0; font-size: 1.2rem; }
+        header { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top:0; z-index: 999; }
+        .logo-text { font-weight: 900; color: var(--text); text-transform: uppercase; margin: 0; font-size: 1.3rem; }
         .logo-text span { color: var(--secondary); }
         
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-        /* VISTAS */
-        #shop-view, #admin-view { display: block; }
-        #admin-view { display: none; background: #0c0c0c; min-height: 100vh; }
-
-        /* LOJA */
-        .category-section { margin-bottom: 40px; }
-        .cat-title { border-left: 4px solid var(--secondary); padding-left: 15px; text-transform: uppercase; color: var(--text); font-style: italic; margin-bottom: 20px; }
+        /* PRODUTOS */
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; }
-        .product-img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; }
+        .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; transition: 0.3s; position: relative; }
+        .product-card:hover { border-color: var(--secondary); transform: translateY(-5px); }
+        .price-tag { color: var(--primary); font-weight: bold; font-size: 1.2rem; margin: 10px 0; }
         
         .btn { padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: 0.2s; }
         .btn-buy { background: var(--secondary); color: white; width: 100%; }
 
         /* MODAIS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: #111; width: 95%; max-width: 500px; border-radius: 15px; border: 1px solid var(--secondary); display: flex; flex-direction: column; max-height: 90vh; }
-        .modal-header { padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .modal-content { background: #111; width: 95%; max-width: 500px; border-radius: 15px; border: 1px solid var(--secondary); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
-
-        /* CHAT E AVALIAÇÕES */
         .tabs { display: flex; background: #000; }
-        .tab-btn { flex: 1; padding: 15px; background: none; border: none; color: #555; cursor: pointer; font-weight: bold; border-bottom: 2px solid transparent; }
-        .tab-btn.active { color: var(--secondary); border-bottom-color: var(--secondary); }
-        .chat-box { background: #0a0a0a; height: 300px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #222; margin-bottom: 10px; }
-        .bubble { padding: 10px; border-radius: 10px; font-size: 0.85em; max-width: 80%; }
-        .bubble.bot { background: #222; align-self: flex-start; }
-        .bubble.user { background: var(--secondary); align-self: flex-end; }
+        .tab-btn { flex: 1; padding: 15px; background: none; color: #555; border: none; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { color: var(--secondary); border-bottom: 2px solid var(--secondary); }
 
-        /* ADMIN */
-        .admin-nav { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
-        .admin-card { background: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
-        
-        input, select, textarea { background: #000; border: 1px solid #333; color: white; padding: 10px; border-radius: 5px; width: 100%; box-sizing: border-box; margin: 5px 0; }
+        /* CHAT */
+        .chat-box { background: #0a0a0a; height: 250px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; border: 1px solid #222; margin-bottom: 10px; }
+        .bubble { padding: 8px 12px; border-radius: 10px; font-size: 0.85em; max-width: 80%; line-height: 1.4; }
+        .bubble.bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .bubble.user { background: var(--secondary); align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        input, select, textarea { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin: 5px 0; }
+
+        #admin-view { display: none; background: #0c0c0c; min-height: 100vh; }
+        .admin-card { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -64,313 +59,237 @@
 <div id="shop-view">
     <header>
         <h1 class="logo-text">QUEBREI O <span>SISTEMA</span></h1>
-        <div>
-            <button class="btn" style="background:var(--secondary)" onclick="openModal('main-modal')">🛒 CHAT / AVALIAÇÕES (<span id="cart-count">0</span>)</button>
-        </div>
+        <button class="btn" style="background:var(--secondary)" onclick="openModal('main-modal')">🛒 CARRINHO (<span id="cart-count">0</span>)</button>
     </header>
-    
-    <div class="container" id="shop-content">
-        </div>
+    <div class="container">
+        <h2 style="border-left: 4px solid var(--secondary); padding-left: 10px; margin-bottom: 30px;">PRODUTOS DISPONÍVEIS</h2>
+        <div id="products-list" class="products-grid"></div>
+    </div>
 </div>
 
 <div id="main-modal" class="modal">
     <div class="modal-content">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('chat')">CARRINHO/CHAT</button>
-            <button class="tab-btn" onclick="switchTab('reviews')">AVALIAÇÕES</button>
+            <button class="tab-btn active" id="btn-chat" onclick="switchTab('chat')">CARRINHO & CHAT</button>
+            <button class="tab-btn" id="btn-rev" onclick="switchTab('rev')">AVALIAÇÕES</button>
         </div>
         
         <div id="tab-chat" class="modal-body">
-            <div id="cart-info" style="font-size: 0.7em; color: var(--secondary); margin-bottom: 10px;"></div>
+            <div id="items-summary" style="font-size: 0.75em; color: var(--secondary); margin-bottom: 10px; font-weight: bold;"></div>
             <div class="chat-box" id="chat-flow">
-                <div class="bubble bot">Bem-vindo! Qual seu Nick do Discord para o pedido?</div>
+                <div class="bubble bot">Olá! Vi que você se interessou por nossos itens. Digite seu <b>Nick do Discord</b> para enviarmos seu pedido ao ADM.</div>
             </div>
-            <div id="chat-inputs">
-                <input type="text" id="c-nick" placeholder="Seu Discord...">
-                <textarea id="c-msg" placeholder="Mensagem extra..."></textarea>
-                <button class="btn btn-buy" onclick="finalizeOrder()">FINALIZAR E VER PIX</button>
+            <div id="chat-form">
+                <input type="text" id="cust-nick" placeholder="Seu Discord (Ex: Fulano#0000)">
+                <textarea id="cust-msg" placeholder="Alguma observação?"></textarea>
+                <button class="btn btn-buy" onclick="sendOrderOnline()">ENVIAR PEDIDO</button>
             </div>
-            <div id="chat-pix" style="display:none; text-align: center;">
-                <p style="color:var(--primary)">Pedido enviado ao ADM!</p>
-                <div style="background:#fff; color:#000; padding:10px; font-family:monospace; word-break:break-all; border-radius:5px">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
+            <div id="pix-display" style="display:none; text-align:center; padding: 10px;">
+                <p style="color:var(--primary); font-weight: bold;">PEDIDO REGISTRADO!</p>
+                <p style="font-size: 0.8rem;">Pague agora via PIX Copia e Cola:</p>
+                <div style="background:#fff; color:#000; padding:10px; font-family:monospace; border-radius:5px; font-size:0.7em; word-break:break-all;">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
+                <button class="btn" style="margin-top:15px; background: #222; width: 100%;" onclick="closeModal('main-modal')">FECHAR</button>
             </div>
         </div>
 
-        <div id="tab-reviews" class="modal-body" style="display:none">
-            <div id="reviews-list" style="margin-bottom: 20px;"></div>
-            <div style="border-top: 1px solid #333; padding-top: 15px;">
-                <input type="text" id="r-nick" placeholder="Seu Nick">
-                <textarea id="r-msg" placeholder="O que achou da loja?"></textarea>
-                <button class="btn btn-buy" onclick="postReview()">ENVIAR AVALIAÇÃO</button>
+        <div id="tab-rev" class="modal-body" style="display:none">
+            <div id="reviews-list" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto;"></div>
+            <div style="border-top: 1px solid #333; padding-top: 10px;">
+                <input type="text" id="rev-nick" placeholder="Seu Nick">
+                <textarea id="rev-msg" placeholder="O que achou da loja?"></textarea>
+                <button class="btn btn-buy" onclick="sendReviewOnline()">POSTAR AVALIAÇÃO</button>
             </div>
         </div>
-        
-        <div class="modal-header">
-            <button class="btn" style="background:#333; width:100%" onclick="closeModal('main-modal')">FECHAR</button>
-        </div>
+        <button class="btn" style="background:#000; color: #444; border-radius:0" onclick="closeModal('main-modal')">VOLTAR</button>
     </div>
 </div>
 
 <div id="login-modal" class="modal">
     <div class="modal-content" style="max-width:300px">
-        <div class="modal-header"><b>ACESSO RESTRITO</b></div>
         <div class="modal-body">
-            <input type="password" id="admin-pass" placeholder="Senha Administrativa">
-            <button class="btn btn-buy" style="margin-top:10px" onclick="tryLogin()">ENTRAR</button>
-            <button class="btn" style="background:none; width:100%; margin-top:5px" onclick="closeModal('login-modal')">Cancelar</button>
+            <h3 style="margin:0 0 15px 0">PAINEL ADM</h3>
+            <input type="password" id="pass-input" placeholder="Senha">
+            <button class="btn btn-buy" style="margin-top:10px" onclick="checkLogin()">ENTRAR</button>
+            <button class="btn" style="background:none; width:100%" onclick="closeModal('login-modal')">Sair</button>
         </div>
     </div>
 </div>
 
 <div id="admin-view">
     <header>
-        <h1 style="color:var(--secondary)">🛠 PAINEL ADM</h1>
-        <button class="btn" style="background:#ff4444" onclick="location.reload()">SAIR</button>
+        <h1 style="color:var(--secondary)">🛠 PAINEL ONLINE</h1>
+        <button class="btn" style="background:red" onclick="location.reload()">SAIR</button>
     </header>
     <div class="container">
-        <div class="admin-nav">
-            <button class="btn btn-admin" onclick="showAdminTab('prod')">Produtos</button>
-            <button class="btn btn-admin" onclick="showAdminTab('cat')">Categorias</button>
-            <button class="btn btn-admin" onclick="showAdminTab('ord')">Pedidos</button>
+        <div class="admin-card">
+            <h3>Novo Produto</h3>
+            <input type="text" id="p-name" placeholder="Nome do Item">
+            <input type="number" id="p-price" placeholder="Preço (R$)">
+            <button class="btn btn-buy" onclick="addProductOnline()">CADASTRAR PRODUTO</button>
         </div>
-
-        <div id="adm-prod" class="admin-tab">
-            <div class="admin-card">
-                <h3 id="prod-form-title">Gerenciar Produto</h3>
-                <input type="hidden" id="edit-p-id">
-                <input type="text" id="p-name" placeholder="Nome">
-                <input type="number" id="p-price" placeholder="Preço">
-                <select id="p-cat-select"></select>
-                <select id="p-img">
-                    <option value="glock.png">Glock</option><option value="ak.png">AK-47</option><option value="c4.png">C4</option><option value="muni.png">Munição</option>
-                </select>
-                <button class="btn btn-buy" onclick="saveProduct()">SALVAR PRODUTO</button>
-            </div>
-            <div class="admin-card">
-                <table id="table-prods"><thead><tr><th>Item</th><th>Cat</th><th>Ações</th></tr></thead><tbody></tbody></table>
-            </div>
-        </div>
-
-        <div id="adm-cat" class="admin-tab" style="display:none">
-            <div class="admin-card">
-                <h3>Criar Categoria</h3>
-                <input type="text" id="new-cat-name" placeholder="Nome da Categoria">
-                <button class="btn btn-buy" onclick="addCategory()">ADICIONAR</button>
-            </div>
-            <div class="admin-card">
-                <div id="cat-list-admin"></div>
-            </div>
-        </div>
-
-        <div id="adm-ord" class="admin-tab" style="display:none">
-            <div id="order-list-admin"></div>
+        <div class="admin-card">
+            <h3>Pedidos Pendentes (Realtime)</h3>
+            <div id="admin-orders-live"></div>
         </div>
     </div>
 </div>
 
-<footer><center><p onclick="openModal('login-modal')" style="cursor:pointer; opacity:0.05; margin: 100px 0;">Painel</p></center></footer>
+<footer style="padding:60px; text-align:center; opacity:0.1; cursor:pointer;" onclick="openModal('login-modal')">Admin Control</footer>
 
 <script>
-    const ADMIN_PASS = "270712";
-    const BANNED = ["quebrei o sistema", "admin", "cu", "lixo"];
-    
-    let db = JSON.parse(localStorage.getItem('qs_v4_db')) || {
-        categories: ["Geral", "Armas"],
-        products: [{id:1, name:"Exemplo", price:10, cat:"Geral", img:"glock.png"}],
-        orders: [],
-        reviews: []
+    // --- INICIALIZAÇÃO FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8",
+        authDomain: "quebrei-o-sistema.firebaseapp.com",
+        databaseURL: "https://quebrei-o-sistema-default-rtdb.firebaseio.com",
+        projectId: "quebrei-o-sistema",
+        storageBucket: "quebrei-o-sistema.firebasestorage.app",
+        messagingSenderId: "133672006102",
+        appId: "1:133672006102:web:e62c681ced44b3650f7477"
     };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
     let cart = [];
 
-    function pushNotif(msg) {
+    // --- FUNÇÕES DE INTERFACE ---
+    function pushNotif(m) {
         const box = document.getElementById('notif-box');
-        const t = document.createElement('div');
-        t.className = 'toast'; t.innerText = msg;
-        box.appendChild(t);
-        setTimeout(() => t.remove(), 3000);
+        const t = document.createElement('div'); t.className = 'toast'; t.innerText = m;
+        box.appendChild(t); setTimeout(() => t.remove(), 3000);
     }
 
-    // CONTROLO DE MODAL
     function openModal(id) { 
         document.getElementById(id).style.display = 'flex'; 
         if(id === 'main-modal') {
-            document.getElementById('cart-info').innerText = "Itens: " + cart.map(i => i.name).join(', ');
+            document.getElementById('items-summary').innerText = "ITENS NO CARRINHO: " + (cart.length > 0 ? cart.map(i => i.name).join(', ') : "Vazio");
         }
     }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     
-    function switchTab(tab) {
-        document.getElementById('tab-chat').style.display = tab === 'chat' ? 'block' : 'none';
-        document.getElementById('tab-reviews').style.display = tab === 'reviews' ? 'block' : 'none';
-        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i===0 && tab==='chat') || (i===1 && tab==='reviews')));
-        if(tab === 'reviews') renderReviews();
+    function switchTab(t) {
+        document.getElementById('tab-chat').style.display = t === 'chat' ? 'block' : 'none';
+        document.getElementById('tab-rev').style.display = t === 'rev' ? 'block' : 'none';
+        document.getElementById('btn-chat').classList.toggle('active', t === 'chat');
+        document.getElementById('btn-rev').classList.toggle('active', t === 'rev');
     }
 
-    // --- LOJA ---
-    function renderShop() {
-        const cont = document.getElementById('shop-content');
-        cont.innerHTML = db.categories.map(cat => `
-            <div class="category-section">
-                <h3 class="cat-title">${cat}</h3>
-                <div class="products-grid">
-                    ${db.products.filter(p => p.cat === cat).map(p => `
-                        <div class="product-card">
-                            <img src="${p.img}" class="product-img">
-                            <b>${p.name}</b>
-                            <div style="color:var(--secondary)">R$ ${p.price.toFixed(2)}</div>
-                            <button class="btn btn-buy" style="margin-top:10px" onclick="addToCart(${p.id})">ADICIONAR</button>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
+    // --- LÓGICA FIREBASE (CLIENTE) ---
+
+    // Sincronizar Produtos
+    db.ref('produtos').on('value', snap => {
+        const list = document.getElementById('products-list');
+        list.innerHTML = "";
+        const data = snap.val();
+        for(let id in data) {
+            list.innerHTML += `
+                <div class="product-card">
+                    <img src="glock.png" style="width:70px; margin-bottom:10px;">
+                    <div style="font-weight:bold; height:40px;">${data[id].name}</div>
+                    <div class="price-tag">R$ ${data[id].price}</div>
+                    <button class="btn btn-buy" onclick="addToCart('${data[id].name}', ${data[id].price})">ADICIONAR</button>
+                    <button class="btn" style="background:transparent; color:red; font-size:0.6rem; margin-top:8px" onclick="deleteProductOnline('${id}')">Remover Item</button>
+                </div>`;
+        }
+    });
+
+    // Sincronizar Avaliações
+    db.ref('avaliacoes').on('value', snap => {
+        const cont = document.getElementById('reviews-list');
+        cont.innerHTML = "";
+        const data = snap.val();
+        for(let id in data) {
+            cont.innerHTML += `<div style="background:#000; padding:10px; margin-bottom:5px; border-radius:5px; font-size:0.8rem">
+                <b style="color:var(--secondary)">${data[id].nick}:</b> ${data[id].msg}
+            </div>`;
+        }
+    });
+
+    function addToCart(name, price) {
+        cart.push({name, price});
         document.getElementById('cart-count').innerText = cart.length;
-        
-        // Update Admin Selects
-        document.getElementById('p-cat-select').innerHTML = db.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        pushNotif(name + " no carrinho!");
     }
 
-    function addToCart(id) {
-        cart.push(db.products.find(p => p.id === id));
-        renderShop();
-        pushNotif("Item adicionado ao carrinho!");
-    }
-
-    // --- CHAT E AVALIAÇÕES ---
-    function finalizeOrder() {
-        const nick = document.getElementById('c-nick').value;
+    function sendOrderOnline() {
+        const nick = document.getElementById('cust-nick').value;
         if(!nick || cart.length === 0) return pushNotif("Preencha o Nick e adicione itens!");
         
-        db.orders.unshift({
-            id: Date.now(), date: new Date().toLocaleString(), nick,
+        db.ref('pedidos').push({
+            nick,
             items: cart.map(i => i.name).join(', '),
-            total: cart.reduce((a,b) => a+b.price, 0).toFixed(2),
-            msg: document.getElementById('c-msg').value
+            msg: document.getElementById('cust-msg').value,
+            total: cart.reduce((a,b) => a + b.price, 0),
+            date: new Date().toLocaleString()
+        }).then(() => {
+            document.getElementById('chat-form').style.display = 'none';
+            document.getElementById('pix-display').style.display = 'block';
+            pushNotif("Pedido enviado para o ADM!");
+            cart = [];
+            document.getElementById('cart-count').innerText = "0";
         });
-        save();
-        document.getElementById('chat-inputs').style.display = 'none';
-        document.getElementById('chat-pix').style.display = 'block';
-        pushNotif("Pedido enviado!");
     }
 
-    function postReview() {
-        const nick = document.getElementById('r-nick').value;
-        const msg = document.getElementById('r-msg').value;
-        if(!nick || !msg) return pushNotif("Preencha os campos!");
-        if(BANNED.some(w => (nick+msg).toLowerCase().includes(w))) return pushNotif("Conteúdo proibido!");
-
-        db.reviews.unshift({ nick, msg, date: new Date().toLocaleString() });
-        save();
-        document.getElementById('r-nick').value=''; document.getElementById('r-msg').value='';
-        renderReviews();
-        pushNotif("Avaliação enviada!");
+    function sendReviewOnline() {
+        const nick = document.getElementById('rev-nick').value;
+        const msg = document.getElementById('rev-msg').value;
+        if(nick && msg) {
+            db.ref('avaliacoes').push({ nick, msg });
+            document.getElementById('rev-msg').value = "";
+            pushNotif("Obrigado pela avaliação!");
+        }
     }
 
-    function renderReviews() {
-        document.getElementById('reviews-list').innerHTML = db.reviews.map(r => `
-            <div style="background:#000; padding:10px; margin-bottom:5px; border-radius:5px; border-left:2px solid var(--secondary)">
-                <small style="color:#555; float:right">${r.date}</small>
-                <b style="color:var(--secondary)">${r.nick}</b>: ${r.msg}
-            </div>
-        `).join('');
-    }
+    // --- LÓGICA FIREBASE (ADMIN) ---
 
-    // --- ADMIN ---
-    function tryLogin() {
-        if(document.getElementById('admin-pass').value === ADMIN_PASS) {
+    function checkLogin() {
+        if(document.getElementById('pass-input').value === "270712") {
             closeModal('login-modal');
             document.getElementById('shop-view').style.display = 'none';
             document.getElementById('admin-view').style.display = 'block';
-            renderAdmin();
+            loadAdminOrders();
         } else {
-            pushNotif("Senha Incorreta!");
+            pushNotif("Senha incorreta!");
         }
     }
 
-    function showAdminTab(tab) {
-        document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
-        document.getElementById('adm-'+tab).style.display = 'block';
-    }
-
-    function addCategory() {
-        const name = document.getElementById('new-cat-name').value;
-        if(name) { db.categories.push(name); save(); document.getElementById('new-cat-name').value=''; pushNotif("Categoria criada!"); }
-    }
-
-    function deleteCategory(cat) {
-        db.categories = db.categories.filter(c => c !== cat);
-        db.products = db.products.filter(p => p.cat !== cat);
-        save();
-    }
-
-    function saveProduct() {
-        const id = document.getElementById('edit-p-id').value;
+    function addProductOnline() {
         const name = document.getElementById('p-name').value;
-        const price = parseFloat(document.getElementById('p-price').value);
-        const cat = document.getElementById('p-cat-select').value;
-        const img = document.getElementById('p-img').value;
-
-        if(id) {
-            const idx = db.products.findIndex(p => p.id == id);
-            db.products[idx] = {id: parseInt(id), name, price, cat, img};
-        } else {
-            db.products.push({id: Date.now(), name, price, cat, img});
+        const price = document.getElementById('p-price').value;
+        if(name && price) {
+            db.ref('produtos').push({ name, price });
+            document.getElementById('p-name').value = "";
+            document.getElementById('p-price').value = "";
+            pushNotif("Produto publicado!");
         }
-        resetProdForm(); save(); pushNotif("Produto Salvo!");
     }
 
-    function editProd(id) {
-        const p = db.products.find(x => x.id === id);
-        document.getElementById('edit-p-id').value = p.id;
-        document.getElementById('p-name').value = p.name;
-        document.getElementById('p-price').value = p.price;
-        document.getElementById('p-cat-select').value = p.cat;
-        document.getElementById('prod-form-title').innerText = "Editando Item";
-        showAdminTab('prod');
+    function deleteProductOnline(id) {
+        // Opção para o ADM remover produtos direto na vitrine
+        db.ref('produtos').child(id).remove();
+        pushNotif("Item removido do catálogo.");
     }
 
-    function resetProdForm() {
-        document.getElementById('edit-p-id').value = "";
-        document.getElementById('p-name').value = "";
-        document.getElementById('p-price').value = "";
-        document.getElementById('prod-form-title').innerText = "Gerenciar Produto";
+    function loadAdminOrders() {
+        db.ref('pedidos').on('value', snap => {
+            const cont = document.getElementById('admin-orders-live');
+            cont.innerHTML = "";
+            const data = snap.val();
+            for(let id in data) {
+                cont.innerHTML += `
+                <div class="admin-card">
+                    <button style="float:right; background:red; color:white; border:none; padding:5px" onclick="deleteOrder('${id}')">X</button>
+                    <b style="color:var(--secondary)">${data[id].nick}</b> [${data[id].date}]<br>
+                    <span>📦 Itens: ${data[id].items}</span><br>
+                    <span>💰 Total: R$ ${data[id].total}</span><br>
+                    <p style="margin:5px 0; color:#888 italic">"${data[id].msg}"</p>
+                </div>`;
+            }
+        });
     }
 
-    function renderAdmin() {
-        // Tabela Produtos
-        document.querySelector('#table-prods tbody').innerHTML = db.products.map(p => `
-            <tr><td>${p.name}</td><td>${p.cat}</td><td>
-                <button onclick="editProd(${p.id})">✏️</button>
-                <button onclick="deleteProd(${p.id})">🗑️</button>
-            </td></tr>
-        `).join('');
+    function deleteOrder(id) { db.ref('pedidos').child(id).remove(); }
 
-        // Categorias Admin
-        document.getElementById('cat-list-admin').innerHTML = db.categories.map(c => `
-            <div style="display:flex; justify-content:space-between; background:#000; padding:10px; margin-bottom:5px">
-                ${c} <button class="btn" style="background:red; padding:2px 5px" onclick="deleteCategory('${c}')">X</button>
-            </div>
-        `).join('');
-
-        // Pedidos Admin
-        document.getElementById('order-list-admin').innerHTML = db.orders.map(o => `
-            <div class="admin-card">
-                <b style="color:var(--secondary)">${o.nick}</b> [${o.date}]<br>
-                Itens: ${o.items} | Total: R$ ${o.total}<br>
-                <i>Msg: ${o.msg}</i>
-            </div>
-        `).join('');
-    }
-
-    function deleteProd(id) { db.products = db.products.filter(p => p.id !== id); save(); }
-
-    function save() {
-        localStorage.setItem('qs_v4_db', JSON.stringify(db));
-        renderShop();
-        renderAdmin();
-    }
-
-    renderShop();
 </script>
 </body>
 </html>
