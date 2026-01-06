@@ -12,62 +12,69 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <style>
-        :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
+        :root { --primary: #00ff88; --secondary: #007bff; --bg: #050505; --card-bg: rgba(20, 20, 20, 0.8); --text: #ffffff; }
         * { transition: all 0.3s ease; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
-
-        /* GALAXY BACKGROUND */
-        #galaxy-bg { display: none; position: fixed; top:0; left:0; width: 100%; height: 100%; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); z-index: -1; }
+        
+        /* GALAXY EM TODO O SITE */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); 
+            color: var(--text); margin: 0; min-height: 100vh;
+        }
+        #galaxy-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: blink 2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        #site-wrapper.hidden { display: none; }
-        header { background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top: 0; z-index: 1000; }
+        header { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top: 0; z-index: 1000; }
         #news-bar { background: var(--secondary); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.9rem; }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .cat-title { border-left: 5px solid var(--secondary); padding-left: 15px; margin: 40px 0 20px; text-transform: uppercase; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .cat-title { border-left: 5px solid var(--secondary); padding-left: 15px; margin: 40px 0 20px; text-transform: uppercase; color: var(--primary); }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #222; position: relative; }
-        .card .prod-img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 15px; }
+        .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .card:hover { border-color: var(--primary); }
+        .card .prod-img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; }
 
-        .btn { padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; }
+        .btn { padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-buy { background: var(--secondary); color: white; width: 100%; }
 
-        /* ADMIN */
-        #admin-page { display: none; width: 100%; min-height: 100vh; padding: 40px 5%; z-index: 9999; position: relative; }
-        .admin-card { background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
-        input, select { background: #000; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; margin: 5px 0; }
+        /* ADMIN PAGE */
+        #site-wrapper.hidden { display: none; }
+        #admin-page { display: none; width: 100%; padding: 40px 5%; position: relative; }
+        .admin-card { background: rgba(0, 0, 0, 0.7); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        input, select { background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; margin: 8px 0; }
+        
+        /* PAINEL DE EDIÇÃO (EM VEZ DE ALERT) */
+        .edit-panel { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 10px; border-left: 3px solid gold; display: none; }
 
-        .chat-area { background: #000; height: 300px; overflow-y: auto; padding: 15px; border-radius: 10px; margin: 10px 0; display: flex; flex-direction: column; gap: 8px; border: 1px solid #222; }
-        .msg { padding: 10px; border-radius: 8px; max-width: 80%; }
+        /* CHAT */
+        .chat-area { background: rgba(0,0,0,0.4); height: 300px; overflow-y: auto; padding: 15px; border-radius: 10px; margin: 10px 0; display: flex; flex-direction: column; gap: 8px; border: 1px solid #333; }
+        .msg { padding: 10px; border-radius: 8px; max-width: 80%; font-size: 0.9rem; }
         .msg.admin { align-self: flex-start; background: var(--secondary); }
         .msg.user { align-self: flex-end; background: var(--primary); color: #000; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: #111; width: 90%; max-width: 600px; padding: 25px; border-radius: 20px; border: 1px solid var(--secondary); }
-    
-        .adm-btn-small { padding: 5px 10px; font-size: 0.7rem; margin: 2px; }
     </style>
 </head>
 <body>
 
-<div id="galaxy-bg"></div>
+<div id="galaxy-container"></div>
 
 <div id="site-wrapper">
     <div id="news-bar">BEM-VINDO À QUEBREI O SISTEMA</div>
     <header>
         <h1 style="cursor:pointer" onclick="location.reload()">QUEBREI O <span>SISTEMA</span></h1>
         <nav>
-            <button class="btn" style="background:var(--secondary); color:white" onclick="openCart()">🛒 CARRINHO (<span id="cart-count">0</span>)</button>
-            <button class="btn" style="background:var(--primary); color:black; margin-left:10px;" onclick="openMyTickets()">MEUS PEDIDOS</button>
+            <button class="btn" style="background:var(--secondary); color:white" onclick="openCart()"><i class="fas fa-shopping-cart"></i> CARRINHO (<span id="cart-count">0</span>)</button>
+            <button class="btn" style="background:var(--primary); color:black; margin-left:10px;" onclick="openMyTickets()"><i class="fas fa-ticket-alt"></i> MEUS PEDIDOS</button>
         </nav>
     </header>
 
     <div class="container">
         <div id="shop-content"></div>
-        <h2 class="cat-title">⭐ Avaliações dos Clientes</h2>
+        <h2 class="cat-title"><i class="fas fa-star" style="color:gold"></i> Feedbacks da Galáxia</h2>
         <div class="grid" id="reviews-content"></div>
     </div>
 
@@ -76,43 +83,50 @@
 
 <div id="admin-page">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h1 style="color:var(--primary)">QUEBREI O SISTEMA - STAFF</h1>
-        <button class="btn" style="background:red; color:white" onclick="exitAdmin()">SAIR DO PAINEL</button>
+        <h1 style="color:var(--primary)"><i class="fas fa-user-shield"></i> PAINEL STAFF</h1>
+        <button class="btn" style="background:red; color:white" onclick="exitAdmin()">FECHAR PAINEL</button>
     </div>
 
     <div class="grid" style="grid-template-columns: 1fr 2fr;">
         <div class="admin-card">
-            <h3>📦 Gerenciar Conteúdo</h3>
-            <input type="text" id="p-name" placeholder="Nome Produto">
-            <input type="number" id="p-price" placeholder="Preço">
-            <input type="text" id="p-img" placeholder="URL Imagem">
+            <h3><i class="fas fa-plus"></i> Novo Item</h3>
+            <input type="text" id="p-name" placeholder="Nome do Produto">
+            <input type="number" id="p-price" placeholder="Preço (R$)">
+            <input type="text" id="p-img" placeholder="URL da Imagem">
             <select id="p-cat-select"></select>
-            <button class="btn btn-buy" onclick="saveProduct()">CADASTRAR PRODUTO</button>
-            <hr style="opacity:0.2; margin:20px 0">
-            <input type="text" id="new-cat" placeholder="Nova Categoria">
-            <button class="btn btn-buy" style="background:gray" onclick="addCategory()">CRIAR CATEGORIA</button>
-            <hr style="opacity:0.2; margin:20px 0">
-            <h3>⭐ Nova Avaliação</h3>
-            <input type="text" id="rev-name" placeholder="Nome Cliente">
-            <input type="text" id="rev-txt" placeholder="Texto">
-            <button class="btn btn-buy" style="background:gold; color:black" onclick="saveReview()">POSTAR AVALIAÇÃO</button>
+            <button class="btn btn-buy" onclick="saveProduct()">CADASTRAR</button>
+            
+            <hr style="opacity:0.1; margin:20px 0">
+            <h3><i class="fas fa-folder-plus"></i> Categoria</h3>
+            <input type="text" id="new-cat" placeholder="Nome da Categoria">
+            <button class="btn btn-buy" style="background:#444" onclick="addCategory()">CRIAR CATEGORIA</button>
         </div>
 
         <div class="admin-card">
-            <h3>💬 Atendimento & Tickets</h3>
-            <div id="adm-tickets-list"></div>
+            <div style="display:flex; gap:10px; margin-bottom:20px">
+                <button class="btn" style="background:var(--secondary)" onclick="toggleAdminTab('tickets')">Tickets</button>
+                <button class="btn" style="background:#333" onclick="toggleAdminTab('manage')">Gerenciar Produtos</button>
+            </div>
+
+            <div id="tab-tickets">
+                <div id="adm-tickets-list"></div>
+            </div>
+
+            <div id="tab-manage" style="display:none">
+                <div id="adm-manage-list"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <div id="cart-modal" class="modal">
     <div class="modal-content">
-        <h3>Seu Carrinho</h3>
-        <div id="cart-list"></div>
+        <h3>🛒 Meu Carrinho</h3>
+        <div id="cart-list" style="margin: 20px 0"></div>
         <h4 id="cart-total-text">Total: R$ 0.00</h4>
         <div id="checkout-area">
-            <input type="text" id="cust-name" placeholder="Seu Nick">
-            <button class="btn btn-buy" onclick="checkout()">FINALIZAR COMPRA</button>
+            <input type="text" id="cust-name" placeholder="Digite seu Nome/Nick">
+            <button class="btn btn-buy" onclick="checkout()">ABRIR TICKET DE COMPRA</button>
         </div>
         <button class="btn" style="background:transparent; color:gray; width:100%" onclick="closeModal('cart-modal')">Voltar</button>
     </div>
@@ -120,20 +134,23 @@
 
 <div id="tickets-modal" class="modal">
     <div class="modal-content">
-        <h3>MEU TICKET ATIVO</h3>
+        <h3 id="ticket-header">TICKET ATIVO</h3>
         <div id="user-tickets-list"></div>
         <button class="btn" style="background:var(--secondary); width:100%" onclick="closeModal('tickets-modal')">Fechar</button>
     </div>
 </div>
 
 <script>
-    // Iniciar Estrelas
-    const bg = document.getElementById('galaxy-bg');
-    for(let i=0; i<100; i++) {
-        let star = document.createElement('div'); star.className = 'star';
-        star.style.width = Math.random()*2+'px'; star.style.height = star.style.width;
-        star.style.top = Math.random()*100+'%'; star.style.left = Math.random()*100+'%';
-        bg.appendChild(star);
+    // Gerar Estrelas em todo o site
+    const galaxy = document.getElementById('galaxy-container');
+    for(let i=0; i<150; i++) {
+        let star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random()*2.5+'px';
+        star.style.height = star.style.width;
+        star.style.top = Math.random()*100+'%';
+        star.style.left = Math.random()*100+'%';
+        galaxy.appendChild(star);
     }
 
     const firebaseConfig = {
@@ -145,7 +162,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
+
     let cart = [];
     let hasActiveTicket = false;
     let myId = localStorage.getItem('qs_id') || 'u' + Math.floor(Math.random() * 9999);
@@ -153,12 +170,13 @@
 
     function closeModal(id){ document.getElementById(id).style.display='none'; }
 
+    // DATA SYNC
     db.ref('/').on('value', snap => {
         const data = snap.val() || {};
         checkUserTicket(data.tickets);
         renderShop(data.categorias, data.produtos);
         renderReviews(data.avaliacoes);
-        renderAdmin(data.categorias, data.tickets, data.produtos, data.avaliacoes);
+        renderAdmin(data.categorias, data.tickets, data.produtos);
         renderUserTickets(data.tickets);
     });
 
@@ -166,9 +184,7 @@
         hasActiveTicket = false;
         for(let id in tickets) { if(tickets[id].clienteId === myId) hasActiveTicket = true; }
         const area = document.getElementById('checkout-area');
-        if(hasActiveTicket) {
-            area.innerHTML = `<p style="color:red; font-weight:bold">Você já possui um ticket aberto! Feche o anterior antes de comprar novamente.</p>`;
-        }
+        if(hasActiveTicket) area.innerHTML = `<p style="color:#ff4444; background:rgba(255,0,0,0.1); padding:10px; border-radius:8px">Você já possui um ticket em andamento. Finalize-o com o Staff antes de uma nova compra.</p>`;
     }
 
     function renderShop(cats, prods) {
@@ -178,10 +194,10 @@
             let html = `<h2 class="cat-title">${cats[id].name}</h2><div class="grid">`;
             for(let p in prods) {
                 if(prods[p].cat === cats[id].name) {
-                    html += `<div class="card">
+                    html += `<div class="card" data-aos="zoom-in">
                         <img src="${prods[p].img || 'https://via.placeholder.com/150'}" class="prod-img">
                         <h4>${prods[p].name}</h4>
-                        <div style="color:var(--primary); font-weight:bold">R$ ${parseFloat(prods[p].price).toFixed(2)}</div>
+                        <div style="color:var(--primary); font-size:1.2rem; font-weight:bold; margin-bottom:15px">R$ ${parseFloat(prods[p].price).toFixed(2)}</div>
                         <button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button>
                     </div>`;
                 }
@@ -194,8 +210,8 @@
         const cont = document.getElementById('reviews-content');
         cont.innerHTML = "";
         for(let id in revs) {
-            cont.innerHTML += `<div class="card" style="border-color:gold">
-                <p>"${revs[id].txt}"</p>
+            cont.innerHTML += `<div class="card" style="border-color:rgba(255,215,0,0.3)">
+                <p style="font-style:italic; opacity:0.9">"${revs[id].txt}"</p>
                 <b style="color:gold">- ${revs[id].name}</b>
             </div>`;
         }
@@ -208,15 +224,15 @@
 
     function openCart() {
         const total = cart.reduce((a,b)=>a+b.price, 0);
-        document.getElementById('cart-list').innerHTML = cart.map(i => `<div style="padding:10px; border-bottom:1px solid #222">📦 ${i.name} - R$ ${i.price}</div>`).join('');
+        document.getElementById('cart-list').innerHTML = cart.map((i, idx) => `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #222"><span>📦 ${i.name}</span> <b>R$ ${i.price}</b></div>`).join('');
         document.getElementById('cart-total-text').innerText = "Total: R$ " + total.toFixed(2);
         document.getElementById('cart-modal').style.display='flex';
     }
 
     function checkout() {
-        if(hasActiveTicket) return alert("Você já tem um ticket!");
+        if(hasActiveTicket) return;
         const nick = document.getElementById('cust-name').value;
-        if(!nick) return alert("Digite seu Nick!");
+        if(!nick) return alert("Identifique-se primeiro!");
         const total = cart.reduce((a,b)=>a+b.price, 0);
         const tId = 'T' + Date.now();
         db.ref('tickets/' + tId).set({ clienteId: myId, clienteNick: nick, itens: cart.map(i=>i.name).join(', '), total: total.toFixed(2) });
@@ -232,49 +248,81 @@
         for(let id in tickets) {
             if(tickets[id].clienteId === myId) {
                 cont.innerHTML += `<div class="admin-card">
-                    <p style="color:var(--secondary); font-size:0.8rem">ESPERE SER ATENDIDO PELA NOSSA EQUIPE.</p>
-                    <b>TOTAL: R$ ${tickets[id].total}</b>
-                    <div class="chat-area">${renderMsgs(tickets[id].chat)}</div>
-                    <div style="display:flex; gap:5px"><input type="text" id="in-${id}" placeholder="Sua mensagem..."><button class="btn" style="background:var(--primary); color:black" onclick="sendChat('${id}', 'user')">ENVIAR</button></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                        <b>Total: R$ ${tickets[id].total}</b>
+                        <span style="color:var(--primary)">Aberto</span>
+                    </div>
+                    <div class="chat-area" id="chat-${id}">${renderMsgs(tickets[id].chat)}</div>
+                    <div style="display:flex; gap:5px">
+                        <input type="text" id="in-${id}" placeholder="Fale com o Staff...">
+                        <button class="btn" style="background:var(--primary); color:black" onclick="sendChat('${id}', 'user')">ENVIAR</button>
+                    </div>
                 </div>`;
             }
         }
-        if(cont.innerHTML === "") cont.innerHTML = "<p>Você não tem tickets abertos.</p>";
+        if(cont.innerHTML === "") cont.innerHTML = "<p style='text-align:center; opacity:0.5'>Nenhum ticket ativo no momento.</p>";
     }
 
-    function renderAdmin(cats, tickets, prods, revs) {
+    // ADMIN FUNCS
+    function renderAdmin(cats, tickets, prods) {
         const sel = document.getElementById('p-cat-select'); sel.innerHTML = "";
         for(let id in cats) sel.innerHTML += `<option value="${cats[id].name}">${cats[id].name}</option>`;
 
+        // Render Tickets
         const tktList = document.getElementById('adm-tickets-list');
-        tktList.innerHTML = "<h4>Tickets Ativos</h4>";
+        tktList.innerHTML = "";
         for(let id in tickets) {
-            tktList.innerHTML += `<div class="admin-card" style="border-left: 5px solid var(--secondary)">
-                <b>${tickets[id].clienteNick} (R$ ${tickets[id].total})</b><br><small>${tickets[id].itens}</small>
+            tktList.innerHTML += `<div class="admin-card" style="border-left: 4px solid var(--secondary)">
+                <div style="display:flex; justify-content:space-between">
+                    <b>${tickets[id].clienteNick} - R$ ${tickets[id].total}</b>
+                    <button class="btn" style="background:red; padding:5px 10px; font-size:0.7rem" onclick="db.ref('tickets/${id}').remove()">CONCLUIR</button>
+                </div>
+                <div style="font-size:0.8rem; margin:5px 0; color:var(--primary)">${tickets[id].itens}</div>
                 <div class="chat-area">${renderMsgs(tickets[id].chat)}</div>
                 <div style="display:flex; gap:5px"><input type="text" id="in-${id}" placeholder="Resposta..."><button class="btn" style="background:var(--secondary); color:white" onclick="sendChat('${id}', 'admin')">ENVIAR</button></div>
-                <button class="btn" style="background:red; width:100%; margin-top:10px" onclick="db.ref('tickets/${id}').remove()">CONCLUIR / EXCLUIR TICKET</button>
             </div>`;
         }
 
-        tktList.innerHTML += "<hr><h4>Editar Produtos</h4>";
-        for(let p in prods) {
-            tktList.innerHTML += `<div style="display:flex; justify-content:space-between; background:#111; padding:10px; margin-bottom:5px; border-radius:5px">
-                <span>${prods[p].name}</span>
-                <div>
-                    <button class="btn adm-btn-small" style="background:orange" onclick="editProd('${p}')">EDITAR</button>
-                    <button class="btn adm-btn-small" style="background:red" onclick="db.ref('produtos/${p}').remove()">X</button>
-                </div>
-            </div>`;
-        }
-
-        tktList.innerHTML += "<hr><h4>Excluir Categorias</h4>";
+        // Render Manage List (COM PAINEL DE EDIÇÃO)
+        const manageList = document.getElementById('adm-manage-list');
+        manageList.innerHTML = "<h4>Categorias</h4>";
         for(let c in cats) {
-            tktList.innerHTML += `<div style="display:flex; justify-content:space-between; background:#111; padding:10px; margin-bottom:5px; border-radius:5px">
+            manageList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333">
                 <span>${cats[c].name}</span>
-                <button class="btn adm-btn-small" style="background:red" onclick="db.ref('categorias/${c}').remove()">EXCLUIR</button>
+                <button class="btn" style="background:red; padding:5px" onclick="db.ref('categorias/${c}').remove()"><i class="fas fa-trash"></i></button>
             </div>`;
         }
+        
+        manageList.innerHTML += "<h4 style='margin-top:20px'>Produtos</h4>";
+        for(let p in prods) {
+            manageList.innerHTML += `
+                <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:10px">
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <span>${prods[p].name} (R$ ${prods[p].price})</span>
+                        <div>
+                            <button class="btn" style="background:orange; padding:5px" onclick="showEditPanel('${p}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn" style="background:red; padding:5px" onclick="db.ref('produtos/${p}').remove()"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div id="edit-panel-${p}" class="edit-panel">
+                        <input type="text" id="edit-name-${p}" value="${prods[p].name}">
+                        <input type="number" id="edit-price-${p}" value="${prods[p].price}">
+                        <button class="btn btn-buy" onclick="updateProduct('${p}')">SALVAR ALTERAÇÕES</button>
+                    </div>
+                </div>`;
+        }
+    }
+
+    function showEditPanel(id) {
+        const p = document.getElementById('edit-panel-'+id);
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function updateProduct(id) {
+        const name = document.getElementById('edit-name-'+id).value;
+        const price = document.getElementById('edit-price-'+id).value;
+        db.ref('produtos/'+id).update({ name, price });
+        alert("Atualizado com sucesso!");
     }
 
     function renderMsgs(chat) {
@@ -290,18 +338,20 @@
         }
     }
 
-    // ADMIN ACTIONS
+    function toggleAdminTab(tab) {
+        document.getElementById('tab-tickets').style.display = tab === 'tickets' ? 'block' : 'none';
+        document.getElementById('tab-manage').style.display = tab === 'manage' ? 'block' : 'none';
+    }
+
     function checkAdmin() {
-        if(prompt("SENHA STAFF:") === "270712") {
+        if(prompt("STAFF KEY:") === "270712") {
             document.getElementById('site-wrapper').classList.add('hidden');
             document.getElementById('admin-page').style.display = 'block';
-            document.getElementById('galaxy-bg').style.display = 'block';
         }
     }
     function exitAdmin() {
         document.getElementById('site-wrapper').classList.remove('hidden');
         document.getElementById('admin-page').style.display = 'none';
-        document.getElementById('galaxy-bg').style.display = 'none';
     }
     function saveProduct() {
         const name = document.getElementById('p-name').value;
@@ -309,15 +359,6 @@
         const img = document.getElementById('p-img').value;
         const cat = document.getElementById('p-cat-select').value;
         if(name && price) db.ref('produtos').push({name, price, img, cat});
-    }
-    function editProd(id) {
-        const nPrice = prompt("Novo Preço:");
-        if(nPrice) db.ref('produtos/'+id).update({price: nPrice});
-    }
-    function saveReview() {
-        const name = document.getElementById('rev-name').value;
-        const txt = document.getElementById('rev-txt').value;
-        if(name && txt) db.ref('avaliacoes').push({name, txt});
     }
     function addCategory() {
         const name = document.getElementById('new-cat').value;
