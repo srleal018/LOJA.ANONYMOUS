@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUEBREI O SISTEMA - Oficial</title>
+    <title>QUEBREI O SISTEMA - Gestão Total</title>
     <style>
         :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
@@ -27,6 +27,7 @@
         .btn { padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
         .btn-buy { background: transparent; border: 1px solid var(--secondary); color: var(--secondary); width: 100%; }
         .btn-add { background: var(--secondary); color: #fff; margin-top: 5px; }
+        .btn-edit { background: #ffaa00; color: #000; font-size: 0.7em; padding: 5px 8px; margin-right: 5px; }
         .btn-del { background: #ff4444; color: white; padding: 5px 8px; font-size: 0.7em; border-radius: 3px; border: none; cursor: pointer; }
 
         input, select, textarea { background: #000; border: 1px solid #333; color: white; padding: 10px; border-radius: 5px; width: 100%; box-sizing: border-box; margin: 5px 0; }
@@ -36,11 +37,15 @@
         .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; }
         .product-img { width: 100%; height: 140px; object-fit: contain; margin-bottom: 10px; }
 
+        /* Estilos de Tabela Admin */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85em; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { background: #000; color: var(--secondary); }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: #111; padding: 25px; width: 320px; border-radius: 15px; border: 1px solid var(--secondary); text-align: center; }
         
-        /* Modal Login Admin */
-        #admin-login-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #111; padding: 30px; border: 1px solid var(--secondary); z-index: 10001; border-radius: 10px; text-align: center; box-shadow: 0 0 20px rgba(0, 123, 255, 0.3); }
+        #admin-login-box { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #111; padding: 30px; border: 1px solid var(--secondary); z-index: 10001; border-radius: 10px; text-align: center; }
     </style>
 </head>
 <body>
@@ -49,8 +54,8 @@
 
 <div id="admin-login-box">
     <h3 style="color:var(--secondary); margin-bottom: 20px;">ACESSO RESTRITO</h3>
-    <input type="password" id="admin-pass-input" placeholder="Digite a Senha">
-    <button class="btn btn-add" style="width:100%; margin-top: 10px;" onclick="checkAdminLogin()">ENTRAR NO PAINEL</button>
+    <input type="password" id="admin-pass-input" placeholder="Senha Administrativa">
+    <button class="btn btn-add" style="width:100%; margin-top: 10px;" onclick="checkAdminLogin()">ENTRAR</button>
     <button class="btn" style="background:none; color:#555; width:100%; margin-top: 5px;" onclick="hideAdminLogin()">Fechar</button>
 </div>
 
@@ -62,7 +67,7 @@
     
     <div class="container">
         <div id="categories-container"></div>
-
+        
         <div style="background: #111; padding: 25px; border-radius: 12px; margin-top: 60px; border: 1px solid #222;">
             <h2 style="color:var(--secondary); margin-top: 0;">💬 FEEDBACK DOS CLIENTES</h2>
             <div id="shop-reviews" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;"></div>
@@ -77,16 +82,19 @@
 
 <div id="admin-view">
     <header style="border-bottom: 2px solid var(--secondary);">
-        <h1 style="color:var(--secondary)">🛠 PAINEL ADMINISTRATIVO</h1>
+        <h1 style="color:var(--secondary)">🛠 PAINEL DE CONTROLE</h1>
         <button class="btn btn-exit" style="background: #ff4444; color:white;" onclick="exitAdmin()">DESLOGAR</button>
     </header>
 
     <div class="container">
-        <div class="admin-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-            <div class="admin-card">
-                <h3>📦 Cadastrar Produto</h3>
+        <div class="admin-card">
+            <h3 id="form-title">📦 Gerenciar Produto</h3>
+            <input type="hidden" id="p-id">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <input type="text" id="p-name" placeholder="Nome do Item">
                 <input type="number" id="p-price" placeholder="Preço (R$)">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <select id="p-img-select">
                     <option value="glock.png">Glock</option>
                     <option value="ak.png">AK-47</option>
@@ -97,17 +105,30 @@
                     <option value="muni.png">Munição</option>
                 </select>
                 <select id="p-cat"></select>
-                <button class="btn btn-add" style="width:100%" onclick="addProduct()">SALVAR NO ESTOQUE</button>
             </div>
+            <button class="btn btn-add" id="btn-save-prod" style="width:100%" onclick="saveProduct()">SALVAR PRODUTO</button>
+            <button class="btn" id="btn-cancel-edit" style="width:100%; display:none; background:#333; color:#fff; margin-top:5px;" onclick="resetForm()">CANCELAR EDIÇÃO</button>
+        </div>
 
-            <div class="admin-card">
-                <h3>📜 Histórico de Vendas</h3>
-                <div id="admin-logs" style="font-size:0.75em; height:220px; overflow-y:auto; background:#000; padding:10px; border-radius: 5px;"></div>
+        <div class="admin-card">
+            <h3>📋 Inventário de Produtos</h3>
+            <div style="overflow-x: auto;">
+                <table id="product-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-list"></tbody>
+                </table>
             </div>
         </div>
-        
+
         <div class="admin-card">
-            <h3>⭐ Gestão de Comentários</h3>
+            <h3>⭐ Gestão de Avaliações</h3>
             <div id="admin-reviews-manage"></div>
         </div>
     </div>
@@ -123,26 +144,25 @@
         <div id="cart-step-2" style="display:none">
             <h2 style="color:var(--primary)">PAGAMENTO PIX</h2>
             <div style="background:#fff; color:#000; padding:15px; font-size:0.75em; word-break:break-all; border-radius: 8px; font-family: monospace;">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
-            <p style="font-size: 0.7em; color: #888; margin-top: 10px;">O ADM recebeu seu pedido e aguarda o comprovante.</p>
             <button class="btn" style="background:green; width:100%; color:#fff; margin-top:10px" onclick="closeCart()">CONCLUÍDO</button>
         </div>
     </div>
 </div>
 
-<footer><center><p onclick="showAdminLogin()" style="cursor:pointer; opacity:0.1; margin: 80px 0;">Acesso Administrativo</p></center></footer>
+<footer><center><p onclick="showAdminLogin()" style="cursor:pointer; opacity:0.1; margin: 50px 0;">Acesso Administrativo</p></center></footer>
 
 <script>
     const ADMIN_PASS = "270712";
     const BANNED_WORDS = ["quebrei o sistema", "quebreisistema", "cu", "pau", "merda", "lixo", "fake", "roubo", "admin", "suporte"];
     
-    let db = JSON.parse(localStorage.getItem('qs_final_db')) || {
+    let db = JSON.parse(localStorage.getItem('qs_v2_db')) || {
         categories: ["Arsenal", "Utilitários"],
         products: [
-            {id:1, cat:"Arsenal", name:"Glock Custom", price:2.5, img:"glock.png"},
-            {id:2, cat:"Utilitários", name:"Furadeira", price:5.0, img:"furadeira.png"}
+            {id: 1, cat: "Arsenal", name: "Glock Custom", price: 2.5, img: "glock.png"},
+            {id: 2, cat: "Utilitários", name: "Furadeira", price: 5.0, img: "furadeira.png"}
         ],
         logs: [],
-        reviews: [{user: "Sistema", msg: "Loja QUEBREI O SISTEMA online.", date: new Date().toLocaleString()}]
+        reviews: [{user: "Sistema", msg: "Bem-vindo à QUEBREI O SISTEMA.", date: new Date().toLocaleString()}]
     };
 
     let cart = [];
@@ -156,11 +176,12 @@
     }
 
     function save() {
-        localStorage.setItem('qs_final_db', JSON.stringify(db));
+        localStorage.setItem('qs_v2_db', JSON.stringify(db));
         render();
     }
 
     function render() {
+        // Render Loja
         const shopCont = document.getElementById('categories-container');
         shopCont.innerHTML = db.categories.map(cat => `
             <div class="category-block">
@@ -178,6 +199,7 @@
             </div>
         `).join('');
 
+        // Render Comentários Loja
         document.getElementById('shop-reviews').innerHTML = db.reviews.map(r => `
             <div style="background:#1a1a1a; padding:12px; margin-top:8px; border-radius:8px; border-left:3px solid var(--secondary)">
                 <small style="color:#555; float:right; font-size: 0.7em;">${r.date}</small>
@@ -185,21 +207,84 @@
             </div>
         `).join('');
 
+        // Render Admin - Tabela de Produtos
         document.getElementById('p-cat').innerHTML = db.categories.map(c => `<option value="${c}">${c}</option>`).join('');
-        
+        const prodList = document.getElementById('admin-product-list');
+        prodList.innerHTML = db.products.map(p => `
+            <tr>
+                <td>${p.name}</td>
+                <td>${p.cat}</td>
+                <td>R$ ${p.price.toFixed(2)}</td>
+                <td>
+                    <button class="btn btn-edit" onclick="editProduct(${p.id})">Editar</button>
+                    <button class="btn btn-del" onclick="deleteProduct(${p.id})">Excluir</button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Render Admin - Reviews
         document.getElementById('admin-reviews-manage').innerHTML = db.reviews.map((r, i) => `
             <div style="font-size:0.8em; margin-bottom:5px; background:#000; padding:10px; border: 1px solid #222;">
                 <button class="btn-del" onclick="delReview(${i})">DELETAR</button> | [${r.date}] <b>${r.user}</b>: ${r.msg}
             </div>
         `).join('');
-
-        document.getElementById('admin-logs').innerHTML = db.logs.map(l => `
-            <div style="border-bottom:1px solid #222; padding:8px 0;">
-                <span style="color:var(--secondary)">[${l.date}]</span> <b>${l.discord}</b> comprou: ${l.items}
-            </div>
-        `).join('');
     }
 
+    // FUNÇÕES DE PRODUTO (CRUD)
+    function saveProduct() {
+        const id = document.getElementById('p-id').value;
+        const name = document.getElementById('p-name').value;
+        const price = parseFloat(document.getElementById('p-price').value);
+        const img = document.getElementById('p-img-select').value;
+        const cat = document.getElementById('p-cat').value;
+
+        if (!name || isNaN(price)) return pushNotif("Preencha todos os campos!");
+
+        if (id) {
+            // EDITAR
+            const index = db.products.findIndex(p => p.id == id);
+            db.products[index] = { id: parseInt(id), name, price, img, cat };
+            pushNotif("Produto atualizado!");
+        } else {
+            // CRIAR
+            db.products.push({ id: Date.now(), name, price, img, cat });
+            pushNotif("Produto criado!");
+        }
+        
+        resetForm();
+        save();
+    }
+
+    function editProduct(id) {
+        const p = db.products.find(prod => prod.id === id);
+        document.getElementById('p-id').value = p.id;
+        document.getElementById('p-name').value = p.name;
+        document.getElementById('p-price').value = p.price;
+        document.getElementById('p-img-select').value = p.img;
+        document.getElementById('p-cat').value = p.cat;
+        
+        document.getElementById('form-title').innerText = "📝 Editando: " + p.name;
+        document.getElementById('btn-save-prod').innerText = "ATUALIZAR MUDANÇAS";
+        document.getElementById('btn-cancel-edit').style.display = "block";
+        window.scrollTo(0,0);
+    }
+
+    function deleteProduct(id) {
+        db.products = db.products.filter(p => p.id !== id);
+        save();
+        pushNotif("Produto removido!");
+    }
+
+    function resetForm() {
+        document.getElementById('p-id').value = "";
+        document.getElementById('p-name').value = "";
+        document.getElementById('p-price').value = "";
+        document.getElementById('form-title').innerText = "📦 Gerenciar Produto";
+        document.getElementById('btn-save-prod').innerText = "SALVAR PRODUTO";
+        document.getElementById('btn-cancel-edit').style.display = "none";
+    }
+
+    // Ações de Loja e Login (Mantidas)
     function addToCart(id) {
         cart.push(db.products.find(x => x.id === id));
         document.getElementById('cart-count').innerText = cart.length;
@@ -207,7 +292,7 @@
     }
 
     function openCart() { 
-        if(cart.length === 0) return pushNotif("Seu carrinho está vazio!");
+        if(cart.length === 0) return pushNotif("Carrinho vazio!");
         document.getElementById('cart-modal').style.display='flex'; 
     }
     
@@ -215,86 +300,42 @@
 
     function processOrder() {
         const d = document.getElementById('buy-discord').value;
-        if(!d) return pushNotif("Preencha seu Nick do Discord!");
-
-        db.logs.unshift({
-            date: new Date().toLocaleString(),
-            discord: d,
-            items: cart.map(i => i.name).join(', '),
-            total: cart.reduce((a, b) => a + b.price, 0).toFixed(2)
-        });
+        if(!d) return pushNotif("Informe seu Discord!");
+        db.logs.unshift({ date: new Date().toLocaleString(), discord: d, items: cart.map(i => i.name).join(', ') });
         save();
         document.getElementById('cart-step-1').style.display='none';
         document.getElementById('cart-step-2').style.display='block';
-        pushNotif("Venda registrada no painel!");
     }
 
     function sendReview() {
         const u = document.getElementById('rev-user').value;
         const m = document.getElementById('rev-msg').value;
-        
-        if(!u || !m) return pushNotif("Preencha todos os campos!");
-
-        const checkText = (u + " " + m).toLowerCase();
-        if(BANNED_WORDS.some(word => checkText.includes(word))) {
-            return pushNotif("Nome ou comentário proibido!");
-        }
-
+        if(!u || !m) return pushNotif("Preencha os campos!");
+        const check = (u + " " + m).toLowerCase();
+        if(BANNED_WORDS.some(w => check.includes(w))) return pushNotif("Conteúdo proibido!");
         db.reviews.unshift({user: u, msg: m, date: new Date().toLocaleString()});
         save();
         document.getElementById('rev-user').value=''; document.getElementById('rev-msg').value='';
-        pushNotif("Avaliação enviada com sucesso!");
+        pushNotif("Avaliação publicada!");
     }
 
-    // LOGIN ADMIN
-    function showAdminLogin() { 
-        document.getElementById('admin-login-box').style.display = 'block'; 
-        document.getElementById('admin-pass-input').focus();
-    }
-    
-    function hideAdminLogin() { 
-        document.getElementById('admin-login-box').style.display = 'none'; 
-        document.getElementById('admin-pass-input').value = '';
-    }
-    
+    function showAdminLogin() { document.getElementById('admin-login-box').style.display = 'block'; }
+    function hideAdminLogin() { document.getElementById('admin-login-box').style.display = 'none'; }
     function checkAdminLogin() {
-        const pass = document.getElementById('admin-pass-input').value;
-        if(pass === ADMIN_PASS) {
+        if(document.getElementById('admin-pass-input').value === ADMIN_PASS) {
             hideAdminLogin();
             document.getElementById('shop-view').style.display = 'none';
             document.getElementById('admin-view').style.display = 'block';
-            pushNotif("Acesso autorizado. Bem-vindo!");
+            pushNotif("Painel Liberado!");
         } else {
             pushNotif("Senha Incorreta!");
-            document.getElementById('admin-pass-input').value = '';
         }
     }
-
     function exitAdmin() {
         document.getElementById('shop-view').style.display = 'block';
         document.getElementById('admin-view').style.display = 'none';
-        pushNotif("Você saiu do painel.");
     }
-
-    function addProduct() {
-        const name = document.getElementById('p-name').value;
-        const price = parseFloat(document.getElementById('p-price').value);
-        const img = document.getElementById('p-img-select').value;
-        const cat = document.getElementById('p-cat').value;
-        if(name && price) {
-            db.products.push({id: Date.now(), name, price, img, cat});
-            save();
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-price').value = '';
-            pushNotif("Produto cadastrado com sucesso!");
-        }
-    }
-
-    function delReview(i) { 
-        db.reviews.splice(i, 1); 
-        save(); 
-        pushNotif("Avaliação removida!"); 
-    }
+    function delReview(i) { db.reviews.splice(i, 1); save(); pushNotif("Removido!"); }
 
     render();
 </script>
