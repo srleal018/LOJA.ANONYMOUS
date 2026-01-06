@@ -3,46 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUEBREI O SISTEMA - Chat & Store</title>
+    <title>QUEBREI O SISTEMA - Chat Oficial</title>
     <style>
         :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
         
         /* Notificações LADO ESQUERDO */
         #notif-box { position: fixed; top: 20px; left: 20px; z-index: 10000; }
-        .toast { background: #1a1a1a; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideInLeft 0.3s forwards; font-weight: bold; font-size: 0.9em; }
-        @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast { background: #1a1a1a; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; animation: slideInLeft 0.3s forwards; font-weight: bold; }
+        @keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
         header { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); }
-        .logo-text { font-weight: 900; letter-spacing: -1px; color: var(--text); text-transform: uppercase; }
+        .logo-text { font-weight: 900; color: var(--text); text-transform: uppercase; margin: 0; }
         .logo-text span { color: var(--secondary); }
         
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+        /* VISTAS */
         #shop-view, #admin-view { display: block; }
         #admin-view { display: none; background: #0c0c0c; min-height: 100vh; }
 
-        /* Estilo Chat no Carrinho */
-        .chat-container { background: #000; border-radius: 10px; padding: 10px; height: 250px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; border: 1px solid #222; }
-        .msg { padding: 8px 12px; border-radius: 15px; font-size: 0.85em; max-width: 80%; }
-        .msg.bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg.user { background: var(--secondary); align-self: flex-end; border-bottom-right-radius: 2px; }
-
-        .admin-card { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; margin-bottom: 20px; }
+        /* PRODUTOS */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .product-card { background: var(--card-bg); border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #222; }
+        .product-img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
+        
         .btn { padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
-        .btn-buy { background: transparent; border: 1px solid var(--secondary); color: var(--secondary); width: 100%; }
-        .btn-add { background: var(--secondary); color: #fff; margin-top: 5px; }
-        .btn-del { background: #ff4444; color: white; padding: 5px 8px; font-size: 0.7em; border-radius: 3px; border: none; }
+        .btn-buy { background: var(--secondary); color: white; width: 100%; }
 
-        input, select, textarea { background: #111; border: 1px solid #333; color: white; padding: 10px; border-radius: 5px; width: 100%; box-sizing: border-box; margin: 5px 0; }
+        /* MODAL CHAT */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; }
+        .chat-window { background: #111; width: 90%; max-width: 400px; height: 80vh; border-radius: 15px; border: 1px solid var(--secondary); display: flex; flex-direction: column; overflow: hidden; }
+        
+        .chat-header { background: #000; padding: 15px; border-bottom: 1px solid #222; text-align: center; }
+        .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0a0a0a; }
+        .chat-footer { padding: 10px; background: #000; border-top: 1px solid #222; }
 
-        .category-title { border-left: 4px solid var(--secondary); padding-left: 15px; color: var(--text); text-transform: uppercase; margin-bottom: 20px; font-style: italic; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; }
-        .product-img { width: 100%; height: 100px; object-fit: contain; }
+        .bubble { padding: 10px 14px; border-radius: 15px; font-size: 0.9em; max-width: 80%; line-height: 1.4; }
+        .bubble.bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; color: #ccc; }
+        .bubble.user { background: var(--secondary); align-self: flex-end; border-bottom-right-radius: 2px; color: white; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #111; padding: 25px; width: 350px; border-radius: 15px; border: 1px solid var(--secondary); }
+        /* ADMIN CARD */
+        .admin-card { background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333; }
+
+        input, textarea { background: #1a1a1a; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; width: 100%; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -52,62 +56,65 @@
 <div id="shop-view">
     <header>
         <h1 class="logo-text">QUEBREI O <span>SISTEMA</span></h1>
-        <button class="btn" style="background:var(--secondary); color:#fff" onclick="openCart()">🛒 ABRIR CARRINHO (<span id="cart-count">0</span>)</button>
+        <button class="btn" style="background:var(--secondary)" onclick="openChat()">🛒 CARRINHO (<span id="cart-count">0</span>)</button>
     </header>
     
     <div class="container">
-        <div id="categories-container"></div>
+        <h3 class="category-title">CATÁLOGO DISPONÍVEL</h3>
+        <div id="products-list" class="products-grid"></div>
+    </div>
+</div>
+
+<div id="chat-modal" class="modal">
+    <div class="chat-window">
+        <div class="chat-header">
+            <b style="color:var(--secondary)">SUPORTE VENDAS</b>
+            <div id="chat-items-list" style="font-size:0.7em; color:#888; margin-top:5px"></div>
+        </div>
+        
+        <div class="chat-body" id="chat-content">
+            <div class="bubble bot">Olá! Vi que você selecionou alguns itens. Qual o seu <b>Nick do Discord</b> para continuarmos o atendimento?</div>
+        </div>
+
+        <div class="chat-footer" id="footer-input">
+            <input type="text" id="user-discord" placeholder="Seu Discord..." style="margin-bottom:5px">
+            <textarea id="user-msg" placeholder="Sua mensagem..." style="height:50px"></textarea>
+            <button class="btn btn-buy" style="margin-top:5px" onclick="sendToAdmin()">ENVIAR E PAGAR</button>
+            <button class="btn" style="background:none; color:#555; width:100%" onclick="closeChat()">Sair</button>
+        </div>
+
+        <div class="chat-footer" id="footer-pix" style="display:none; text-align:center">
+            <p style="color:var(--primary); font-size:0.8em; margin:5px">Pedido enviado! Pague o PIX abaixo:</p>
+            <div style="background:#fff; color:#000; padding:10px; font-size:0.7em; word-break:break-all; border-radius:5px">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
+            <button class="btn" style="background:green; color:white; width:100%; margin-top:10px" onclick="closeChat()">FECHAR</button>
+        </div>
     </div>
 </div>
 
 <div id="admin-view">
     <header>
-        <h1 style="color:var(--secondary)">🛠 PAINEL DE ATENDIMENTO</h1>
-        <button class="btn" style="background: #ff4444; color:white;" onclick="exitAdmin()">FECHAR ADMIN</button>
+        <h1 style="color:var(--secondary)">🛠 PAINEL ADM</h1>
+        <button class="btn" style="background:#ff4444" onclick="location.reload()">SAIR DO ADMIN</button>
     </header>
     <div class="container">
         <div class="admin-card">
-            <h3>💬 Últimas Mensagens/Pedidos de Clientes</h3>
-            <div id="admin-chat-logs" style="max-height: 400px; overflow-y: auto;"></div>
-        </div>
-        <div class="admin-card">
-            <h3>📦 Gerenciar Produtos</h3>
-            <div id="admin-prod-list"></div>
+            <h3>💬 CHATS ATIVOS (PEDIDOS)</h3>
+            <div id="admin-chat-list"></div>
         </div>
     </div>
 </div>
 
-<div id="cart-modal" class="modal">
-    <div class="modal-content">
-        <h3 style="margin-top:0; color:var(--secondary)">💬 CHAT DE PEDIDO</h3>
-        <div class="chat-container" id="chat-box">
-            <div class="msg bot">Olá! Vi que você quer comprar. Digite seu <b>Nick do Discord</b> abaixo para começarmos.</div>
-        </div>
-        
-        <div id="chat-input-area">
-            <input type="text" id="chat-discord" placeholder="Seu Discord...">
-            <textarea id="chat-msg" placeholder="Alguma observação? (Opcional)" style="height: 60px;"></textarea>
-            <button class="btn btn-add" style="width:100%" onclick="sendMessageToAdmin()">ENVIAR PEDIDO E VER PIX</button>
-        </div>
-
-        <div id="pix-area" style="display:none; text-align:center;">
-            <p style="color:var(--primary); font-size:0.9em">Pedido enviado ao ADM!</p>
-            <div style="background:#fff; color:#000; padding:10px; font-family:monospace; font-size:0.7em; word-break:break-all; border-radius:5px">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
-            <button class="btn" style="background:green; color:white; width:100%; margin-top:10px" onclick="closeCart()">CONCLUÍDO</button>
-        </div>
-        <button class="btn" style="background:none; color:#555; width:100%" onclick="closeCart()">Sair</button>
-    </div>
-</div>
-
-<footer><center><p onclick="askAdmin()" style="cursor:pointer; opacity:0.1; margin: 50px 0;">Admin</p></center></footer>
+<footer><center><p onclick="loginAdmin()" style="cursor:pointer; opacity:0.1; margin: 100px 0;">Acesso</p></center></footer>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('qs_chat_db')) || {
+    // Configurações Iniciais
+    let db = JSON.parse(localStorage.getItem('qs_v3_db')) || {
         products: [
-            {id:1, cat:"Arsenal", name:"Glock Custom", price:2.5, img:"glock.png"},
-            {id:2, cat:"Utilitários", name:"C4 Explosivo", price:10.0, img:"c4.png"}
+            {id: 1, name: "Glock G18", price: 5.0, img: "glock.png"},
+            {id: 2, name: "Munição x100", price: 2.0, img: "muni.png"},
+            {id: 3, name: "C4 Explosivo", price: 15.0, img: "c4.png"}
         ],
-        logs: []
+        orders: []
     };
     let cart = [];
 
@@ -119,92 +126,96 @@
         setTimeout(() => t.remove(), 3000);
     }
 
-    function render() {
-        const shopCont = document.getElementById('categories-container');
-        shopCont.innerHTML = `
-            <div class="category-block">
-                <h2 class="category-title">PRODUTOS DISPONÍVEIS</h2>
-                <div class="products-grid">
-                    ${db.products.map(p => `
-                        <div class="product-card">
-                            <img src="${p.img}" class="product-img">
-                            <h4>${p.name}</h4>
-                            <p style="color:var(--secondary)">R$ ${p.price.toFixed(2)}</p>
-                            <button class="btn btn-buy" onclick="addToCart(${p.id})">ADICIONAR</button>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>`;
-
-        const logCont = document.getElementById('admin-chat-logs');
-        logCont.innerHTML = db.logs.map(l => `
-            <div style="background:#000; padding:10px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--secondary)">
-                <small style="color:#555">${l.date}</small><br>
-                <b style="color:var(--secondary)">Cliente: ${l.discord}</b><br>
-                <span>📦 Itens: ${l.items}</span><br>
-                <i style="color:#aaa">💬 Mensagem: ${l.msg || 'Sem observação'}</i>
+    function renderProducts() {
+        const list = document.getElementById('products-list');
+        list.innerHTML = db.products.map(p => `
+            <div class="product-card">
+                <img src="${p.img}" class="product-img">
+                <div style="font-weight:bold">${p.name}</div>
+                <div style="color:var(--secondary)">R$ ${p.price.toFixed(2)}</div>
+                <button class="btn btn-buy" style="margin-top:10px" onclick="addToCart(${p.id})">COMPRAR</button>
             </div>
         `).join('');
     }
 
     function addToCart(id) {
-        cart.push(db.products.find(x => x.id === id));
+        const p = db.products.find(x => x.id === id);
+        cart.push(p);
         document.getElementById('cart-count').innerText = cart.length;
-        pushNotif("Item no carrinho!");
+        pushNotif(p.name + " adicionado!");
     }
 
-    function openCart() {
-        if(cart.length === 0) return pushNotif("Carrinho vazio!");
-        document.getElementById('cart-modal').style.display='flex';
+    // LÓGICA DO CHAT
+    function openChat() {
+        if(cart.length === 0) return pushNotif("Adicione itens primeiro!");
+        document.getElementById('chat-modal').style.display = 'flex';
+        document.getElementById('chat-items-list').innerText = "Itens: " + cart.map(i => i.name).join(', ');
     }
 
-    function closeCart() { 
-        document.getElementById('cart-modal').style.display='none';
-        document.getElementById('chat-input-area').style.display='block';
-        document.getElementById('pix-area').style.display='none';
+    function closeChat() {
+        document.getElementById('chat-modal').style.display = 'none';
+        // Reset do chat se necessário
+        document.getElementById('footer-input').style.display = 'block';
+        document.getElementById('footer-pix').style.display = 'none';
     }
 
-    function sendMessageToAdmin() {
-        const disc = document.getElementById('chat-discord').value;
-        const msg = document.getElementById('chat-msg').value;
-        
-        if(!disc) return pushNotif("Preciso do seu Discord!");
+    function sendToAdmin() {
+        const discord = document.getElementById('user-discord').value;
+        const msg = document.getElementById('user-msg').value;
 
-        const newLog = {
+        if(!discord) return pushNotif("Informe seu Discord!");
+
+        const order = {
+            id: Date.now(),
             date: new Date().toLocaleString(),
-            discord: disc,
+            discord: discord,
             msg: msg,
-            items: cart.map(i => i.name).join(', ')
+            items: cart.map(i => i.name).join(', '),
+            total: cart.reduce((a, b) => a + b.price, 0).toFixed(2)
         };
 
-        db.logs.unshift(newLog);
-        localStorage.setItem('qs_chat_db', JSON.stringify(db));
-        
-        // Simular Chat
-        const chatBox = document.getElementById('chat-box');
-        chatBox.innerHTML += `<div class="msg user">Meu discord é ${disc}. ${msg}</div>`;
-        chatBox.innerHTML += `<div class="msg bot">Pedido anotado! Realize o pagamento abaixo para eu liberar o produto.</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
+        db.orders.unshift(order);
+        localStorage.setItem('qs_v3_db', JSON.stringify(db));
 
-        document.getElementById('chat-input-area').style.display='none';
-        document.getElementById('pix-area').style.display='block';
-        render();
+        // Atualizar visual do chat
+        const content = document.getElementById('chat-content');
+        content.innerHTML += `<div class="bubble user">Meu Discord: ${discord}<br>Mensagem: ${msg}</div>`;
+        content.innerHTML += `<div class="bubble bot">Perfeito! Recebi seu pedido aqui no sistema. Abaixo está a chave PIX para pagamento. Após pagar, me chame no privado!</div>`;
+        content.scrollTop = content.scrollHeight;
+
+        document.getElementById('footer-input').style.display = 'none';
+        document.getElementById('footer-pix').style.display = 'block';
+        
+        pushNotif("Pedido Enviado!");
+        renderAdmin();
     }
 
-    function askAdmin() {
+    // ADMIN
+    function loginAdmin() {
         const p = prompt("Senha:");
         if(p === "270712") {
-            document.getElementById('shop-view').style.display='none';
-            document.getElementById('admin-view').style.display='block';
+            document.getElementById('shop-view').style.display = 'none';
+            document.getElementById('admin-view').style.display = 'block';
+            renderAdmin();
         }
     }
 
-    function exitAdmin() {
-        document.getElementById('shop-view').style.display='block';
-        document.getElementById('admin-view').style.display='none';
+    function renderAdmin() {
+        const list = document.getElementById('admin-chat-list');
+        list.innerHTML = db.orders.map(o => `
+            <div class="admin-card">
+                <small style="color:#555">${o.date}</small><br>
+                <b style="color:var(--secondary)">CLIENTE: ${o.discord}</b><br>
+                <div style="background:#000; padding:10px; margin-top:5px; border-radius:5px">
+                    <b>Itens:</b> ${o.items}<br>
+                    <b>Total:</b> R$ ${o.total}<br>
+                    <i style="color:#aaa">" ${o.msg} "</i>
+                </div>
+            </div>
+        `).join('');
     }
 
-    render();
+    renderProducts();
 </script>
 </body>
 </html>
