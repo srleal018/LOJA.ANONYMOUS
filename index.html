@@ -3,293 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUEBREI O SISTEMA - Live Shop</title>
-    
+    <title>QUEBREI O SISTEMA - Live Store</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
+        :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; --discord: #5865F2; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
         
-        /* NOTIFICAÇÕES LADO ESQUERDO */
-        #notif-box { position: fixed; top: 20px; left: 20px; z-index: 10000; }
-        .toast { background: #1a1a1a; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; animation: slideIn 0.3s forwards; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-weight: bold; }
-        @keyframes slideIn { from { transform: translateX(-100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
-
-        header { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top:0; z-index: 999; }
-        .logo-text { font-weight: 900; color: var(--text); text-transform: uppercase; margin: 0; font-size: 1.3rem; }
+        /* HEADER ESTILO IMAGEM */
+        header { background: #000; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); sticky: top; z-index: 1000; }
+        .logo-area { display: flex; align-items: center; gap: 20px; }
+        .logo-text { font-weight: 900; text-transform: uppercase; margin: 0; font-size: 1.2rem; cursor: default; }
         .logo-text span { color: var(--secondary); }
         
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .discord-btn { background: var(--discord); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px; animation: glow 2s infinite; font-size: 0.8rem; }
+        @keyframes glow { 0% { box-shadow: 0 0 5px var(--discord); } 50% { box-shadow: 0 0 20px var(--discord); } 100% { box-shadow: 0 0 5px var(--discord); } }
+
+        nav a { color: #888; text-decoration: none; margin-left: 20px; text-transform: uppercase; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+        nav a:hover, nav a.active { color: var(--text); }
+
+        /* NOTIFICAÇÕES */
+        #notif-box { position: fixed; top: 20px; left: 20px; z-index: 10000; }
+        .toast { background: #1a1a1a; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; animation: slideIn 0.3s forwards; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
         /* PRODUTOS */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; transition: 0.3s; position: relative; }
-        .product-card:hover { border-color: var(--secondary); transform: translateY(-5px); }
-        .price-tag { color: var(--primary); font-weight: bold; font-size: 1.2rem; margin: 10px 0; }
-        
-        .btn { padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; transition: 0.2s; }
-        .btn-buy { background: var(--secondary); color: white; width: 100%; }
+        .cat-title { border-left: 4px solid var(--secondary); padding-left: 10px; margin: 40px 0 20px; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #222; }
+        .card img { width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-radius: 5px; }
+        .btn { padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; width: 100%; transition: 0.2s; margin-top: 10px; }
+        .btn-buy { background: var(--secondary); color: white; }
 
         /* MODAIS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: #111; width: 95%; max-width: 500px; border-radius: 15px; border: 1px solid var(--secondary); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
-        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
-        .tabs { display: flex; background: #000; }
-        .tab-btn { flex: 1; padding: 15px; background: none; color: #555; border: none; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { color: var(--secondary); border-bottom: 2px solid var(--secondary); }
-
-        /* CHAT */
-        .chat-box { background: #0a0a0a; height: 250px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; border: 1px solid #222; margin-bottom: 10px; }
-        .bubble { padding: 8px 12px; border-radius: 10px; font-size: 0.85em; max-width: 80%; line-height: 1.4; }
-        .bubble.bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .bubble.user { background: var(--secondary); align-self: flex-end; border-bottom-right-radius: 2px; }
-
+        .modal-content { background: #111; width: 95%; max-width: 500px; border-radius: 15px; border: 1px solid var(--secondary); max-height: 90vh; overflow-y: auto; }
+        .modal-body { padding: 20px; }
+        
         input, select, textarea { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin: 5px 0; }
 
-        #admin-view { display: none; background: #0c0c0c; min-height: 100vh; }
-        .admin-card { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; margin-bottom: 15px; }
+        /* AVALIAÇÕES */
+        #view-reviews { display: none; }
+        .review-item { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--primary); }
+
+        /* ADMIN */
+        #admin-view { display: none; padding: 20px; background: #0c0c0c; min-height: 100vh; }
+        .admin-card { background: #151515; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
 <div id="notif-box"></div>
 
-<div id="shop-view">
-    <header>
+<header>
+    <div class="logo-area">
         <h1 class="logo-text">QUEBREI O <span>SISTEMA</span></h1>
-        <button class="btn" style="background:var(--secondary)" onclick="openModal('main-modal')">🛒 CARRINHO (<span id="cart-count">0</span>)</button>
-    </header>
-    <div class="container">
-        <h2 style="border-left: 4px solid var(--secondary); padding-left: 10px; margin-bottom: 30px;">PRODUTOS DISPONÍVEIS</h2>
-        <div id="products-list" class="products-grid"></div>
+        <a id="discord-link" href="#" target="_blank" class="discord-btn">
+            <i class="fab fa-discord"></i> DISCORD
+        </a>
+    </div>
+    <nav>
+        <a href="#" class="active" onclick="showSection('shop')">Recepção</a>
+        <a href="#" onclick="showSection('reviews')">Avaliações</a>
+        <button class="btn" style="width:auto; margin:0; background:var(--secondary)" onclick="openCart()">🛒 CARRINHO (<span id="cart-count">0</span>)</button>
+    </nav>
+</header>
+
+<div id="view-shop" class="container">
+    <div id="shop-content"></div>
+</div>
+
+<div id="view-reviews" class="container">
+    <h2 class="cat-title">Feedback dos Clientes</h2>
+    <div id="reviews-list"></div>
+    <div class="admin-card" style="margin-top:40px">
+        <h3>Deixe sua Avaliação</h3>
+        <input type="text" id="rev-nick" placeholder="Seu Nick">
+        <textarea id="rev-msg" placeholder="Sua mensagem..."></textarea>
+        <button class="btn btn-buy" onclick="sendReview()">ENVIAR AVALIAÇÃO</button>
     </div>
 </div>
 
-<div id="main-modal" class="modal">
+<div id="cart-modal" class="modal">
     <div class="modal-content">
-        <div class="tabs">
-            <button class="tab-btn active" id="btn-chat" onclick="switchTab('chat')">CARRINHO & CHAT</button>
-            <button class="tab-btn" id="btn-rev" onclick="switchTab('rev')">AVALIAÇÕES</button>
-        </div>
-        
-        <div id="tab-chat" class="modal-body">
-            <div id="items-summary" style="font-size: 0.75em; color: var(--secondary); margin-bottom: 10px; font-weight: bold;"></div>
-            <div class="chat-box" id="chat-flow">
-                <div class="bubble bot">Olá! Vi que você se interessou por nossos itens. Digite seu <b>Nick do Discord</b> para enviarmos seu pedido ao ADM.</div>
-            </div>
-            <div id="chat-form">
-                <input type="text" id="cust-nick" placeholder="Seu Discord (Ex: Fulano#0000)">
-                <textarea id="cust-msg" placeholder="Alguma observação?"></textarea>
-                <button class="btn btn-buy" onclick="sendOrderOnline()">ENVIAR PEDIDO</button>
-            </div>
-            <div id="pix-display" style="display:none; text-align:center; padding: 10px;">
-                <p style="color:var(--primary); font-weight: bold;">PEDIDO REGISTRADO!</p>
-                <p style="font-size: 0.8rem;">Pague agora via PIX Copia e Cola:</p>
-                <div style="background:#fff; color:#000; padding:10px; font-family:monospace; border-radius:5px; font-size:0.7em; word-break:break-all;">9c176ab9-a6d6-4311-a0ea-21dd7481227f</div>
-                <button class="btn" style="margin-top:15px; background: #222; width: 100%;" onclick="closeModal('main-modal')">FECHAR</button>
-            </div>
-        </div>
-
-        <div id="tab-rev" class="modal-body" style="display:none">
-            <div id="reviews-list" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto;"></div>
-            <div style="border-top: 1px solid #333; padding-top: 10px;">
-                <input type="text" id="rev-nick" placeholder="Seu Nick">
-                <textarea id="rev-msg" placeholder="O que achou da loja?"></textarea>
-                <button class="btn btn-buy" onclick="sendReviewOnline()">POSTAR AVALIAÇÃO</button>
-            </div>
-        </div>
-        <button class="btn" style="background:#000; color: #444; border-radius:0" onclick="closeModal('main-modal')">VOLTAR</button>
-    </div>
-</div>
-
-<div id="login-modal" class="modal">
-    <div class="modal-content" style="max-width:300px">
         <div class="modal-body">
-            <h3 style="margin:0 0 15px 0">PAINEL ADM</h3>
-            <input type="password" id="pass-input" placeholder="Senha">
-            <button class="btn btn-buy" style="margin-top:10px" onclick="checkLogin()">ENTRAR</button>
-            <button class="btn" style="background:none; width:100%" onclick="closeModal('login-modal')">Sair</button>
+            <h3>Seu Carrinho</h3>
+            <div id="cart-items-list" style="margin-bottom:20px; font-size:0.9rem"></div>
+            <div style="background:#000; padding:15px; border-radius:8px; border:1px solid var(--primary)">
+                <h4 style="margin:0 0 10px 0; color:var(--primary)"><i class="fas fa-headset"></i> Falar com Staff</h4>
+                <p style="font-size:0.8rem; color:#888">Envie seu Nick abaixo para um vendedor entrar em contato e finalizar seu pedido.</p>
+                <input type="text" id="cust-discord" placeholder="Seu Nick do Discord">
+                <button class="btn btn-buy" onclick="checkout()">FINALIZAR PEDIDO COM STAFF</button>
+            </div>
+            <button class="btn" style="background:#222" onclick="closeModal('cart-modal')">FECHAR</button>
         </div>
     </div>
 </div>
 
 <div id="admin-view">
-    <header>
-        <h1 style="color:var(--secondary)">🛠 PAINEL ONLINE</h1>
-        <button class="btn" style="background:red" onclick="location.reload()">SAIR</button>
-    </header>
     <div class="container">
-        <div class="admin-card">
-            <h3>Novo Produto</h3>
-            <input type="text" id="p-name" placeholder="Nome do Item">
-            <input type="number" id="p-price" placeholder="Preço (R$)">
-            <button class="btn btn-buy" onclick="addProductOnline()">CADASTRAR PRODUTO</button>
+        <div style="display:flex; justify-content:space-between; align-items:center">
+            <h2>PAINEL DE CONTROLO</h2>
+            <button class="btn" style="width:auto; background:red" onclick="location.reload()">SAIR</button>
         </div>
+
         <div class="admin-card">
-            <h3>Pedidos Pendentes (Realtime)</h3>
-            <div id="admin-orders-live"></div>
+            <h3>Configurações Gerais</h3>
+            <label>Link do Discord (Ícone do Topo):</label>
+            <input type="text" id="adm-discord-url" placeholder="https://discord.gg/exemplo">
+            <button class="btn btn-buy" onclick="updateDiscordLink()">SALVAR LINK</button>
+        </div>
+
+        <div class="admin-card">
+            <h3>Criar Categoria</h3>
+            <input type="text" id="new-cat-name" placeholder="Ex: Armas, VIPs, Veículos">
+            <button class="btn btn-buy" onclick="addCategory()">ADICIONAR CATEGORIA</button>
+            <div id="admin-cats" style="margin-top:10px"></div>
+        </div>
+
+        <div class="admin-card">
+            <h3>Gerenciar Produto</h3>
+            <input type="hidden" id="edit-p-id">
+            <input type="text" id="p-name" placeholder="Nome do Produto">
+            <input type="number" id="p-price" placeholder="Preço">
+            <input type="text" id="p-img" placeholder="Link da Imagem (URL)">
+            <select id="p-cat-select"></select>
+            <button class="btn btn-buy" id="btn-save-p" onclick="saveProduct()">SALVAR PRODUTO</button>
+            <button class="btn" id="btn-cancel-edit" style="display:none; background:#444" onclick="clearProdForm()">CANCELAR EDIÇÃO</button>
+        </div>
+
+        <div class="admin-card">
+            <h3>Produtos Atuais</h3>
+            <div id="admin-prods-list"></div>
+        </div>
+
+        <div class="admin-card">
+            <h3>Pedidos / Chamados Staff</h3>
+            <div id="admin-orders"></div>
         </div>
     </div>
 </div>
 
-<footer style="padding:60px; text-align:center; opacity:0.1; cursor:pointer;" onclick="openModal('login-modal')">Admin Control</footer>
+<footer style="text-align:center; padding:50px; opacity:0.1; cursor:pointer" onclick="openLogin()">Painel Administrativo</footer>
 
 <script>
-    // --- INICIALIZAÇÃO FIREBASE ---
+    // CONFIGURAÇÃO FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8",
         authDomain: "quebrei-o-sistema.firebaseapp.com",
         databaseURL: "https://quebrei-o-sistema-default-rtdb.firebaseio.com",
         projectId: "quebrei-o-sistema",
-        storageBucket: "quebrei-o-sistema.firebasestorage.app",
-        messagingSenderId: "133672006102",
         appId: "1:133672006102:web:e62c681ced44b3650f7477"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let cart = [];
 
-    // --- FUNÇÕES DE INTERFACE ---
+    // --- UTILITÁRIOS ---
     function pushNotif(m) {
-        const box = document.getElementById('notif-box');
-        const t = document.createElement('div'); t.className = 'toast'; t.innerText = m;
-        box.appendChild(t); setTimeout(() => t.remove(), 3000);
+        const b = document.getElementById('notif-box');
+        const t = document.createElement('div'); t.className='toast'; t.innerText=m;
+        b.appendChild(t); setTimeout(()=>t.remove(), 3000);
+    }
+    function openModal(id){ document.getElementById(id).style.display='flex'; }
+    function closeModal(id){ document.getElementById(id).style.display='none'; }
+    function showSection(s){
+        document.getElementById('view-shop').style.display = s==='shop'?'block':'none';
+        document.getElementById('view-reviews').style.display = s==='reviews'?'block':'none';
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        event.target.classList.add('active');
     }
 
-    function openModal(id) { 
-        document.getElementById(id).style.display = 'flex'; 
-        if(id === 'main-modal') {
-            document.getElementById('items-summary').innerText = "ITENS NO CARRINHO: " + (cart.length > 0 ? cart.map(i => i.name).join(', ') : "Vazio");
-        }
-    }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    
-    function switchTab(t) {
-        document.getElementById('tab-chat').style.display = t === 'chat' ? 'block' : 'none';
-        document.getElementById('tab-rev').style.display = t === 'rev' ? 'block' : 'none';
-        document.getElementById('btn-chat').classList.toggle('active', t === 'chat');
-        document.getElementById('btn-rev').classList.toggle('active', t === 'rev');
-    }
+    // --- LOGICA ONLINE ---
 
-    // --- LÓGICA FIREBASE (CLIENTE) ---
-
-    // Sincronizar Produtos
-    db.ref('produtos').on('value', snap => {
-        const list = document.getElementById('products-list');
-        list.innerHTML = "";
-        const data = snap.val();
-        for(let id in data) {
-            list.innerHTML += `
-                <div class="product-card">
-                    <img src="glock.png" style="width:70px; margin-bottom:10px;">
-                    <div style="font-weight:bold; height:40px;">${data[id].name}</div>
-                    <div class="price-tag">R$ ${data[id].price}</div>
-                    <button class="btn btn-buy" onclick="addToCart('${data[id].name}', ${data[id].price})">ADICIONAR</button>
-                    <button class="btn" style="background:transparent; color:red; font-size:0.6rem; margin-top:8px" onclick="deleteProductOnline('${id}')">Remover Item</button>
-                </div>`;
-        }
+    // Ouvir Categorias e Produtos
+    db.ref('/').on('value', snap => {
+        const data = snap.val() || {};
+        renderShop(data.categorias, data.produtos);
+        renderAdminLists(data.categorias, data.produtos);
+        if(data.config) document.getElementById('discord-link').href = data.config.discord || "#";
     });
 
-    // Sincronizar Avaliações
+    // Ouvir Avaliações
     db.ref('avaliacoes').on('value', snap => {
+        const data = snap.val();
         const cont = document.getElementById('reviews-list');
         cont.innerHTML = "";
-        const data = snap.val();
         for(let id in data) {
-            cont.innerHTML += `<div style="background:#000; padding:10px; margin-bottom:5px; border-radius:5px; font-size:0.8rem">
-                <b style="color:var(--secondary)">${data[id].nick}:</b> ${data[id].msg}
-            </div>`;
+            cont.innerHTML += `<div class="review-item"><b>${data[id].nick}:</b> ${data[id].msg}</div>`;
         }
     });
 
-    function addToCart(name, price) {
-        cart.push({name, price});
+    function renderShop(cats, prods) {
+        const cont = document.getElementById('shop-content');
+        cont.innerHTML = "";
+        for(let cId in cats) {
+            let catHtml = `<h2 class="cat-title">${cats[cId].name}</h2><div class="grid">`;
+            let hasProds = false;
+            for(let pId in prods) {
+                if(prods[pId].cat === cats[cId].name) {
+                    hasProds = true;
+                    catHtml += `
+                        <div class="card">
+                            <img src="${prods[pId].img || 'https://via.placeholder.com/150'}">
+                            <h4>${prods[pId].name}</h4>
+                            <p style="color:var(--primary); font-weight:bold">R$ ${prods[pId].price}</p>
+                            <button class="btn btn-buy" onclick="addToCart('${prods[pId].name}', ${prods[pId].price})">ADICIONAR</button>
+                        </div>`;
+                }
+            }
+            catHtml += `</div>`;
+            if(hasProds) cont.innerHTML += catHtml;
+        }
+    }
+
+    function addToCart(n, p) {
+        cart.push({name:n, price:p});
         document.getElementById('cart-count').innerText = cart.length;
-        pushNotif(name + " no carrinho!");
+        pushNotif(n + " adicionado!");
     }
 
-    function sendOrderOnline() {
-        const nick = document.getElementById('cust-nick').value;
-        if(!nick || cart.length === 0) return pushNotif("Preencha o Nick e adicione itens!");
-        
+    function openCart() {
+        if(cart.length === 0) return pushNotif("Carrinho vazio!");
+        const list = document.getElementById('cart-items-list');
+        list.innerHTML = cart.map(i => `<div>• ${i.name} (R$ ${i.price})</div>`).join('');
+        openModal('cart-modal');
+    }
+
+    function checkout() {
+        const nick = document.getElementById('cust-discord').value;
+        if(!nick) return pushNotif("Insira seu Discord!");
         db.ref('pedidos').push({
-            nick,
-            items: cart.map(i => i.name).join(', '),
-            msg: document.getElementById('cust-msg').value,
-            total: cart.reduce((a,b) => a + b.price, 0),
-            date: new Date().toLocaleString()
-        }).then(() => {
-            document.getElementById('chat-form').style.display = 'none';
-            document.getElementById('pix-display').style.display = 'block';
-            pushNotif("Pedido enviado para o ADM!");
-            cart = [];
-            document.getElementById('cart-count').innerText = "0";
+            nick, 
+            itens: cart.map(i=>i.name).join(', '),
+            total: cart.reduce((a,b)=>a+b.price, 0),
+            data: new Date().toLocaleString()
         });
+        pushNotif("Pedido enviado à Staff!");
+        cart = []; document.getElementById('cart-count').innerText = "0";
+        closeModal('cart-modal');
     }
 
-    function sendReviewOnline() {
+    function sendReview() {
         const nick = document.getElementById('rev-nick').value;
         const msg = document.getElementById('rev-msg').value;
         if(nick && msg) {
-            db.ref('avaliacoes').push({ nick, msg });
-            document.getElementById('rev-msg').value = "";
-            pushNotif("Obrigado pela avaliação!");
+            db.ref('avaliacoes').push({nick, msg});
+            document.getElementById('rev-nick').value=""; document.getElementById('rev-msg').value="";
+            pushNotif("Avaliação enviada!");
         }
     }
 
-    // --- LÓGICA FIREBASE (ADMIN) ---
-
-    function checkLogin() {
-        if(document.getElementById('pass-input').value === "270712") {
-            closeModal('login-modal');
-            document.getElementById('shop-view').style.display = 'none';
-            document.getElementById('admin-view').style.display = 'block';
+    // --- ADMIN ACTIONS ---
+    function openLogin() {
+        const p = prompt("Senha Administrativa:");
+        if(p === "270712") {
+            document.getElementById('shop-view')?.remove(); // Segurança extra
+            document.getElementById('view-shop').style.display='none';
+            document.getElementById('view-reviews').style.display='none';
+            document.querySelector('header').style.display='none';
+            document.getElementById('admin-view').style.display='block';
             loadAdminOrders();
-        } else {
-            pushNotif("Senha incorreta!");
         }
     }
 
-    function addProductOnline() {
-        const name = document.getElementById('p-name').value;
-        const price = document.getElementById('p-price').value;
-        if(name && price) {
-            db.ref('produtos').push({ name, price });
-            document.getElementById('p-name').value = "";
-            document.getElementById('p-price').value = "";
-            pushNotif("Produto publicado!");
+    function addCategory() {
+        const name = document.getElementById('new-cat-name').value;
+        if(name) {
+            db.ref('categorias').push({name});
+            document.getElementById('new-cat-name').value = "";
         }
     }
 
-    function deleteProductOnline(id) {
-        // Opção para o ADM remover produtos direto na vitrine
-        db.ref('produtos').child(id).remove();
-        pushNotif("Item removido do catálogo.");
+    function saveProduct() {
+        const id = document.getElementById('edit-p-id').value;
+        const pData = {
+            name: document.getElementById('p-name').value,
+            price: document.getElementById('p-price').value,
+            img: document.getElementById('p-img').value,
+            cat: document.getElementById('p-cat-select').value
+        };
+        if(id) db.ref('produtos/'+id).update(pData);
+        else db.ref('produtos').push(pData);
+        clearProdForm();
+    }
+
+    function editProd(id, n, p, i, c) {
+        document.getElementById('edit-p-id').value = id;
+        document.getElementById('p-name').value = n;
+        document.getElementById('p-price').value = p;
+        document.getElementById('p-img').value = i;
+        document.getElementById('p-cat-select').value = c;
+        document.getElementById('btn-save-p').innerText = "ATUALIZAR PRODUTO";
+        document.getElementById('btn-cancel-edit').style.display = "block";
+    }
+
+    function clearProdForm() {
+        document.getElementById('edit-p-id').value = "";
+        document.getElementById('p-name').value = "";
+        document.getElementById('p-price').value = "";
+        document.getElementById('p-img').value = "";
+        document.getElementById('btn-save-p').innerText = "SALVAR PRODUTO";
+        document.getElementById('btn-cancel-edit').style.display = "none";
+    }
+
+    function renderAdminLists(cats, prods) {
+        // Dropdown categorias
+        const sel = document.getElementById('p-cat-select');
+        sel.innerHTML = "";
+        for(let id in cats) sel.innerHTML += `<option value="${cats[id].name}">${cats[id].name}</option>`;
+
+        // Lista de Cats no ADM
+        const catCont = document.getElementById('admin-cats');
+        catCont.innerHTML = "";
+        for(let id in cats) catCont.innerHTML += `<div style="display:inline-block; background:#333; padding:5px 10px; margin:5px; border-radius:5px">${cats[id].name} <i class="fas fa-times" style="color:red; cursor:pointer" onclick="db.ref('categorias/${id}').remove()"></i></div>`;
+
+        // Lista de Prods no ADM
+        const prodCont = document.getElementById('admin-prods-list');
+        prodCont.innerHTML = "";
+        for(let id in prods) {
+            const p = prods[id];
+            prodCont.innerHTML += `
+                <div style="background:#000; padding:10px; margin-bottom:5px; display:flex; justify-content:space-between">
+                    <span>${p.name} (${p.cat}) - R$ ${p.price}</span>
+                    <div>
+                        <button onclick="editProd('${id}','${p.name}','${p.price}','${p.img}','${p.cat}')">✏️</button>
+                        <button onclick="db.ref('produtos/${id}').remove()">🗑️</button>
+                    </div>
+                </div>`;
+        }
+    }
+
+    function updateDiscordLink() {
+        const url = document.getElementById('adm-discord-url').value;
+        db.ref('config').update({discord: url});
+        pushNotif("Link atualizado!");
     }
 
     function loadAdminOrders() {
         db.ref('pedidos').on('value', snap => {
-            const cont = document.getElementById('admin-orders-live');
+            const cont = document.getElementById('admin-orders');
             cont.innerHTML = "";
             const data = snap.val();
             for(let id in data) {
-                cont.innerHTML += `
-                <div class="admin-card">
-                    <button style="float:right; background:red; color:white; border:none; padding:5px" onclick="deleteOrder('${id}')">X</button>
-                    <b style="color:var(--secondary)">${data[id].nick}</b> [${data[id].date}]<br>
-                    <span>📦 Itens: ${data[id].items}</span><br>
-                    <span>💰 Total: R$ ${data[id].total}</span><br>
-                    <p style="margin:5px 0; color:#888 italic">"${data[id].msg}"</p>
+                cont.innerHTML += `<div class="review-item" style="border-left-color:var(--secondary)">
+                    <b>Nick: ${data[id].nick}</b><br>
+                    <span>Itens: ${data[id].itens}</span><br>
+                    <span>Total: R$ ${data[id].total}</span>
+                    <button class="btn" style="background:#444; font-size:0.6rem" onclick="db.ref('pedidos/${id}').remove()">ARQUIVAR</button>
                 </div>`;
             }
         });
     }
-
-    function deleteOrder(id) { db.ref('pedidos').child(id).remove(); }
-
 </script>
 </body>
 </html>
