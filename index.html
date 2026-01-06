@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUEBREI O SISTEMA - GALAXY VIP</title>
+    <title>QUEBREI O SISTEMA - VIP HUB</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -12,56 +12,43 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <style>
-        :root { 
-            --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; 
-            --card-bg: #151515; --text: #ffffff; 
-        }
-
+        :root { --primary: #00ff88; --secondary: #007bff; --bg: #0a0a0a; --card-bg: #151515; --text: #ffffff; }
         * { transition: all 0.3s ease; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
 
         /* GALAXY BACKGROUND */
-        #galaxy-bg {
-            display: none; position: fixed; top:0; left:0; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
-            z-index: -1;
-        }
+        #galaxy-bg { display: none; position: fixed; top:0; left:0; width: 100%; height: 100%; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); z-index: -1; }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: blink 2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* LOJA */
         #site-wrapper.hidden { display: none; }
-        header { 
-            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 2px solid var(--secondary); position: sticky; top: 0; z-index: 1000;
-        }
+        header { background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top: 0; z-index: 1000; }
         #news-bar { background: var(--secondary); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.9rem; }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .cat-title { border-left: 5px solid var(--secondary); padding-left: 15px; margin: 40px 0 20px; text-transform: uppercase; color: var(--primary); }
+        .cat-title { border-left: 5px solid var(--secondary); padding-left: 15px; margin: 40px 0 20px; text-transform: uppercase; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #222; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #222; position: relative; }
         .card .prod-img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 15px; }
 
         .btn { padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; }
         .btn-buy { background: var(--secondary); color: white; width: 100%; }
 
-        /* ADMIN PAGE */
+        /* ADMIN */
         #admin-page { display: none; width: 100%; min-height: 100vh; padding: 40px 5%; z-index: 9999; position: relative; }
-        .admin-card { background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
+        .admin-card { background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
         input, select { background: #000; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; margin: 5px 0; }
 
-        /* TICKETS & CHAT */
         .chat-area { background: #000; height: 300px; overflow-y: auto; padding: 15px; border-radius: 10px; margin: 10px 0; display: flex; flex-direction: column; gap: 8px; border: 1px solid #222; }
         .msg { padding: 10px; border-radius: 8px; max-width: 80%; }
         .msg.admin { align-self: flex-start; background: var(--secondary); }
         .msg.user { align-self: flex-end; background: var(--primary); color: #000; }
-        .msg img { max-width: 100%; border-radius: 5px; margin-top: 5px; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: #111; width: 90%; max-width: 600px; padding: 25px; border-radius: 20px; border: 1px solid var(--secondary); }
+    
+        .adm-btn-small { padding: 5px 10px; font-size: 0.7rem; margin: 2px; }
     </style>
 </head>
 <body>
@@ -71,7 +58,7 @@
 <div id="site-wrapper">
     <div id="news-bar">BEM-VINDO À QUEBREI O SISTEMA</div>
     <header>
-        <h1 style="cursor:pointer" onclick="location.reload()">SISTEMA<span>VIP</span></h1>
+        <h1 style="cursor:pointer" onclick="location.reload()">QUEBREI O <span>SISTEMA</span></h1>
         <nav>
             <button class="btn" style="background:var(--secondary); color:white" onclick="openCart()">🛒 CARRINHO (<span id="cart-count">0</span>)</button>
             <button class="btn" style="background:var(--primary); color:black; margin-left:10px;" onclick="openMyTickets()">MEUS PEDIDOS</button>
@@ -80,8 +67,7 @@
 
     <div class="container">
         <div id="shop-content"></div>
-
-        <h2 class="cat-title">⭐ Avaliações Recentes</h2>
+        <h2 class="cat-title">⭐ Avaliações dos Clientes</h2>
         <div class="grid" id="reviews-content"></div>
     </div>
 
@@ -90,8 +76,8 @@
 
 <div id="admin-page">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h1 style="color:var(--primary)">STAFF CONTROL</h1>
-        <button class="btn" style="background:red; color:white" onclick="exitAdmin()">SAIR</button>
+        <h1 style="color:var(--primary)">QUEBREI O SISTEMA - STAFF</h1>
+        <button class="btn" style="background:red; color:white" onclick="exitAdmin()">SAIR DO PAINEL</button>
     </div>
 
     <div class="grid" style="grid-template-columns: 1fr 2fr;">
@@ -101,15 +87,19 @@
             <input type="number" id="p-price" placeholder="Preço">
             <input type="text" id="p-img" placeholder="URL Imagem">
             <select id="p-cat-select"></select>
-            <button class="btn btn-buy" onclick="saveProduct()">CRIAR PRODUTO</button>
-            <hr>
-            <input type="text" id="rev-name" placeholder="Nome do Cliente">
-            <input type="text" id="rev-txt" placeholder="Depoimento">
+            <button class="btn btn-buy" onclick="saveProduct()">CADASTRAR PRODUTO</button>
+            <hr style="opacity:0.2; margin:20px 0">
+            <input type="text" id="new-cat" placeholder="Nova Categoria">
+            <button class="btn btn-buy" style="background:gray" onclick="addCategory()">CRIAR CATEGORIA</button>
+            <hr style="opacity:0.2; margin:20px 0">
+            <h3>⭐ Nova Avaliação</h3>
+            <input type="text" id="rev-name" placeholder="Nome Cliente">
+            <input type="text" id="rev-txt" placeholder="Texto">
             <button class="btn btn-buy" style="background:gold; color:black" onclick="saveReview()">POSTAR AVALIAÇÃO</button>
         </div>
 
         <div class="admin-card">
-            <h3>💬 Atendimentos (Tickets)</h3>
+            <h3>💬 Atendimento & Tickets</h3>
             <div id="adm-tickets-list"></div>
         </div>
     </div>
@@ -120,16 +110,17 @@
         <h3>Seu Carrinho</h3>
         <div id="cart-list"></div>
         <h4 id="cart-total-text">Total: R$ 0.00</h4>
-        <input type="text" id="cust-name" placeholder="Seu Nick">
-        <button class="btn btn-buy" onclick="checkout()">FECHAR PEDIDO E ABRIR TICKET</button>
+        <div id="checkout-area">
+            <input type="text" id="cust-name" placeholder="Seu Nick">
+            <button class="btn btn-buy" onclick="checkout()">FINALIZAR COMPRA</button>
+        </div>
         <button class="btn" style="background:transparent; color:gray; width:100%" onclick="closeModal('cart-modal')">Voltar</button>
     </div>
 </div>
 
 <div id="tickets-modal" class="modal">
     <div class="modal-content">
-        <h3>CENTRAL DE ATENDIMENTO</h3>
-        <p style="color:var(--secondary)">ESPERE SER ATENDIDO PELA NOSSA EQUIPE.</p>
+        <h3>MEU TICKET ATIVO</h3>
         <div id="user-tickets-list"></div>
         <button class="btn" style="background:var(--secondary); width:100%" onclick="closeModal('tickets-modal')">Fechar</button>
     </div>
@@ -139,8 +130,7 @@
     // Iniciar Estrelas
     const bg = document.getElementById('galaxy-bg');
     for(let i=0; i<100; i++) {
-        let star = document.createElement('div');
-        star.className = 'star';
+        let star = document.createElement('div'); star.className = 'star';
         star.style.width = Math.random()*2+'px'; star.style.height = star.style.width;
         star.style.top = Math.random()*100+'%'; star.style.left = Math.random()*100+'%';
         bg.appendChild(star);
@@ -157,19 +147,29 @@
     const db = firebase.database();
     
     let cart = [];
+    let hasActiveTicket = false;
     let myId = localStorage.getItem('qs_id') || 'u' + Math.floor(Math.random() * 9999);
     localStorage.setItem('qs_id', myId);
 
     function closeModal(id){ document.getElementById(id).style.display='none'; }
 
-    // REALTIME LISTENER
     db.ref('/').on('value', snap => {
         const data = snap.val() || {};
+        checkUserTicket(data.tickets);
         renderShop(data.categorias, data.produtos);
         renderReviews(data.avaliacoes);
-        renderAdmin(data.categorias, data.tickets);
+        renderAdmin(data.categorias, data.tickets, data.produtos, data.avaliacoes);
         renderUserTickets(data.tickets);
     });
+
+    function checkUserTicket(tickets) {
+        hasActiveTicket = false;
+        for(let id in tickets) { if(tickets[id].clienteId === myId) hasActiveTicket = true; }
+        const area = document.getElementById('checkout-area');
+        if(hasActiveTicket) {
+            area.innerHTML = `<p style="color:red; font-weight:bold">Você já possui um ticket aberto! Feche o anterior antes de comprar novamente.</p>`;
+        }
+    }
 
     function renderShop(cats, prods) {
         const cont = document.getElementById('shop-content');
@@ -178,11 +178,11 @@
             let html = `<h2 class="cat-title">${cats[id].name}</h2><div class="grid">`;
             for(let p in prods) {
                 if(prods[p].cat === cats[id].name) {
-                    html += `<div class="card" data-aos="fade-up">
+                    html += `<div class="card">
                         <img src="${prods[p].img || 'https://via.placeholder.com/150'}" class="prod-img">
                         <h4>${prods[p].name}</h4>
                         <div style="color:var(--primary); font-weight:bold">R$ ${parseFloat(prods[p].price).toFixed(2)}</div>
-                        <button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">COMPRAR</button>
+                        <button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button>
                     </div>`;
                 }
             }
@@ -195,9 +195,8 @@
         cont.innerHTML = "";
         for(let id in revs) {
             cont.innerHTML += `<div class="card" style="border-color:gold">
-                <div style="color:gold; margin-bottom:10px"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                 <p>"${revs[id].txt}"</p>
-                <b>- ${revs[id].name}</b>
+                <b style="color:gold">- ${revs[id].name}</b>
             </div>`;
         }
     }
@@ -215,17 +214,12 @@
     }
 
     function checkout() {
+        if(hasActiveTicket) return alert("Você já tem um ticket!");
         const nick = document.getElementById('cust-name').value;
         if(!nick) return alert("Digite seu Nick!");
         const total = cart.reduce((a,b)=>a+b.price, 0);
         const tId = 'T' + Date.now();
-        db.ref('tickets/' + tId).set({
-            clienteId: myId,
-            clienteNick: nick,
-            itens: cart.map(i=>i.name).join(', '),
-            total: total.toFixed(2),
-            data: new Date().toLocaleString()
-        });
+        db.ref('tickets/' + tId).set({ clienteId: myId, clienteNick: nick, itens: cart.map(i=>i.name).join(', '), total: total.toFixed(2) });
         cart = []; document.getElementById('cart-count').innerText = "0";
         closeModal('cart-modal'); openMyTickets();
     }
@@ -238,60 +232,61 @@
         for(let id in tickets) {
             if(tickets[id].clienteId === myId) {
                 cont.innerHTML += `<div class="admin-card">
-                    <b>PEDIDO: ${tickets[id].itens}</b><br>
-                    <span style="color:var(--primary)">TOTAL: R$ ${tickets[id].total}</span>
+                    <p style="color:var(--secondary); font-size:0.8rem">ESPERE SER ATENDIDO PELA NOSSA EQUIPE.</p>
+                    <b>TOTAL: R$ ${tickets[id].total}</b>
                     <div class="chat-area">${renderMsgs(tickets[id].chat)}</div>
-                    <div style="display:flex; gap:5px">
-                        <input type="text" id="in-${id}" placeholder="Mensagem...">
-                        <input type="text" id="img-${id}" placeholder="Link Imagem..." style="width:100px">
-                        <button class="btn" style="background:var(--primary); color:black" onclick="sendChat('${id}', 'user')">ENVIAR</button>
-                    </div>
+                    <div style="display:flex; gap:5px"><input type="text" id="in-${id}" placeholder="Sua mensagem..."><button class="btn" style="background:var(--primary); color:black" onclick="sendChat('${id}', 'user')">ENVIAR</button></div>
                 </div>`;
             }
         }
+        if(cont.innerHTML === "") cont.innerHTML = "<p>Você não tem tickets abertos.</p>";
     }
 
-    function renderAdmin(cats, tickets) {
-        const sel = document.getElementById('p-cat-select');
-        sel.innerHTML = "";
+    function renderAdmin(cats, tickets, prods, revs) {
+        const sel = document.getElementById('p-cat-select'); sel.innerHTML = "";
         for(let id in cats) sel.innerHTML += `<option value="${cats[id].name}">${cats[id].name}</option>`;
 
         const tktList = document.getElementById('adm-tickets-list');
-        tktList.innerHTML = "";
+        tktList.innerHTML = "<h4>Tickets Ativos</h4>";
         for(let id in tickets) {
-            // AQUI O STAFF VÊ TUDO: NOME, ITENS E TOTAL
             tktList.innerHTML += `<div class="admin-card" style="border-left: 5px solid var(--secondary)">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start">
-                    <div>
-                        <h4 style="margin:0; color:var(--secondary)">CLIENTE: ${tickets[id].clienteNick}</h4>
-                        <p style="margin:5px 0; font-size:0.9rem"><b>PRODUTOS:</b> ${tickets[id].itens}</p>
-                        <h3 style="margin:0; color:var(--primary)">TOTAL: R$ ${tickets[id].total}</h3>
-                        <small>Data: ${tickets[id].data}</small>
-                    </div>
-                    <button class="btn" style="background:red; padding:5px" onclick="db.ref('tickets/${id}').remove()">FECHAR</button>
-                </div>
+                <b>${tickets[id].clienteNick} (R$ ${tickets[id].total})</b><br><small>${tickets[id].itens}</small>
                 <div class="chat-area">${renderMsgs(tickets[id].chat)}</div>
-                <div style="display:flex; gap:5px">
-                    <input type="text" id="in-${id}" placeholder="Resposta Staff...">
-                    <input type="text" id="img-${id}" placeholder="Link Imagem..." style="width:100px">
-                    <button class="btn" style="background:var(--secondary); color:white" onclick="sendChat('${id}', 'admin')">RESPONDER</button>
+                <div style="display:flex; gap:5px"><input type="text" id="in-${id}" placeholder="Resposta..."><button class="btn" style="background:var(--secondary); color:white" onclick="sendChat('${id}', 'admin')">ENVIAR</button></div>
+                <button class="btn" style="background:red; width:100%; margin-top:10px" onclick="db.ref('tickets/${id}').remove()">CONCLUIR / EXCLUIR TICKET</button>
+            </div>`;
+        }
+
+        tktList.innerHTML += "<hr><h4>Editar Produtos</h4>";
+        for(let p in prods) {
+            tktList.innerHTML += `<div style="display:flex; justify-content:space-between; background:#111; padding:10px; margin-bottom:5px; border-radius:5px">
+                <span>${prods[p].name}</span>
+                <div>
+                    <button class="btn adm-btn-small" style="background:orange" onclick="editProd('${p}')">EDITAR</button>
+                    <button class="btn adm-btn-small" style="background:red" onclick="db.ref('produtos/${p}').remove()">X</button>
                 </div>
+            </div>`;
+        }
+
+        tktList.innerHTML += "<hr><h4>Excluir Categorias</h4>";
+        for(let c in cats) {
+            tktList.innerHTML += `<div style="display:flex; justify-content:space-between; background:#111; padding:10px; margin-bottom:5px; border-radius:5px">
+                <span>${cats[c].name}</span>
+                <button class="btn adm-btn-small" style="background:red" onclick="db.ref('categorias/${c}').remove()">EXCLUIR</button>
             </div>`;
         }
     }
 
     function renderMsgs(chat) {
         if(!chat) return "";
-        return Object.values(chat).map(m => `<div class="msg ${m.sender}">${m.txt ? `<div>${m.txt}</div>` : ""}${m.img ? `<img src="${m.img}" onclick="window.open('${m.img}')">` : ""}</div>`).join('');
+        return Object.values(chat).map(m => `<div class="msg ${m.sender}">${m.txt}</div>`).join('');
     }
 
     function sendChat(tId, role) {
         const txt = document.getElementById('in-' + tId).value;
-        const img = document.getElementById('img-' + tId).value;
-        if(txt || img) {
-            db.ref(`tickets/${tId}/chat`).push({ sender: role, txt, img });
+        if(txt) {
+            db.ref(`tickets/${tId}/chat`).push({ sender: role, txt });
             document.getElementById('in-' + tId).value = "";
-            document.getElementById('img-' + tId).value = "";
         }
     }
 
@@ -314,6 +309,10 @@
         const img = document.getElementById('p-img').value;
         const cat = document.getElementById('p-cat-select').value;
         if(name && price) db.ref('produtos').push({name, price, img, cat});
+    }
+    function editProd(id) {
+        const nPrice = prompt("Novo Preço:");
+        if(nPrice) db.ref('produtos/'+id).update({price: nPrice});
     }
     function saveReview() {
         const name = document.getElementById('rev-name').value;
