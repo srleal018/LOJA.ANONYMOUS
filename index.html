@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <style>
-        :root { --primary: #00ff88; --secondary: #007bff; --bg: #050505; --card-bg: rgba(20, 20, 20, 0.8); --text: #ffffff; }
+        :root { --primary: #00ff88; --secondary: #007bff; --bg: #050505; --card-bg: rgba(20, 20, 20, 0.9); --text: #ffffff; }
         * { transition: all 0.3s ease; box-sizing: border-box; }
         
         body { 
@@ -25,33 +25,32 @@
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         header { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); position: sticky; top: 0; z-index: 1000; }
-        #news-bar { background: var(--secondary); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.9rem; }
+        #news-bar { background: var(--secondary); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.9rem; min-height: 35px; }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         .cat-title { border-left: 5px solid var(--secondary); padding-left: 15px; margin: 40px 0 20px; text-transform: uppercase; color: var(--primary); }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         .card .prod-img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; }
 
         .btn { padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-buy { background: var(--secondary); color: white; width: 100%; }
 
         /* ADMIN */
-        #site-wrapper.hidden { display: none; }
-        #admin-page { display: none; width: 100%; padding: 40px 5%; position: relative; }
-        .admin-card { background: rgba(0, 0, 0, 0.85); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        input, select { background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; margin: 8px 0; }
+        #admin-page { display: none; width: 100%; padding: 40px 5%; z-index: 9999; }
+        .admin-card { background: rgba(10, 10, 10, 0.95); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
+        input, select { background: #000; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; width: 100%; margin: 8px 0; }
         
-        .edit-panel { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-top: 10px; border-left: 3px solid #00ff88; display: none; text-align: left; }
+        .edit-panel { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid gold; display: none; }
 
-        .chat-area { background: rgba(0,0,0,0.4); height: 300px; overflow-y: auto; padding: 15px; border-radius: 10px; margin: 10px 0; display: flex; flex-direction: column; gap: 8px; border: 1px solid #333; }
-        .msg { padding: 10px; border-radius: 8px; max-width: 80%; font-size: 0.9rem; }
+        .chat-area { background: #000; height: 250px; overflow-y: auto; padding: 15px; border-radius: 10px; margin: 10px 0; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 10px; border-radius: 8px; max-width: 80%; }
         .msg.admin { align-self: flex-start; background: var(--secondary); }
         .msg.user { align-self: flex-end; background: var(--primary); color: #000; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: #111; width: 90%; max-width: 600px; padding: 25px; border-radius: 20px; border: 1px solid var(--secondary); }
+        .modal-content { background: #111; width: 90%; max-width: 500px; padding: 25px; border-radius: 20px; border: 1px solid var(--secondary); }
     </style>
 </head>
 <body>
@@ -61,7 +60,7 @@
 <div id="site-wrapper">
     <div id="news-bar">CARREGANDO...</div>
     <header>
-        <h1 style="cursor:pointer" onclick="location.reload()">QUEBREI O <span>SISTEMA</span></h1>
+        <h1>QUEBREI O <span>SISTEMA</span></h1>
         <nav>
             <button class="btn" style="background:var(--secondary); color:white" onclick="openCart()"><i class="fas fa-shopping-cart"></i> CARRINHO (<span id="cart-count">0</span>)</button>
             <button class="btn" style="background:var(--primary); color:black; margin-left:10px;" onclick="openMyTickets()"><i class="fas fa-ticket-alt"></i> MEUS PEDIDOS</button>
@@ -70,7 +69,7 @@
 
     <div class="container">
         <div id="shop-content"></div>
-        <h2 class="cat-title"><i class="fas fa-star" style="color:gold"></i> Feedbacks da Galáxia</h2>
+        <h2 class="cat-title">⭐ Avaliações</h2>
         <div class="grid" id="reviews-content"></div>
     </div>
 
@@ -78,45 +77,35 @@
 </div>
 
 <div id="admin-page">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h1 style="color:var(--primary)"><i class="fas fa-user-shield"></i> PAINEL STAFF</h1>
-        <button class="btn" style="background:red; color:white" onclick="exitAdmin()">SAIR DO PAINEL</button>
+    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+        <h2 style="color:var(--primary)">PAINEL STAFF</h2>
+        <button class="btn" style="background:red; color:white" onclick="exitAdmin()">VOLTAR À LOJA</button>
     </div>
 
     <div class="grid" style="grid-template-columns: 1fr 2fr;">
         <div class="admin-card">
-            <h3><i class="fas fa-bullhorn"></i> Aviso Global</h3>
-            <input type="text" id="adm-news-input" placeholder="Texto da barra superior">
-            <button class="btn btn-buy" onclick="saveAviso()">ATUALIZAR AVISO</button>
-
-            <hr style="opacity:0.1; margin:20px 0">
-            <h3><i class="fas fa-plus"></i> Novo Item</h3>
-            <input type="text" id="p-name" placeholder="Nome do Produto">
-            <input type="number" id="p-price" placeholder="Preço (R$)">
-            <input type="text" id="p-img" placeholder="URL da Imagem">
+            <h3>📢 Configurações</h3>
+            <input type="text" id="adm-news-input" placeholder="Aviso da barra superior">
+            <button class="btn btn-buy" onclick="saveAviso()">SALVAR AVISO</button>
+            <hr>
+            <h3>📦 Adicionar Produto</h3>
+            <input type="text" id="p-name" placeholder="Nome">
+            <input type="number" id="p-price" placeholder="Preço">
+            <input type="text" id="p-img" placeholder="URL Imagem">
             <select id="p-cat-select"></select>
-            <button class="btn btn-buy" style="background:var(--primary); color:black" onclick="saveProduct()">CADASTRAR</button>
-            
-            <hr style="opacity:0.1; margin:20px 0">
+            <button class="btn btn-buy" onclick="saveProduct()">POSTAR</button>
+            <hr>
             <input type="text" id="new-cat" placeholder="Nova Categoria">
-            <button class="btn btn-buy" style="background:#444" onclick="addCategory()">CRIAR CATEGORIA</button>
+            <button class="btn btn-buy" style="background:gray" onclick="addCategory()">CRIAR CATEGORIA</button>
         </div>
 
         <div class="admin-card">
             <div style="display:flex; gap:10px; margin-bottom:20px">
-                <button class="btn" id="btn-tab-tickets" style="background:var(--secondary)" onclick="toggleAdminTab('tickets')">Tickets</button>
-                <button class="btn" id="btn-tab-manage" style="background:#333" onclick="toggleAdminTab('manage')">Gerenciar Tudo</button>
+                <button class="btn" id="btn-tk" style="background:var(--secondary)" onclick="toggleTab('tickets')">TICKETS</button>
+                <button class="btn" id="btn-ge" style="background:#333" onclick="toggleTab('manage')">EDITAR PRODUTOS/CAT</button>
             </div>
-
-            <div id="tab-tickets">
-                <div id="adm-tickets-list"></div>
-            </div>
-
-            <div id="tab-manage" style="display:none">
-                <div id="adm-manage-prods"></div>
-                <hr style="opacity:0.1; margin:20px 0">
-                <div id="adm-manage-cats"></div>
-            </div>
+            <div id="tab-tickets"></div>
+            <div id="tab-manage" style="display:none"></div>
         </div>
     </div>
 </div>
@@ -124,13 +113,13 @@
 <div id="cart-modal" class="modal">
     <div class="modal-content">
         <h3>🛒 Meu Carrinho</h3>
-        <div id="cart-list" style="margin: 20px 0"></div>
-        <h4 id="cart-total-text">Total: R$ 0.00</h4>
+        <div id="cart-list"></div>
+        <h4 id="cart-total-text"></h4>
         <div id="checkout-area">
             <input type="text" id="cust-name" placeholder="Seu Nick">
             <button class="btn btn-buy" onclick="checkout()">FINALIZAR COMPRA</button>
         </div>
-        <button class="btn" style="background:transparent; color:gray; width:100%" onclick="closeModal('cart-modal')">Voltar</button>
+        <button class="btn" style="background:transparent; color:gray; width:100%" onclick="closeModal('cart-modal')">Cancelar</button>
     </div>
 </div>
 
@@ -143,12 +132,11 @@
 </div>
 
 <script>
-    // Iniciar Galaxy
+    // Galaxy Background
     const galaxy = document.getElementById('galaxy-container');
-    for(let i=0; i<150; i++) {
-        let star = document.createElement('div');
-        star.className = 'star';
-        star.style.width = Math.random()*2.5+'px'; star.style.height = star.style.width;
+    for(let i=0; i<100; i++) {
+        let star = document.createElement('div'); star.className = 'star';
+        star.style.width = Math.random()*3+'px'; star.style.height = star.style.width;
         star.style.top = Math.random()*100+'%'; star.style.left = Math.random()*100+'%';
         galaxy.appendChild(star);
     }
@@ -164,73 +152,87 @@
     const db = firebase.database();
 
     let cart = [];
-    let myId = localStorage.getItem('qs_id') || 'u' + Math.floor(Math.random() * 9999);
+    let hasTicket = false;
+    let myId = localStorage.getItem('qs_id') || 'u' + Date.now();
     localStorage.setItem('qs_id', myId);
 
     function closeModal(id){ document.getElementById(id).style.display='none'; }
 
-    // SINCRO REALTIME
+    // DATA SYNC
     db.ref('/').on('value', snap => {
         const data = snap.val() || {};
-        if(data.aviso) document.getElementById('news-bar').innerText = data.aviso;
+        
+        // 1. Atualizar Aviso
+        document.getElementById('news-bar').innerText = data.aviso || "BEM-VINDO À QUEBREI O SISTEMA";
+
+        // 2. Trava de Ticket
+        hasTicket = false;
+        if(data.tickets) {
+            for(let id in data.tickets) { if(data.tickets[id].clienteId === myId) hasTicket = true; }
+        }
+
+        // 3. Renderizar Loja
         renderShop(data.categorias, data.produtos);
         renderReviews(data.avaliacoes);
+        
+        // 4. Renderizar Admin
         renderAdmin(data.categorias, data.tickets, data.produtos);
+        
+        // 5. Renderizar Tickets do Usuário
         renderUserTickets(data.tickets);
     });
 
     function renderShop(cats, prods) {
         const cont = document.getElementById('shop-content');
         cont.innerHTML = "";
+        if(!cats) { cont.innerHTML = "Nenhuma categoria cadastrada."; return; }
+        
         for(let id in cats) {
             let html = `<h2 class="cat-title">${cats[id].name}</h2><div class="grid">`;
+            let hasProd = false;
             for(let p in prods) {
                 if(prods[p].cat === cats[id].name) {
-                    html += `<div class="card" data-aos="zoom-in">
+                    hasProd = true;
+                    html += `<div class="card">
                         <img src="${prods[p].img || 'https://via.placeholder.com/150'}" class="prod-img">
                         <h4>${prods[p].name}</h4>
-                        <div style="color:var(--primary); font-size:1.1rem; font-weight:bold; margin-bottom:10px">R$ ${parseFloat(prods[p].price).toFixed(2)}</div>
+                        <div style="color:var(--primary); font-weight:bold; margin-bottom:10px">R$ ${parseFloat(prods[p].price).toFixed(2)}</div>
                         <button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button>
                     </div>`;
                 }
             }
+            if(!hasProd) html += `<p style="opacity:0.5; padding:20px">Nenhum produto aqui.</p>`;
             cont.innerHTML += html + `</div>`;
         }
     }
 
-    function renderReviews(revs) {
-        const cont = document.getElementById('reviews-content');
-        cont.innerHTML = "";
-        for(let id in revs) {
-            cont.innerHTML += `<div class="card" style="border-color:rgba(255,215,0,0.2)">
-                <p>"${revs[id].txt}"</p><b style="color:gold">- ${revs[id].name}</b>
-            </div>`;
-        }
-    }
-
     function addToCart(n, p) {
-        cart.push({name:n, price:parseFloat(p)});
+        cart.push({name:n, price:p});
         document.getElementById('cart-count').innerText = cart.length;
     }
 
     function openCart() {
         const total = cart.reduce((a,b)=>a+b.price, 0);
-        document.getElementById('cart-list').innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #222"><span>📦 ${i.name}</span> <b>R$ ${i.price}</b></div>`).join('');
+        document.getElementById('cart-list').innerHTML = cart.map(i => `<div style="padding:10px; border-bottom:1px solid #222">${i.name} - R$ ${i.price}</div>`).join('');
         document.getElementById('cart-total-text').innerText = "Total: R$ " + total.toFixed(2);
+        
+        const area = document.getElementById('checkout-area');
+        if(hasTicket) {
+            area.innerHTML = `<p style="color:red; font-weight:bold">VOCÊ JÁ TEM UM TICKET ABERTO. TERMINE-O PRIMEIRO.</p>`;
+        } else {
+            area.innerHTML = `<input type="text" id="cust-name" placeholder="Seu Nick"> <button class="btn btn-buy" onclick="checkout()">FINALIZAR COMPRA</button>`;
+        }
         document.getElementById('cart-modal').style.display='flex';
     }
 
     function checkout() {
         const nick = document.getElementById('cust-name').value;
-        if(!nick) return alert("Nick?");
+        if(!nick) return alert("Digite seu Nick!");
         const total = cart.reduce((a,b)=>a+b.price, 0);
-        const tId = 'T' + Date.now();
-        db.ref('tickets/' + tId).set({ clienteId: myId, clienteNick: nick, itens: cart.map(i=>i.name).join(', '), total: total.toFixed(2) });
+        db.ref('tickets').push({ clienteId: myId, clienteNick: nick, itens: cart.map(i=>i.name).join(', '), total: total.toFixed(2) });
         cart = []; document.getElementById('cart-count').innerText = "0";
-        closeModal('cart-modal'); openMyTickets();
+        closeModal('cart-modal');
     }
-
-    function openMyTickets() { document.getElementById('tickets-modal').style.display = 'flex'; }
 
     function renderUserTickets(tickets) {
         const cont = document.getElementById('user-tickets-list');
@@ -238,80 +240,85 @@
         for(let id in tickets) {
             if(tickets[id].clienteId === myId) {
                 cont.innerHTML += `<div class="admin-card">
-                    <b>TOTAL: R$ ${tickets[id].total}</b>
+                    <b>Status: Aguardando Staff</b><br>
                     <div class="chat-area">${renderMsgs(tickets[id].chat)}</div>
-                    <div style="display:flex; gap:5px"><input type="text" id="in-${id}" placeholder="Mensagem..."><button class="btn" style="background:var(--primary); color:black" onclick="sendChat('${id}', 'user')">ENVIAR</button></div>
+                    <div style="display:flex; gap:5px"><input type="text" id="in-${id}"><button class="btn" style="background:var(--primary); color:#000" onclick="sendChat('${id}', 'user')">ENVIAR</button></div>
                 </div>`;
             }
         }
     }
 
-    // --- ADMIN ---
+    // ADMIN
     function renderAdmin(cats, tickets, prods) {
-        // Categorias no Select
         const sel = document.getElementById('p-cat-select'); sel.innerHTML = "";
         for(let id in cats) sel.innerHTML += `<option value="${cats[id].name}">${cats[id].name}</option>`;
 
-        // Tickets
-        const tktList = document.getElementById('adm-tickets-list');
-        tktList.innerHTML = "<h3>Tickets Ativos</h3>";
+        const tktCont = document.getElementById('tab-tickets');
+        tktCont.innerHTML = "";
         for(let id in tickets) {
-            tktList.innerHTML += `<div class="admin-card" style="border-left: 5px solid var(--secondary)">
-                <b>${tickets[id].clienteNick} (R$ ${tickets[id].total})</b><br><small>${tickets[id].itens}</small>
+            tktCont.innerHTML += `<div class="admin-card">
+                <b>${tickets[id].clienteNick} - R$ ${tickets[id].total}</b>
                 <div class="chat-area">${renderMsgs(tickets[id].chat)}</div>
-                <div style="display:flex; gap:5px"><input type="text" id="in-${id}" placeholder="Resposta..."><button class="btn" style="background:var(--secondary); color:white" onclick="sendChat('${id}', 'admin')">ENVIAR</button></div>
-                <button class="btn" style="background:red; width:100%; margin-top:10px" onclick="db.ref('tickets/${id}').remove()">FECHAR PEDIDO</button>
+                <div style="display:flex; gap:5px"><input type="text" id="in-${id}"><button class="btn" style="background:var(--secondary)" onclick="sendChat('${id}', 'admin')">RESPONDER</button></div>
+                <button class="btn" style="background:red; width:100%; margin-top:10px" onclick="db.ref('tickets/${id}').remove()">FINALIZAR TICKET</button>
             </div>`;
         }
 
-        // Listagem de Edição de Produtos
-        const prodManage = document.getElementById('adm-manage-prods');
-        prodManage.innerHTML = "<h3>Produtos</h3>";
+        const manageCont = document.getElementById('tab-manage');
+        manageCont.innerHTML = "<h4>Produtos</h4>";
         for(let p in prods) {
-            prodManage.innerHTML += `
-                <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px">
-                    <div style="display:flex; justify-content:space-between; align-items:center">
-                        <span>${prods[p].name}</span>
-                        <div>
-                            <button class="btn" style="background:orange; padding:5px 10px" onclick="toggleEdit('${p}')">EDITAR</button>
-                            <button class="btn" style="background:red; padding:5px 10px" onclick="db.ref('produtos/${p}').remove()">X</button>
-                        </div>
+            manageCont.innerHTML += `<div style="background:#111; padding:10px; margin-bottom:5px; border-radius:8px">
+                <div style="display:flex; justify-content:space-between">
+                    <span>${prods[p].name}</span>
+                    <div>
+                        <button class="btn" style="background:orange; padding:5px" onclick="toggleEditPanel('${p}')">EDITAR</button>
+                        <button class="btn" style="background:red; padding:5px" onclick="db.ref('produtos/${p}').remove()">X</button>
                     </div>
-                    <div id="edit-${p}" class="edit-panel">
-                        <label>Novo Nome:</label><input type="text" id="en-${p}" value="${prods[p].name}">
-                        <label>Novo Preço:</label><input type="number" id="ep-${p}" value="${prods[p].price}">
-                        <button class="btn btn-buy" onclick="updateProd('${p}')">SALVAR</button>
-                    </div>
-                </div>`;
+                </div>
+                <div id="edit-box-${p}" class="edit-panel">
+                    <input type="text" id="en-${p}" value="${prods[p].name}">
+                    <input type="number" id="ep-${p}" value="${prods[p].price}">
+                    <button class="btn btn-buy" onclick="updateProd('${p}')">SALVAR</button>
+                </div>
+            </div>`;
         }
-
-        // Listagem de Categorias
-        const catManage = document.getElementById('adm-manage-cats');
-        catManage.innerHTML = "<h3>Categorias</h3>";
+        manageCont.innerHTML += "<h4 style='margin-top:20px'>Categorias</h4>";
         for(let c in cats) {
-            catManage.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333">
+            manageCont.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333">
                 <span>${cats[c].name}</span>
-                <button class="btn" style="background:red; padding:5px" onclick="db.ref('categorias/${c}').remove()">EXCLUIR</button>
+                <button class="btn" style="background:red; padding:5px" onclick="db.ref('categorias/${c}').remove()">X</button>
             </div>`;
         }
     }
 
-    function toggleEdit(id) {
-        const el = document.getElementById('edit-'+id);
+    function toggleEditPanel(id) {
+        const el = document.getElementById('edit-box-'+id);
         el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
     function updateProd(id) {
         const name = document.getElementById('en-'+id).value;
         const price = document.getElementById('ep-'+id).value;
-        db.ref('produtos/'+id).update({ name, price });
-        alert("Produto Atualizado!");
+        db.ref('produtos/'+id).update({name, price});
+        alert("Salvo!");
     }
 
     function saveAviso() {
-        const t = document.getElementById('adm-news-input').value;
-        if(t) db.ref('aviso').set(t);
-        alert("Aviso Global Atualizado!");
+        db.ref('aviso').set(document.getElementById('adm-news-input').value);
+        alert("Aviso salvo!");
+    }
+
+    function saveProduct() {
+        const name = document.getElementById('p-name').value;
+        const price = document.getElementById('p-price').value;
+        const img = document.getElementById('p-img').value;
+        const cat = document.getElementById('p-cat-select').value;
+        if(name && price) db.ref('produtos').push({name, price, img, cat});
+    }
+
+    function addCategory() {
+        const name = document.getElementById('new-cat').value;
+        if(name) db.ref('categorias').push({name});
     }
 
     function renderMsgs(chat) {
@@ -327,36 +334,34 @@
         }
     }
 
-    function toggleAdminTab(tab) {
+    function toggleTab(tab) {
         document.getElementById('tab-tickets').style.display = tab === 'tickets' ? 'block' : 'none';
         document.getElementById('tab-manage').style.display = tab === 'manage' ? 'block' : 'none';
-        document.getElementById('btn-tab-tickets').style.background = tab === 'tickets' ? 'var(--secondary)' : '#333';
-        document.getElementById('btn-tab-manage').style.background = tab === 'manage' ? 'var(--secondary)' : '#333';
+        document.getElementById('btn-tk').style.background = tab === 'tickets' ? 'var(--secondary)' : '#333';
+        document.getElementById('btn-ge').style.background = tab === 'manage' ? 'var(--secondary)' : '#333';
     }
 
     function checkAdmin() {
-        if(prompt("STAFF:") === "270712") {
-            document.getElementById('site-wrapper').classList.add('hidden');
+        if(prompt("SENHA:") === "270712") {
+            document.getElementById('site-wrapper').style.display = 'none';
             document.getElementById('admin-page').style.display = 'block';
         }
     }
     function exitAdmin() {
-        document.getElementById('site-wrapper').classList.remove('hidden');
+        document.getElementById('site-wrapper').style.display = 'block';
         document.getElementById('admin-page').style.display = 'none';
     }
-    function saveProduct() {
-        const name = document.getElementById('p-name').value;
-        const price = document.getElementById('p-price').value;
-        const img = document.getElementById('p-img').value;
-        const cat = document.getElementById('p-cat-select').value;
-        if(name && price) db.ref('produtos').push({name, price, img, cat});
-    }
-    function addCategory() {
-        const name = document.getElementById('new-cat').value;
-        if(name) db.ref('categorias').push({name});
-    }
 
-    AOS.init();
+    function renderReviews(revs) {
+        const cont = document.getElementById('reviews-content');
+        cont.innerHTML = "";
+        for(let id in revs) {
+            cont.innerHTML += `<div class="card">
+                <p>"${revs[id].txt}"</p>
+                <b style="color:gold">- ${revs[id].name}</b>
+            </div>`;
+        }
+    }
 </script>
 </body>
 </html>
