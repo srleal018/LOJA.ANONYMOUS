@@ -6,7 +6,7 @@
     <title>Roblox RP Store - Armas & Dinheiro</title>
     <style>
         :root {
-            --primary: #00ff88; /* Verde neon para combinar com dinheiro */
+            --primary: #00ff88;
             --secondary: #bd00ff;
             --bg: #121212;
             --card-bg: #1e1e1e;
@@ -34,7 +34,7 @@
             z-index: 100;
         }
 
-        h1 { margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        h1 { margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); font-size: 1.5rem; }
 
         .cart-btn {
             background: var(--secondary);
@@ -51,7 +51,6 @@
         /* Layout */
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-        /* Categorias */
         .category-title {
             border-left: 5px solid var(--primary);
             padding-left: 15px;
@@ -59,7 +58,7 @@
             text-transform: uppercase;
         }
 
-        /* Produtos Grid */
+        /* Grid de Produtos */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -87,14 +86,13 @@
         .product-img {
             width: 100%;
             height: 150px;
-            object-fit: contain; /* Para não cortar as armas */
+            object-fit: contain;
             border-radius: 5px;
             background: #252525;
             padding: 10px;
             box-sizing: border-box;
         }
 
-        .product-info h3 { font-size: 1.1em; margin: 10px 0 5px 0; }
         .price { color: var(--primary); font-size: 1.3em; font-weight: bold; margin: 5px 0; }
         .stock { font-size: 0.8em; color: #888; }
 
@@ -112,9 +110,6 @@
         }
         button.buy-btn:hover { background: var(--primary); color: #000; }
 
-        /* Avaliações */
-        .stars { color: gold; font-size: 0.9em; }
-
         /* Admin Panel */
         #admin-panel {
             display: none; 
@@ -125,7 +120,7 @@
             border-radius: 10px;
         }
 
-        input, textarea {
+        input {
             width: 95%;
             padding: 10px;
             margin: 5px 0;
@@ -153,6 +148,7 @@
             border-radius: 10px;
             border: 1px solid var(--secondary);
             box-shadow: 0 0 30px rgba(189, 0, 255, 0.2);
+            text-align: center;
         }
 
         /* Footer */
@@ -165,133 +161,121 @@
             background: #0a0a0a;
         }
         .admin-link { color: #333; cursor: pointer; text-decoration: none; }
-        .admin-link:hover { color: #555; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>⚔️ Loja RP BlackMarket</h1>
+    <h1>⚔️ BlackMarket RP</h1>
     <button class="cart-btn" onclick="toggleCart()">🛒 Carrinho (<span id="cart-count">0</span>)</button>
 </header>
 
 <div class="container">
+    <div style="background: #333; color: #fff; padding: 10px; border-radius: 5px; font-size: 0.8em; margin-bottom: 20px; text-align: center;">
+        ℹ️ Dica: Se as imagens não aparecerem, certifique-se de que os arquivos (glock.png, ak.png, etc.) estão na mesma pasta que este arquivo HTML.
+    </div>
 
     <div id="admin-panel">
-        <h2 style="color: var(--secondary);">🛠️ Painel Admin (Logado: srleal018@gmail.com)</h2>
-        <input type="text" id="new-name" placeholder="Nome do Item (ex: Colete Nível 4)">
+        <h2 style="color: var(--secondary);">🛠️ Painel Admin</h2>
+        <input type="text" id="new-name" placeholder="Nome do Item">
         <input type="number" id="new-price" placeholder="Preço (R$)">
-        <input type="number" id="new-stock" placeholder="Quantidade em Estoque">
-        <input type="text" id="new-img" placeholder="Nome do arquivo da imagem (ex: item.png)">
+        <input type="number" id="new-stock" placeholder="Estoque">
+        <input type="text" id="new-img" placeholder="Nome da imagem (ex: c4.png)">
         <button onclick="addProduct()" class="buy-btn" style="background: var(--secondary); color: white; border: none;">Adicionar Produto</button>
     </div>
 
-    <h2 class="category-title">🔫 Armamento Pesado & Equipamentos</h2>
-    <div class="products-grid" id="products-weapons">
-        </div>
+    <h2 class="category-title">🔫 Arsenal</h2>
+    <div class="products-grid" id="products-weapons"></div>
 
-    <h2 class="category-title">💰 Dinheiro & Pacotes</h2>
-    <div class="products-grid" id="products-money">
-        </div>
+    <h2 class="category-title">💰 Dinheiro Sujo</h2>
+    <div class="products-grid" id="products-money"></div>
 </div>
 
 <div id="cart-modal" class="modal">
     <div class="modal-content">
-        <h2 style="border-bottom: 1px solid #333; padding-bottom: 10px;">Seu Carrinho</h2>
-        <div id="cart-items" style="max-height: 300px; overflow-y: auto;"></div>
-        <hr style="border-color: #333;">
-        <h3>Total: R$ <span id="cart-total">0.00</span></h3>
+        <h2 style="border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0;">Seu Carrinho</h2>
+        <div id="cart-items" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
         
-        <div id="pix-area" style="display:none; text-align: center; background: white; padding: 15px; border-radius: 5px; color: black;">
-            <p style="font-weight:bold; font-size: 1.2em; margin-top:0;">Pagamento via PIX</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PagamentoLojaRP" alt="QR Pix" style="border: 2px solid #000;">
-            <p style="font-size: 0.9em; margin: 10px 0;">Chave: <strong>srleal018@gmail.com</strong></p>
-            <p style="font-size: 0.8em; color: red;">Envie o comprovante no Discord!</p>
-            <button onclick="finishOrder()" style="background: green; color: white; padding: 12px; width: 100%; border:none; margin-top:5px; cursor:pointer; font-weight: bold; border-radius: 5px;">✅ Confirmar Pagamento</button>
+        <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 15px;">
+            Total: R$ <span id="cart-total" style="color: var(--primary);">0.00</span>
+        </div>
+        
+        <div id="pix-area" style="display:none; background: white; padding: 15px; border-radius: 5px; color: black;">
+            <p style="font-weight:bold; margin: 0;">Pagamento via PIX</p>
+            
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=9c176ab9-a6d6-4311-a0ea-21dd7481227f" alt="QR Pix" style="border: 2px solid #000; margin: 10px 0;">
+            
+            <p style="font-size: 0.8em; margin: 5px 0;">Chave Aleatória:</p>
+            <input type="text" value="9c176ab9-a6d6-4311-a0ea-21dd7481227f" readonly style="width: 100%; text-align: center; font-weight: bold; background: #eee; color: #000; border: none; padding: 5px;">
+            
+            <p style="font-size: 0.7em; color: red; margin-top: 10px;">⚠️ Envie o comprovante no Discord!</p>
+            <button onclick="finishOrder()" style="background: green; color: white; padding: 10px; width: 100%; border:none; margin-top:5px; cursor:pointer; font-weight: bold; border-radius: 5px;">✅ Já paguei</button>
         </div>
 
         <button id="btn-checkout" class="buy-btn" style="background: var(--secondary); color: white; border:none;" onclick="showPix()">Finalizar Compra</button>
-        <button class="buy-btn" style="background: #333; color: white; border:none; margin-top: 10px;" onclick="toggleCart()">Fechar</button>
+        <button class="buy-btn" style="background: #333; color: white; border:none; margin-top: 10px;" onclick="toggleCart()">Continuar Comprando</button>
     </div>
 </div>
 
 <footer>
-    <p>&copy; 2024 BlackMarket RP. Entrega imediata na cidade.</p>
+    <p>&copy; 2024 BlackMarket RP.</p>
     <span class="admin-link" onclick="adminLogin()">Area Restrita</span>
 </footer>
 
 <script>
-    // --- BANCO DE DADOS (SIMULADO) ---
-    // Aqui estão os produtos baseados nas suas imagens e pedidos.
-    
+    // --- DADOS ---
     const initialProducts = [
-        // ARMAS (Preços até R$ 5,00)
-        { id: 1, type: 'weapon', name: "Glock G18", price: 2.50, stock: 50, image: "glock.png", reviews: 5 },
-        { id: 2, type: 'weapon', name: "AK-47 Tática", price: 4.50, stock: 15, image: "ak.png", reviews: 5 },
-        { id: 3, type: 'weapon', name: "Fuzil Parafal", price: 4.00, stock: 10, image: "fall.png", reviews: 4 },
-        { id: 4, type: 'weapon', name: "Rifle M4A1", price: 5.00, stock: 8, image: "arma.png", reviews: 5 },
-        { id: 5, type: 'weapon', name: "Explosivo C4", price: 3.50, stock: 5, image: "c4.png", reviews: 5 },
-        { id: 6, type: 'weapon', name: "Furadeira de Cofre", price: 2.00, stock: 20, image: "furadeira.png", reviews: 4 },
-        { id: 7, type: 'weapon', name: "Pack Munição (x100)", price: 1.00, stock: 100, image: "muni.png", reviews: 5 },
+        // ARMAS
+        { id: 1, type: 'weapon', name: "Glock G18", price: 2.50, stock: 50, image: "glock.png" },
+        { id: 2, type: 'weapon', name: "AK-47 Tática", price: 4.50, stock: 15, image: "ak.png" },
+        { id: 3, type: 'weapon', name: "Fuzil Parafal", price: 4.00, stock: 10, image: "fall.png" },
+        { id: 4, type: 'weapon', name: "Rifle M4A1", price: 5.00, stock: 8, image: "arma.png" },
+        { id: 5, type: 'weapon', name: "Explosivo C4", price: 3.50, stock: 5, image: "c4.png" },
+        { id: 6, type: 'weapon', name: "Furadeira Cofre", price: 2.00, stock: 20, image: "furadeira.png" },
+        { id: 7, type: 'weapon', name: "Munição (x100)", price: 1.00, stock: 100, image: "muni.png" },
 
-        // DINHEIRO (Preços variados)
-        // Usando uma imagem genérica de dinheiro já que você pediu para adicionar "uns dinheiros"
-        { id: 8, type: 'money', name: "Maleta de 100k", price: 3.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png", reviews: 5 },
-        { id: 9, type: 'money', name: "Maleta de 500k", price: 10.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/3135/3135706.png", reviews: 5 },
-        { id: 10, type: 'money', name: "Pack 1 Milhão (Sujo)", price: 15.00, stock: 10, image: "https://cdn-icons-png.flaticon.com/512/2488/2488749.png", reviews: 5 }
+        // DINHEIRO (Usando ícones online para estes, mas pode baixar tb)
+        { id: 8, type: 'money', name: "Maleta 100k", price: 3.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/2489/2489756.png" },
+        { id: 9, type: 'money', name: "Maleta 500k", price: 10.00, stock: 99, image: "https://cdn-icons-png.flaticon.com/512/3135/3135706.png" },
+        { id: 10, type: 'money', name: "1 Milhão Sujo", price: 15.00, stock: 10, image: "https://cdn-icons-png.flaticon.com/512/2488/2488749.png" }
     ];
 
-    // Carregar do localStorage ou usar inicial
-    let products = JSON.parse(localStorage.getItem('rp_store_products')) || initialProducts;
+    let products = JSON.parse(localStorage.getItem('rp_store_v2')) || initialProducts;
     let cart = [];
 
-    // --- FUNÇÕES ---
-
     function renderProducts() {
-        const weaponsContainer = document.getElementById('products-weapons');
-        const moneyContainer = document.getElementById('products-money');
+        const wContainer = document.getElementById('products-weapons');
+        const mContainer = document.getElementById('products-money');
+        wContainer.innerHTML = ''; mContainer.innerHTML = '';
         
-        weaponsContainer.innerHTML = '';
-        moneyContainer.innerHTML = '';
-        
-        products.forEach(product => {
-            const stars = "★".repeat(product.reviews) + "☆".repeat(5 - product.reviews);
+        products.forEach(p => {
+            // Se a imagem falhar, mostra um aviso
+            const imgHtml = `<img src="${p.image}" class="product-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Img'">`;
+            
             const html = `
                 <div class="product-card">
-                    <img src="${product.image}" class="product-img" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200?text=Sem+Imagem'">
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <div class="stars">${stars}</div>
-                        <p class="stock">Restam: ${product.stock}</p>
-                        <p class="price">R$ ${product.price.toFixed(2)}</p>
-                        <button class="buy-btn" onclick="addToCart(${product.id})">COMPRAR</button>
+                    ${imgHtml}
+                    <div style="padding: 10px;">
+                        <h3 style="margin:5px 0; font-size:1em;">${p.name}</h3>
+                        <p class="stock" style="margin:0;">Restam: ${p.stock}</p>
+                        <p class="price">R$ ${p.price.toFixed(2)}</p>
+                        <button class="buy-btn" onclick="addToCart(${p.id})">COMPRAR</button>
                     </div>
                 </div>
             `;
-
-            if(product.type === 'money') {
-                moneyContainer.innerHTML += html;
-            } else {
-                weaponsContainer.innerHTML += html;
-            }
+            if(p.type === 'money') mContainer.innerHTML += html;
+            else wContainer.innerHTML += html;
         });
     }
 
-    // Login Admin
     function adminLogin() {
-        const email = prompt("✉️ Email de Administrador:");
-        if (email && email.toLowerCase() === "srleal018@gmail.com") {
-            const pass = prompt("🔑 Senha de segurança (crie uma na sua mente, aperte enter para teste):");
-            // Em sistema real, validaria a senha. Aqui só libera.
+        const email = prompt("Email Admin:");
+        if (email === "srleal018@gmail.com") {
             document.getElementById('admin-panel').style.display = 'block';
-            alert("Acesso Admin Liberado!");
             window.scrollTo(0, 0);
-        } else {
-            alert("❌ Acesso Negado: Email não autorizado.");
-        }
+        } else { alert("Não autorizado."); }
     }
 
-    // Adicionar novo produto
     function addProduct() {
         const name = document.getElementById('new-name').value;
         const price = parseFloat(document.getElementById('new-price').value);
@@ -299,104 +283,63 @@
         const img = document.getElementById('new-img').value;
 
         if(name && price) {
-            const newProduct = {
+            products.push({
                 id: Date.now(),
-                type: name.toLowerCase().includes('dinheiro') ? 'money' : 'weapon',
-                name: name,
-                price: price,
-                stock: stock || 1,
-                image: img || "https://via.placeholder.com/200",
-                reviews: 5
-            };
-            
-            products.push(newProduct);
-            localStorage.setItem('rp_store_products', JSON.stringify(products));
+                type: name.toLowerCase().includes('dinheiro') || name.toLowerCase().includes('maleta') ? 'money' : 'weapon',
+                name, price, stock: stock || 1, image: img || "https://via.placeholder.com/150"
+            });
+            localStorage.setItem('rp_store_v2', JSON.stringify(products));
             renderProducts();
-            alert("✅ Produto adicionado com sucesso!");
-            
-            // Limpar
-            document.getElementById('new-name').value = '';
-            document.getElementById('new-price').value = '';
-        } else {
-            alert("Preencha pelo menos Nome e Preço!");
+            alert("Salvo!");
         }
     }
 
-    // Carrinho
     function addToCart(id) {
-        const product = products.find(p => p.id === id);
-        if(product && product.stock > 0) {
-            cart.push(product);
-            updateCartUI();
-            
-            // Pequena animação no botão do carrinho
-            const btn = document.querySelector('.cart-btn');
-            btn.style.transform = "scale(1.1)";
-            setTimeout(() => btn.style.transform = "scale(1)", 200);
-        } else {
-            alert("Produto esgotado!");
-        }
+        const p = products.find(x => x.id === id);
+        if(p && p.stock > 0) {
+            cart.push(p);
+            updateCart();
+        } else { alert("Esgotado!"); }
     }
 
-    function updateCartUI() {
+    function updateCart() {
         document.getElementById('cart-count').innerText = cart.length;
-        const cartItemsDiv = document.getElementById('cart-items');
+        const div = document.getElementById('cart-items');
         let total = 0;
-        
-        if(cart.length === 0) {
-            cartItemsDiv.innerHTML = "<p style='text-align:center; color:#666;'>Carrinho vazio...</p>";
-        } else {
-            cartItemsDiv.innerHTML = cart.map((item, index) => {
-                total += item.price;
-                return `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:#111; padding:10px; border-radius:5px;">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="${item.image}" style="width:30px; height:30px; object-fit:cover;">
-                        <span>${item.name}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="color:var(--primary);">R$ ${item.price.toFixed(2)}</span>
-                        <button onclick="removeFromCart(${index})" style="background:red; color:white; border:none; border-radius:3px; cursor:pointer;">X</button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-        
+        div.innerHTML = cart.map((item, i) => {
+            total += item.price;
+            return `<div style="display:flex; justify-content:space-between; margin-bottom:5px; border-bottom:1px solid #333; padding-bottom:5px;">
+                <span>${item.name}</span> <span style="color:var(--primary);cursor:pointer;" onclick="remItem(${i})">❌</span>
+            </div>`;
+        }).join('');
         document.getElementById('cart-total').innerText = total.toFixed(2);
     }
 
-    function removeFromCart(index) {
-        cart.splice(index, 1);
-        updateCartUI();
+    function remItem(i) {
+        cart.splice(i, 1);
+        updateCart();
     }
 
     function toggleCart() {
-        const modal = document.getElementById('cart-modal');
-        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        // Resetar visualização do PIX
+        const m = document.getElementById('cart-modal');
+        m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
         document.getElementById('pix-area').style.display = 'none';
         document.getElementById('btn-checkout').style.display = 'block';
     }
 
     function showPix() {
-        if(cart.length === 0) {
-            alert("Adicione itens ao carrinho primeiro!");
-            return;
+        if(cart.length > 0) {
+            document.getElementById('pix-area').style.display = 'block';
+            document.getElementById('btn-checkout').style.display = 'none';
         }
-        document.getElementById('pix-area').style.display = 'block';
-        document.getElementById('btn-checkout').style.display = 'none';
     }
 
     function finishOrder() {
-        alert("🎉 Pedido Confirmado!\n\nEnvie o comprovante para o ADM.\nEntrega no jogo em breve.");
-        cart = [];
-        updateCartUI();
-        toggleCart();
+        alert("Pedido enviado para o ADM! Aguarde a entrega.");
+        cart = []; updateCart(); toggleCart();
     }
 
-    // Inicialização
     renderProducts();
-
 </script>
 
 </body>
