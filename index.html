@@ -3,93 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FiveM Store | Galactic Edition</title>
+    <title>QUEBREI O SISTEMA | Oficial</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <style>
-        :root { --primary: #00ff88; --secondary: #007bff; --bg: #050505; }
+        :root { --primary: #00ff88; --secondary: #007bff; --bg: #02010a; --glass: rgba(255, 255, 255, 0.05); }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: 0.3s; }
 
         body { 
-            background: radial-gradient(circle at center, #110a1f 0%, #050505 100%) fixed;
+            font-family: 'Segoe UI', sans-serif; 
+            background: radial-gradient(circle at center, #1a0b2e 0%, #02010a 100%) fixed;
             color: white; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* FUNDO DE ESTRELAS */
+        /* ESTRELAS ANIMADAS */
         .stars {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.3; z-index: -1; animation: move 120s linear infinite;
+            opacity: 0.3; z-index: -1; animation: moveStars 100s linear infinite;
         }
-        @keyframes move { from {background-position: 0 0;} to {background-position: 1000px 1000px;} }
+        @keyframes moveStars { from {background-position: 0 0;} to {background-position: 1000px 1000px;} }
 
-        /* HEADER ESTILO FIVEM STORE (IGUAL IMAGEM) */
+        /* HEADER */
         header {
-            background: #000; padding: 20px 8%;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+            padding: 15px 5%; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        .brand { font-size: 1.4rem; letter-spacing: 1px; font-weight: 300; }
-        .brand b { font-weight: 700; color: #fff; }
+        .logo { font-weight: 900; letter-spacing: 2px; font-size: 1.2rem; }
+        .logo span { color: var(--secondary); text-shadow: 0 0 15px var(--secondary); }
 
-        .nav-menu { display: flex; gap: 30px; align-items: center; }
-        .nav-menu a { 
-            color: #999; text-decoration: none; font-size: 0.85rem; 
-            text-transform: uppercase; font-weight: bold; cursor: pointer;
-        }
-        .nav-menu a:hover, .nav-menu a.active { color: #fff; }
-        .search-icon { color: #fff; font-size: 1.1rem; cursor: pointer; margin-left: 10px; }
+        nav { display: flex; gap: 20px; }
+        nav a { color: #888; text-decoration: none; font-weight: bold; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; }
+        nav a:hover, nav a.active { color: var(--primary); }
 
-        /* BANNER DISCORD */
-        .discord-banner {
-            background: #5865F2; margin: 20px 8%; padding: 25px;
-            border-radius: 5px; display: flex; align-items: center; gap: 20px;
-        }
-        .discord-banner i { font-size: 2.5rem; }
-        .discord-info h3 { font-size: 1.5rem; }
+        /* CONTAINER */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
 
-        /* GRID DE PRODUTOS */
-        .container { padding: 40px 8%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
-        
-        /* CARD SEM IMAGEM (ESTILO CAIXA) */
+        /* CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
         .card { 
-            background: rgba(255,255,255,0.03); border: 1px solid #222;
-            padding: 20px; border-radius: 8px; text-align: center;
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px; padding: 25px; text-align: center; backdrop-filter: blur(5px);
         }
-        .card:hover { border-color: var(--secondary); background: rgba(255,255,255,0.05); }
-        .card img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 15px; }
-        .product-box { 
-            height: 160px; background: rgba(0,0,0,0.3); border: 1px dashed #444;
-            display: flex; align-items: center; justify-content: center; 
-            margin-bottom: 15px; border-radius: 5px; font-size: 3rem; opacity: 0.5;
-        }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1); }
+        .card img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; }
+        .no-img-box { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 4rem; opacity: 0.3; }
 
-        /* LOGIN BUTTON */
-        .btn-login {
-            background: #db4437; color: white; border: none; padding: 10px 20px;
-            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.8rem;
+        /* BUTTONS */
+        .btn { 
+            padding: 12px 25px; border-radius: 8px; border: none; font-weight: bold; 
+            cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 8px;
         }
+        .btn-buy { background: var(--secondary); width: 100%; justify-content: center; }
+        .btn-google { background: #db4437; font-size: 0.8rem; }
 
         /* CHAT / FORUM */
-        .forum-container { background: #0a0a0a; border: 1px solid #222; border-radius: 8px; height: 400px; display: flex; flex-direction: column; }
-        .msg-list { flex: 1; padding: 20px; overflow-y: auto; }
-        .msg-input { display: flex; padding: 15px; background: #000; border-top: 1px solid #222; gap: 10px; }
-        input { flex: 1; background: #111; border: 1px solid #333; color: white; padding: 10px; border-radius: 4px; outline: none; }
+        .chat-box { 
+            background: rgba(0,0,0,0.6); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
+            height: 500px; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 10px; max-width: 70%; font-size: 0.9rem; line-height: 1.4; }
+        .msg.me { background: var(--secondary); align-self: flex-end; }
+        .msg.others { background: #333; align-self: flex-start; }
+        .chat-input { padding: 20px; background: rgba(0,0,0,0.4); display: flex; gap: 10px; }
+        input { flex: 1; background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; outline: none; }
 
-        #notif { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
-        .toast { background: var(--secondary); padding: 15px 25px; border-radius: 5px; margin-top: 10px; animation: slide 0.3s forwards; }
-        @keyframes slide { from {transform: translateX(100%);} to {transform: translateX(0);} }
-        
+        /* NOTIFICAÇÃO */
+        #notif { position: fixed; top: 20px; left: 20px; z-index: 9999; }
+        .toast { background: #111; color: var(--primary); border-left: 5px solid var(--primary); padding: 15px 25px; border-radius: 5px; margin-bottom: 10px; animation: slideIn 0.4s forwards; }
+        @keyframes slideIn { from {transform: translateX(-120%);} to {transform: translateX(0);} }
+
+        /* SEÇÕES */
         section { display: none; }
-        section.active { display: block; }
+        section.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
     </style>
 </head>
 <body>
@@ -98,54 +96,64 @@
 <div id="notif"></div>
 
 <header>
-    <div class="brand">FIVEM <b>STORE</b></div>
-    <div class="nav-menu">
-        <a onclick="showTab('loja')" id="t-loja" class="active">Recepção</a>
-        <a onclick="showTab('forum')" id="t-forum">Comunidade</a>
-        <a onclick="showTab('suporte')" id="t-suporte">Suporte</a>
-        <div id="auth-ui">
-            <button class="btn-login" onclick="login()">LOGIN GMAIL</button>
-        </div>
-        <i class="fas fa-search search-icon"></i>
+    <div class="logo">QUEBREI O <span>SISTEMA</span></div>
+    <nav>
+        <a onclick="openTab('loja')" id="nav-loja" class="active">Produtos</a>
+        <a onclick="openTab('forum')" id="nav-forum">Fórum</a>
+        <a onclick="openTab('suporte')" id="nav-suporte">Suporte</a>
+    </nav>
+    <div id="auth-box">
+        <button class="btn btn-google" onclick="handleLogin()">
+            <i class="fab fa-google"></i> LOGIN GMAIL
+        </button>
     </div>
 </header>
 
-<div class="discord-banner">
-    <i class="fab fa-discord"></i>
-    <div class="discord-info">
-        <h3>Discord</h3>
-        <p>0 Members Online</p>
-    </div>
-</div>
-
 <div class="container">
     <section id="loja" class="active">
-        <div id="product-grid" class="grid"></div>
+        <div id="products-list" class="grid"></div>
     </section>
 
     <section id="forum">
-        <div class="forum-container">
-            <div id="forum-msgs" class="msg-list"></div>
-            <div class="msg-input">
-                <input type="text" id="forum-in" placeholder="Diga algo...">
-                <button onclick="sendChat()" class="btn-login" style="background:var(--secondary)">ENVIAR</button>
+        <div class="chat-box">
+            <div id="forum-msgs" class="messages"></div>
+            <div class="chat-input">
+                <input type="text" id="forum-in" placeholder="Diga algo para a comunidade...">
+                <button class="btn btn-buy" style="width:auto" onclick="sendForum()">ENVIAR</button>
             </div>
         </div>
     </section>
 
     <section id="suporte">
-        <div class="card" style="max-width: 500px; margin: auto;">
-            <h3>Suporte Técnico</h3>
-            <p style="color:#777; margin: 15px 0;">Abra um ticket para falar com a gerência.</p>
-            <button onclick="toast('Ticket aberto! Aguarde contato.')" class="btn-login" style="width:100%; background:var(--primary); color:#000">ABRIR TICKET</button>
+        <div id="ticket-container" class="chat-box">
+            <div id="ticket-msgs" class="messages">
+                <div style="text-align:center; padding:50px; opacity:0.5">
+                    <i class="fas fa-headset fa-3x"></i>
+                    <p style="margin-top:15px">Clique abaixo para iniciar um atendimento privado.</p>
+                </div>
+            </div>
+            <div class="chat-input" id="ticket-footer">
+                <button class="btn btn-buy" onclick="startTicket()">ABRIR TICKET AGORA</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="admin">
+        <div class="card" style="text-align:left; max-width:600px; margin: 0 auto">
+            <h3>Painel Administrativo</h3>
+            <input type="text" id="p-name" placeholder="Nome do Produto" style="margin: 10px 0">
+            <input type="number" id="p-price" placeholder="Preço (R$)" style="margin: 10px 0">
+            <input type="text" id="p-img" placeholder="Link da Imagem (Opcional)" style="margin: 10px 0">
+            <button class="btn btn-buy" onclick="addProduct()">CADASTRAR PRODUTO</button>
+            <button class="btn" style="background:red; margin-top:10px" onclick="location.reload()">SAIR</button>
         </div>
     </section>
 </div>
 
-<footer style="padding:40px; text-align:center; opacity:0.1; cursor:pointer" onclick="goAdmin()">ADMIN</footer>
+<footer style="padding:50px; text-align:center; opacity:0.1; cursor:pointer" onclick="accessAdmin()">ADMIN</footer>
 
 <script>
-    // --- CONFIGURAÇÃO FIREBASE ---
+    // 1. CONFIGURAÇÃO (Troque se necessário)
     const firebaseConfig = {
         apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8",
         authDomain: "quebrei-o-sistema.firebaseapp.com",
@@ -157,79 +165,85 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
-    let user = null;
+    let currentUser = null;
 
+    // 2. FUNÇÕES DE INTERFACE
     function toast(m) {
-        const t = document.createElement('div'); t.className='toast'; t.innerText=m;
+        const t = document.createElement('div'); t.className = 'toast'; t.innerText = m;
         document.getElementById('notif').appendChild(t);
         setTimeout(() => t.remove(), 3000);
     }
 
-    function showTab(id) {
+    function openTab(id) {
         document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.getElementById('t-'+id).classList.add('active');
+        document.getElementById('nav-'+id).classList.add('active');
     }
 
-    // --- LOGIN CORRIGIDO ---
-    function login() {
+    // 3. LOGIN
+    function handleLogin() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        // Usamos signInWithRedirect se o popup falhar, mas o Popup é melhor:
         auth.signInWithPopup(provider).then(res => {
-            user = res.user;
-            document.getElementById('auth-ui').innerHTML = `<img src="${user.photoURL}" style="width:30px; border-radius:50%; border:2px solid var(--primary)">`;
-            toast("Bem-vindo!");
-        }).catch(e => {
-            console.log(e);
-            alert("ERRO: Vá no Console Firebase > Authentication > Settings e adicione este domínio em 'Authorized Domains'");
-        });
+            currentUser = res.user;
+            document.getElementById('auth-box').innerHTML = `<img src="${res.user.photoURL}" style="width:35px; border-radius:50%; border:2px solid var(--primary)">`;
+            toast("Bem-vindo, " + res.user.displayName);
+        }).catch(() => toast("Erro no login. Ative o Google no Firebase!"));
     }
 
-    // --- CARREGAR PRODUTOS (ADAPTÁVEL) ---
+    // 4. LOJA (CARREGAR)
     db.ref('produtos').on('value', snap => {
-        const grid = document.getElementById('product-grid');
-        grid.innerHTML = "";
+        const list = document.getElementById('products-list');
+        list.innerHTML = "";
         snap.forEach(child => {
             const p = child.val();
-            grid.innerHTML += `
-                <div class="card">
-                    ${p.img ? `<img src="${p.img}">` : '<div class="product-box">📦</div>'}
-                    <h4 style="margin-bottom:10px">${p.name}</h4>
-                    <p style="color:var(--primary); font-weight:bold; margin-bottom:15px">R$ ${p.price}</p>
-                    <button class="btn-login" style="width:100%; background:var(--secondary)" onclick="toast('Adicionado!')">COMPRAR</button>
+            list.innerHTML += `
+                <div class="card" data-aos="fade-up">
+                    ${p.img ? `<img src="${p.img}">` : '<div class="no-img-box">📦</div>'}
+                    <h3>${p.name}</h3>
+                    <div style="color:var(--primary); font-weight:bold; margin: 10px 0">R$ ${p.price}</div>
+                    <button class="btn btn-buy" onclick="toast('Adicionado ao carrinho!')">COMPRAR</button>
                 </div>`;
         });
     });
 
-    // --- CHAT ---
-    function sendChat() {
-        if(!user) return toast("Faça login!");
+    // 5. FÓRUM
+    function sendForum() {
+        if(!currentUser) return toast("Faça login para falar!");
         const txt = document.getElementById('forum-in').value;
         if(txt) {
-            db.ref('forum').push({ name: user.displayName, text: txt });
+            db.ref('forum').push({ uid: currentUser.uid, name: currentUser.displayName, text: txt });
             document.getElementById('forum-in').value = "";
         }
     }
 
-    db.ref('forum').limitToLast(15).on('value', snap => {
+    db.ref('forum').limitToLast(20).on('value', snap => {
         const box = document.getElementById('forum-msgs');
         box.innerHTML = "";
         snap.forEach(child => {
             const m = child.val();
-            box.innerHTML += `<div style="margin-bottom:10px"><b>${m.name}:</b> ${m.text}</div>`;
+            const isMe = currentUser && m.uid === currentUser.uid;
+            box.innerHTML += `<div class="msg ${isMe ? 'me' : 'others'}"><b>${m.name}:</b><br>${m.text}</div>`;
         });
         box.scrollTop = box.scrollHeight;
     });
 
-    function goAdmin() {
-        if(prompt("Senha:") === "270712") {
-            const n = prompt("Nome produto:");
-            const p = prompt("Preço:");
-            const i = prompt("Link imagem (vazio p/ sem imagem):");
-            if(n) db.ref('produtos').push({name: n, price: p, img: i});
+    // 6. ADMIN
+    function accessAdmin() {
+        if(prompt("Chave Mestra:") === "270712") openTab('admin');
+    }
+
+    function addProduct() {
+        const name = document.getElementById('p-name').value;
+        const price = document.getElementById('p-price').value;
+        const img = document.getElementById('p-img').value;
+        if(name && price) {
+            db.ref('produtos').push({ name, price, img });
+            toast("Produto Cadastrado!");
         }
     }
+
+    AOS.init();
 </script>
 </body>
 </html>
