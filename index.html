@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP HUB - QUEBREI O SISTEMA</title>
+    <title>QUEBREI O SISTEMA # - VIP HUB</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -11,81 +11,110 @@
 
     <style>
         :root { 
-            --primary: #00ff88; /* Verde Neon Original */
-            --secondary: #5dade2; /* Azul Bebê (Alertas/Destaques) */
+            --primary: #00ff88; 
+            --secondary: #5dade2; 
             --bg: #050505; --card-bg: #111; --text: #ffffff;
-            --header-h: 60px; --news-h: 35px;
+            --header-h: 70px; --news-h: 35px;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
 
-        /* HEADER E NEWS FIXED */
+        /* HEADER E LOGO ROUBADO */
         #top-fixed { position: fixed; top: 0; width: 100%; z-index: 1000; }
         #news-bar { background: var(--primary); color: #000; height: var(--news-h); display: flex; align-items: center; overflow: hidden; font-weight: bold; font-size: 0.85rem; }
-        header { background: rgba(17, 17, 17, 0.95); height: var(--header-h); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-bottom: 2px solid var(--primary); backdrop-filter: blur(10px); }
+        
+        header { 
+            background: rgba(10, 10, 10, 0.98); 
+            height: var(--header-h); 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 15px; border-bottom: 2px solid var(--primary);
+            backdrop-filter: blur(15px);
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .logo-hash { 
+            font-size: 2rem; color: var(--primary); font-weight: 900; 
+            text-shadow: 0 0 10px var(--primary);
+            animation: glitch 2s infinite;
+        }
+        @keyframes glitch {
+            0% { transform: skew(0deg); opacity: 1; }
+            10% { transform: skew(10deg); color: #ff00ea; }
+            11% { transform: skew(-10deg); color: var(--primary); }
+            50% { opacity: 0.8; }
+            100% { transform: skew(0deg); }
+        }
+
         .marquee { display: inline-block; white-space: nowrap; animation: marquee 15s linear infinite; padding-left: 100%; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-150%); } }
 
-        .container { margin-top: calc(var(--header-h) + var(--news-h) + 20px); padding: 15px; max-width: 1200px; margin-left: auto; margin-right: auto; min-height: 80vh; }
+        /* CONTAINER */
+        .container { margin-top: calc(var(--header-h) + var(--news-h) + 20px); padding: 15px; max-width: 1200px; margin-left: auto; margin-right: auto; min-height: 70vh; }
         
-        /* GRID DE PRODUTOS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-        @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; } }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+        @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; } }
 
-        .card { background: var(--card-bg); border-radius: 12px; padding: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); border-bottom: 3px solid var(--primary); }
-        .prod-img { width: 100%; height: 130px; object-fit: contain; margin-bottom: 10px; border-radius: 8px; background: #000; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
+        .prod-img { width: 100%; height: 140px; object-fit: contain; margin-bottom: 10px; border-radius: 8px; }
 
-        .btn { padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; }
         .btn-buy { background: var(--primary); color: #000; width: 100%; }
 
-        /* CUSTOM ALERT (AZUL BEBÊ - SUA IMAGEM) */
-        #custom-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; }
-        .alert-box { background: white; width: 85%; max-width: 320px; border-radius: 12px; overflow: hidden; text-align: center; box-shadow: 0 0 20px var(--secondary); }
-        .alert-body { padding: 30px 20px; color: #333; font-size: 1.1rem; border-top: 5px solid var(--secondary); }
-        .alert-btn { background: var(--secondary); color: white; padding: 12px; cursor: pointer; font-weight: bold; border: none; width: 100%; }
+        /* ALERT ESTILO AZUL BEBÊ */
+        #custom-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
+        .alert-box { background: white; width: 85%; max-width: 330px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(93, 173, 226, 0.4); }
+        .alert-body { padding: 35px 20px; color: #2c3e50; font-size: 1.1rem; border-top: 6px solid var(--secondary); font-weight: 500; }
+        .alert-btn { background: var(--secondary); color: white; padding: 15px; cursor: pointer; font-weight: bold; border: none; width: 100%; font-size: 1rem; }
 
-        /* CHAT INTERFACE */
-        .chat-container { display: flex; flex-direction: column; height: 450px; background: #000; border: 1px solid var(--primary); border-radius: 8px; }
+        /* CHAT */
+        .chat-container { display: flex; flex-direction: column; height: 480px; background: #000; border: 1px solid #333; border-radius: 12px; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 85%; font-size: 0.9rem; }
-        .msg.admin { align-self: flex-start; background: #222; color: #fff; }
-        .msg.user { align-self: flex-end; background: var(--primary); color: #000; font-weight: 500; }
-        .chat-input-area { padding: 10px; display: flex; gap: 5px; background: #111; }
+        .msg { padding: 12px; border-radius: 12px; max-width: 85%; font-size: 0.95rem; line-height: 1.4; }
+        .msg.admin { align-self: flex-start; background: #1a1a1a; color: #00ff88; border-bottom-left-radius: 2px; }
+        .msg.user { align-self: flex-end; background: var(--primary); color: #000; border-bottom-right-radius: 2px; font-weight: bold; }
+        .chat-input-area { padding: 12px; display: flex; gap: 8px; background: #0a0a0a; border-top: 1px solid #222; }
 
-        /* FOOTER PROFISSIONAL */
-        footer { background: #0a0a0a; padding: 40px 20px; text-align: center; border-top: 1px solid #222; margin-top: 50px; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto 30px; text-align: left; }
-        .footer-col h4 { color: var(--primary); margin-bottom: 15px; }
-        .footer-col p, .footer-col li { font-size: 0.85rem; opacity: 0.7; list-style: none; padding: 0; margin-bottom: 8px; }
+        /* FOOTER */
+        footer { background: #080808; padding: 50px 20px; border-top: 1px solid #1a1a1a; text-align: center; }
+        .pix-area { background: #111; padding: 20px; border-radius: 10px; display: inline-block; margin-bottom: 30px; border: 1px dashed var(--primary); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1100px; margin: 0 auto; text-align: left; }
         
-        .trust-icons { display: flex; justify-content: center; gap: 20px; font-size: 1.5rem; opacity: 0.6; margin: 20px 0; }
-        .by-leal { filter: blur(0.8px); opacity: 0.4; font-size: 0.7rem; margin-top: 20px; cursor: pointer; transition: 0.3s; }
-        .by-leal:hover { filter: blur(0); opacity: 1; }
+        .col-title { color: var(--primary); font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .footer-col p, .footer-col li { font-size: 0.85rem; opacity: 0.6; line-height: 1.8; list-style: none; padding: 0; }
 
-        /* ADMIN */
-        #admin-page { display: none; padding: 120px 15px; }
+        .by-leal { filter: blur(1px); opacity: 0.3; margin-top: 40px; cursor: pointer; font-size: 0.7rem; transition: 0.4s; }
+        .by-leal:hover { filter: blur(0); opacity: 1; color: var(--primary); }
+
+        #admin-page { display: none; padding: 120px 20px; }
     </style>
 </head>
 <body>
 
 <div id="custom-alert">
     <div class="alert-box">
-        <div id="alert-msg" class="alert-body">Mensagem de teste.</div>
+        <div id="alert-msg" class="alert-body">Aguardando...</div>
         <button class="alert-btn" onclick="closeAlert()">OK</button>
     </div>
 </div>
 
 <div id="top-fixed">
-    <div id="news-bar"><div class="marquee" id="marquee-text">CARREGANDO AVISOS...</div></div>
+    <div id="news-bar"><div class="marquee" id="marquee-text">SISTEMA HACKEADO... PROMOÇÕES ATIVAS! ⚡</div></div>
     <header>
-        <h2 style="margin:0; font-size:1.3rem; color:var(--primary)">VIP <span style="color:#fff">HUB</span></h2>
-        <div style="display:flex; gap:12px">
-            <button class="btn" style="background:var(--primary); color:#000; padding:8px 12px" onclick="openCart()">
+        <div class="logo-box">
+            <span class="logo-hash">#</span>
+            <div style="line-height: 1">
+                <span style="font-weight: 900; font-size: 1.2rem; letter-spacing: -1px;">QUEBREI O</span><br>
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.9rem;">SISTEMA</span>
+            </div>
+        </div>
+        <div style="display:flex; gap:10px">
+            <button class="btn" style="background:var(--primary); color:#000; padding:10px" onclick="openCart()">
                 <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
             </button>
-            <button class="btn" style="background:#fff; color:#000; padding:8px 12px" onclick="openMyTickets()">
-                <i class="fas fa-ticket-alt"></i>
+            <button class="btn" style="background:#fff; color:#000" onclick="openMyTickets()">
+                <i class="fas fa-headset"></i>
             </button>
         </div>
     </header>
@@ -96,62 +125,58 @@
 </div>
 
 <footer>
-    <div class="footer-grid">
-        <div class="footer-col">
-            <h4>SOBRE NÓS</h4>
-            <p>A VIP HUB é referência em produtos digitais, garantindo entrega instantânea e suporte 24h para todos os nossos clientes.</p>
-        </div>
-        <div class="footer-col">
-            <h4>TERMOS DA LOJA</h4>
-            <li>• Entrega imediata via ticket.</li>
-            <li>• Reembolso apenas por falha no produto.</li>
-            <li>• Proibido revenda sem autorização.</li>
-            <li>• Suporte prioritário para VIPs.</li>
-        </div>
-        <div class="footer-col">
-            <h4>PAGAMENTO</h4>
-            <div style="font-size: 1.2rem; display:flex; gap:10px">
-                <i class="fab fa-pix"></i> <i class="fas fa-credit-card"></i> <i class="fas fa-barcode"></i>
-            </div>
-            <p style="margin-top:10px"><i class="fas fa-shield-alt"></i> Pagamento 100% Criptografado</p>
-        </div>
-    </div>
-    
-    <div class="trust-icons">
-        <i class="fas fa-lock" title="SSL Seguro"></i>
-        <i class="fas fa-user-shield" title="Dados Protegidos"></i>
-        <i class="fas fa-check-double" title="Verificado"></i>
+    <div class="pix-area">
+        <div style="color:var(--primary); font-weight:bold; margin-bottom:5px"><i class="fab fa-pix"></i> PAGAMENTO APENAS VIA PIX</div>
+        <div style="font-size:0.8rem; opacity:0.8">Entrega imediata após envio do comprovante no chat.</div>
     </div>
 
-    <p style="font-size: 0.75rem; opacity: 0.5">© 2026 VIP HUB - TODOS OS DIREITOS RESERVADOS</p>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="col-title"><i class="fas fa-user-secret"></i> SOBRE A HUB</div>
+            <p>Especialistas em derrubar preços. O QUEBREI O SISTEMA oferece as melhores contas e serviços digitais com segurança criptografada.</p>
+        </div>
+        <div class="footer-col">
+            <div class="col-title"><i class="fas fa-file-contract"></i> TERMOS E REGRAS</div>
+            <li>• Pagamentos via PIX são processados na hora.</li>
+            <li>• Garantia de 7 dias para contas inativas.</li>
+            <li>• Suporte humano via Ticket das 08h às 22h.</li>
+            <li>• Respeite os prazos de entrega do sistema.</li>
+        </div>
+        <div class="footer-col">
+            <div class="col-title"><i class="fas fa-shield-virus"></i> SEGURANÇA</div>
+            <p><i class="fas fa-check-circle" style="color:var(--primary)"></i> Conexão SSL 256-bits</p>
+            <p><i class="fas fa-check-circle" style="color:var(--primary)"></i> Proteção Anti-Fraude</p>
+            <p><i class="fas fa-check-circle" style="color:var(--primary)"></i> Transação PIX Segura</p>
+        </div>
+    </div>
+
     <div class="by-leal" onclick="askAdmin()">BY LE4L</div>
+    <p style="font-size: 0.7rem; opacity: 0.4; margin-top: 10px;">QUEBREI O SISTEMA # VIP HUB © 2026</p>
 </footer>
 
 <div id="admin-page">
-    <div class="card" style="text-align:left; max-width:600px; margin: 0 auto;">
-        <h2 style="color:var(--primary)">STAFF CONTROL</h2>
-        <button class="btn" style="background:red; color:white; margin-bottom:20px" onclick="location.reload()">FECHAR</button>
+    <div class="card" style="max-width:700px; margin: 0 auto; text-align: left;">
+        <h2 style="color:var(--primary)">ADMIN PANEL #</h2>
+        <button class="btn" style="background:red; color:white; margin-bottom:20px" onclick="location.reload()">SAIR</button>
         
-        <h4>CRIAR PRODUTO</h4>
-        <input type="text" id="p-name" placeholder="Nome" style="width:100%; padding:10px; margin-bottom:5px">
-        <input type="number" id="p-price" placeholder="Preço" style="width:100%; padding:10px; margin-bottom:5px">
-        <input type="text" id="p-img" placeholder="Link da Foto (Opcional)" style="width:100%; padding:10px; margin-bottom:5px">
-        <select id="p-cat-select" style="width:100%; padding:10px; margin-bottom:10px"></select>
-        <button class="btn btn-buy" onclick="saveProduct()">ADICIONAR PRODUTO</button>
-        
-        <hr style="margin:20px 0; opacity:0.1">
-        
-        <h4>GERENCIAR TICKETS</h4>
+        <h4>POSTAR NOVO ITEM</h4>
+        <input type="text" id="p-name" placeholder="Nome do Produto" style="width:100%; padding:12px; margin-bottom:8px; background:#000; border:1px solid #333; color:#fff">
+        <input type="number" id="p-price" placeholder="Preço (R$)" style="width:100%; padding:12px; margin-bottom:8px; background:#000; border:1px solid #333; color:#fff">
+        <input type="text" id="p-img" placeholder="Link da Imagem (Vazio = Sem Foto)" style="width:100%; padding:12px; margin-bottom:8px; background:#000; border:1px solid #333; color:#fff">
+        <select id="p-cat-select" style="width:100%; padding:12px; margin-bottom:15px; background:#000; color:#fff"></select>
+        <button class="btn btn-buy" onclick="saveProduct()">LANÇAR PRODUTO</button>
+
+        <h4 style="margin-top:30px">TICKETS EM ABERTO</h4>
         <div id="admin-tickets-list"></div>
     </div>
 </div>
 
 <div id="ticket-modal" style="display:none" class="modal">
-    <div class="alert-box" style="max-width:450px; width:95%; background:#111; border: 1px solid var(--primary)">
-        <div class="alert-body" style="border-top:none; color:#fff; padding:10px">
-            <h3 style="color:var(--primary)">MEU ATENDIMENTO</h3>
+    <div class="alert-box" style="max-width:450px; width:95%; background:#111; border: 1px solid var(--primary); box-shadow: 0 0 20px var(--primary);">
+        <div class="alert-body" style="border-top:none; color:#fff; padding:15px">
+            <h3 style="color:var(--primary); margin:0 0 10px 0">CHAT DE SUPORTE #</h3>
             <div id="user-chat-area"></div>
-            <button class="btn" style="background:none; color:gray; width:100%; margin-top:10px" onclick="document.getElementById('ticket-modal').style.display='none'">FECHAR</button>
+            <button class="btn" style="background:none; color:gray; width:100%; margin-top:15px" onclick="document.getElementById('ticket-modal').style.display='none'">VOLTAR À LOJA</button>
         </div>
     </div>
 </div>
@@ -181,7 +206,7 @@
         renderShop(data.categorias, data.produtos);
         renderAdminTickets(data.tickets);
         renderUserChat(data.tickets);
-        document.getElementById('marquee-text').innerText = data.aviso || "BEM-VINDO À MELHOR LOJA DIGITAL!";
+        document.getElementById('marquee-text').innerText = data.aviso || "SISTEMA HACKEADO... PROMOÇÕES ATIVAS! ⚡";
         
         const sel = document.getElementById('p-cat-select'); sel.innerHTML = "";
         for(let id in data.categorias) sel.innerHTML += `<option value="${data.categorias[id].name}">${data.categorias[id].name}</option>`;
@@ -190,11 +215,11 @@
     function renderShop(cats, prods) {
         const cont = document.getElementById('shop-content'); cont.innerHTML = "";
         for(let id in cats) {
-            let html = `<h3 style="margin:30px 0 15px; border-left: 4px solid var(--primary); padding-left:10px">${cats[id].name.toUpperCase()}</h3><div class="grid">`;
+            let html = `<h3 style="margin:40px 0 15px; letter-spacing:1px; color:var(--primary)">// ${cats[id].name.toUpperCase()}</h3><div class="grid">`;
             for(let p in prods) {
                 if(prods[p].cat === cats[id].name) {
-                    const img = prods[p].img ? `<img src="${prods[p].img}" class="prod-img">` : `<div style="height:10px"></div>`;
-                    html += `<div class="card">${img}<b>${prods[p].name}</b><div style="color:var(--primary); font-weight:bold; margin:10px 0">R$ ${prods[p].price}</div><button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button></div>`;
+                    const img = prods[p].img ? `<img src="${prods[p].img}" class="prod-img">` : ``;
+                    html += `<div class="card">${img}<b>${prods[p].name}</b><div style="color:var(--primary); font-weight:bold; margin:15px 0; font-size:1.1rem">R$ ${prods[p].price}</div><button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button></div>`;
                 }
             }
             cont.innerHTML += html + `</div>`;
@@ -204,7 +229,20 @@
     function addToCart(n, p) {
         cart.push({name:n, price:p});
         document.getElementById('cart-count').innerText = cart.length;
-        showAlert(n + " adicionado!");
+        showAlert("✓ " + n + " no carrinho!");
+    }
+
+    function openCart() {
+        if(cart.length === 0) return showAlert("O carrinho está vazio!");
+        let nick = prompt("Seu Nick para entrega:");
+        if(nick) {
+            db.ref('tickets').push({ 
+                clienteId: myId, nick: nick, 
+                chat: { m1: {sender:'admin', txt:'Olá! Para concluir a compra de: ' + cart.map(i=>i.name).join(', ') + '. Realize o PIX e envie o comprovante aqui!'} } 
+            });
+            cart = []; document.getElementById('cart-count').innerText = "0";
+            openMyTickets();
+        }
     }
 
     function openMyTickets() { document.getElementById('ticket-modal').style.display='flex'; }
@@ -224,26 +262,26 @@
                 cont.innerHTML = `<div class="chat-container">
                     <div class="chat-messages" id="ubox-${id}">${renderMsgs(tickets[id].chat)}</div>
                     <div class="chat-input-area">
-                        <input type="text" id="in-${id}" placeholder="Mensagem..." style="flex:1; padding:10px; border-radius:5px; border:none" onkeypress="if(event.key==='Enter') sendChat('${id}','user')">
+                        <input type="text" id="in-${id}" placeholder="Envie o comprovante ou dúvida..." style="flex:1; padding:12px; border:none; background:#1a1a1a; color:#fff; border-radius:8px" onkeypress="if(event.key==='Enter') sendChat('${id}','user')">
                         <button class="btn" style="background:var(--primary); color:#000" onclick="sendChat('${id}','user')"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>`;
                 setTimeout(() => { let b = document.getElementById('ubox-'+id); if(b) b.scrollTop = b.scrollHeight; }, 100);
             }
         }
-        if(cont.innerHTML === "") cont.innerHTML = "<p style='opacity:0.5'>Você não tem tickets ativos.</p>";
+        if(cont.innerHTML === "") cont.innerHTML = "<p style='opacity:0.5; text-align:center'>Nenhum ticket aberto.</p>";
     }
 
     function renderAdminTickets(tickets) {
         const cont = document.getElementById('admin-tickets-list'); cont.innerHTML = "";
         for(let id in tickets) {
-            cont.innerHTML += `<div class="card" style="margin-bottom:10px; text-align:left">
-                <b>👤 ${tickets[id].nick}</b>
-                <div class="chat-messages" id="abox-${id}" style="height:150px; background:#000; margin:5px 0">${renderMsgs(tickets[id].chat)}</div>
-                <input type="text" id="in-${id}" placeholder="Responder..." style="width:100%; padding:8px; margin-bottom:5px" onkeypress="if(event.key==='Enter') sendChat('${id}','admin')">
-                <div style="display:flex; gap:5px">
+            cont.innerHTML += `<div class="card" style="margin-bottom:15px; text-align:left; border-color:#444">
+                <b style="color:var(--primary)">👤 ${tickets[id].nick}</b>
+                <div class="chat-messages" id="abox-${id}" style="height:180px; background:#000; margin:10px 0; border:1px solid #222">${renderMsgs(tickets[id].chat)}</div>
+                <input type="text" id="in-${id}" placeholder="Responder..." style="width:100%; padding:10px; margin-bottom:8px; background:#111; border:1px solid #333; color:#fff" onkeypress="if(event.key==='Enter') sendChat('${id}','admin')">
+                <div style="display:flex; gap:10px">
                     <button class="btn btn-buy" onclick="sendChat('${id}','admin')">ENVIAR</button>
-                    <button class="btn" style="background:red; color:white" onclick="db.ref('tickets/${id}').remove()">X</button>
+                    <button class="btn" style="background:red; color:white" onclick="db.ref('tickets/${id}').remove()">FECHAR</button>
                 </div>
             </div>`;
         }
@@ -256,20 +294,7 @@
         const p = document.getElementById('p-price').value;
         const i = document.getElementById('p-img').value;
         const c = document.getElementById('p-cat-select').value;
-        if(n && p) { db.ref('produtos').push({name:n, price:parseFloat(p), img:i, cat:c}); showAlert("Produto Adicionado!"); }
-    }
-
-    // Criar Ticket (Exemplo simples para não complicar)
-    function openCart() {
-        let nick = prompt("Seu Nick para o Ticket:");
-        if(nick && cart.length > 0) {
-            db.ref('tickets').push({ 
-                clienteId: myId, nick: nick, 
-                chat: { m1: {sender:'admin', txt:'Olá! Vi que você quer: ' + cart.map(i=>i.name).join(', ')} } 
-            });
-            cart = []; document.getElementById('cart-count').innerText = "0";
-            showAlert("Ticket Criado!");
-        }
+        if(n && p) { db.ref('produtos').push({name:n, price:parseFloat(p), img:i, cat:c}); showAlert("✓ Produto em estoque!"); }
     }
 </script>
 </body>
