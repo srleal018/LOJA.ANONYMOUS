@@ -12,7 +12,6 @@
     <style>
         :root { 
             --primary: #00ff88; 
-            --secondary: #5dade2; 
             --bg: #050505; --card-bg: #111; --text: #ffffff;
             --header-h: 70px; --news-h: 35px;
         }
@@ -20,99 +19,89 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* HEADER FIXO */
+        /* HEADER */
         #top-fixed { position: fixed; top: 0; width: 100%; z-index: 1000; }
         #news-bar { background: var(--primary); color: #000; height: var(--news-h); display: flex; align-items: center; overflow: hidden; font-weight: bold; font-size: 0.85rem; }
         header { background: rgba(10, 10, 10, 0.98); height: var(--header-h); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-bottom: 2px solid var(--primary); backdrop-filter: blur(15px); }
 
-        .logo-hash { font-size: 2rem; color: var(--primary); font-weight: 900; text-shadow: 0 0 10px var(--primary); animation: glitch 2s infinite; }
-        @keyframes glitch { 0% { transform: skew(0deg); opacity: 1; } 10% { transform: skew(10deg); color: #ff00ea; } 100% { transform: skew(0deg); } }
+        .logo-hash { font-size: 2rem; color: var(--primary); font-weight: 900; text-shadow: 0 0 10px var(--primary); }
 
-        /* CONTEÚDO PRINCIPAL (Ajustado para não sumir no rodapé) */
-        .container { flex: 1; margin-top: calc(var(--header-h) + var(--news-h) + 20px); padding: 15px; max-width: 1200px; margin-left: auto; margin-right: auto; width: 100%; padding-bottom: 50px; }
-        
+        /* CONTEÚDO */
+        .container { flex: 1; margin-top: calc(var(--header-h) + var(--news-h) + 20px); padding: 15px; max-width: 1200px; margin-left: auto; margin-right: auto; width: 100%; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
         @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; } }
 
-        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; border-left: 4px solid var(--primary); }
-        .prod-img { width: 100%; height: 140px; object-fit: contain; margin-bottom: 10px; border-radius: 8px; }
-
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #222; }
         .btn { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-buy { background: var(--primary); color: #000; width: 100%; }
 
-        /* MODAIS PERSONALIZADOS (ESTILO AZUL BEBÊ / NEON) */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
-        .alert-box { background: white; width: 100%; max-width: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 0 25px var(--secondary); animation: pop 0.3s ease; }
-        .alert-body { padding: 30px 20px; color: #1a1a1a; text-align: center; border-top: 6px solid var(--secondary); font-weight: 600; }
-        .alert-footer { background: #f1f1f1; padding: 10px; display: flex; gap: 10px; }
-        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* MODAIS ESTILO "QUEBREI O SISTEMA" (Tirei o Azul Bebê) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
+        .alert-box { background: #111; width: 100%; max-width: 350px; border-radius: 12px; overflow: hidden; border: 1px solid var(--primary); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+        .alert-body { padding: 30px 20px; color: #fff; text-align: center; font-weight: bold; }
+        .alert-footer { background: #000; padding: 10px; display: flex; gap: 10px; }
+        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: var(--primary); color: #000; }
 
-        /* CHAT */
-        .chat-container { height: 400px; background: #000; border-radius: 10px; display: flex; flex-direction: column; border: 1px solid #333; }
+        /* CHAT E TICKETS */
+        .chat-container { height: 350px; background: #000; display: flex; flex-direction: column; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 85%; font-size: 0.9rem; }
-        .msg.admin { align-self: flex-start; background: #222; color: var(--primary); }
-        .msg.user { align-self: flex-end; background: var(--secondary); color: white; }
+        .msg { padding: 10px; border-radius: 8px; max-width: 85%; font-size: 0.9rem; }
+        .msg.admin { align-self: flex-start; background: #1a1a1a; color: var(--primary); border: 1px solid #333; }
+        .msg.user { align-self: flex-end; background: var(--primary); color: #000; font-weight: bold; }
+        
+        .empty-ticket { text-align: center; padding: 40px 20px; }
+        .empty-ticket p { opacity: 0.6; font-size: 1.1rem; margin-bottom: 20px; }
 
-        /* FOOTER */
-        footer { background: #080808; padding: 40px 20px; border-top: 1px solid #1a1a1a; text-align: center; width: 100%; }
-        .by-leal { filter: blur(1px); opacity: 0.3; margin-top: 20px; cursor: pointer; transition: 0.4s; }
-        .by-leal:hover { filter: blur(0); opacity: 1; color: var(--primary); }
+        /* RODAPÉ IGUAL AO PRINT */
+        footer { background: #000; padding: 60px 20px; border-top: 1px solid #111; margin-top: 50px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; max-width: 1100px; margin: 0 auto; text-align: left; }
+        .col-title { color: var(--primary); font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .footer-col p, .footer-col li { font-size: 0.9rem; opacity: 0.7; line-height: 1.6; list-style: none; padding: 0; margin-bottom: 8px; }
+        .check-icon { color: var(--primary); margin-right: 8px; }
+
+        .by-leal { opacity: 0.2; margin-top: 40px; cursor: pointer; font-size: 0.8rem; letter-spacing: 2px; }
+        .copy { opacity: 0.4; font-size: 0.75rem; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div id="modal-msg" class="modal-overlay">
     <div class="alert-box">
-        <div id="msg-text" class="alert-body">Aguardando...</div>
-        <div class="alert-footer">
-            <button class="btn-modal" style="background:var(--secondary); color:white" onclick="closeModal('modal-msg')">OK</button>
-        </div>
+        <div id="msg-text" class="alert-body"></div>
+        <div class="alert-footer"><button class="btn-modal" onclick="closeModal('modal-msg')">OK</button></div>
     </div>
 </div>
 
 <div id="modal-login" class="modal-overlay">
     <div class="alert-box">
-        <div class="alert-body">
-            <h3 style="margin:0">ACESSO STAFF</h3>
-            <input type="password" id="admin-pass" placeholder="Senha do Sistema" style="width:100%; padding:12px; margin-top:15px; border-radius:8px; border:1px solid #ccc">
-        </div>
+        <div class="alert-body">SISTEMA STAFF<input type="password" id="admin-pass" placeholder="Senha" style="width:100%; padding:12px; margin-top:15px; background:#000; color:#fff; border:1px solid #333"></div>
         <div class="alert-footer">
-            <button class="btn-modal" onclick="closeModal('modal-login')">CANCELAR</button>
-            <button class="btn-modal" style="background:var(--primary); color:black" onclick="tryAdmin()">ENTRAR</button>
+            <button class="btn-modal" style="background:#333; color:#fff" onclick="closeModal('modal-login')">X</button>
+            <button class="btn-modal" onclick="tryAdmin()">LOGAR</button>
         </div>
     </div>
 </div>
 
 <div id="modal-nick" class="modal-overlay">
     <div class="alert-box">
-        <div class="alert-body">
-            <h3 style="margin:0; color:var(--secondary)">ENTREGA #</h3>
-            <p style="font-size: 0.8rem; color: #666">Informe seu Nick para gerarmos seu Ticket.</p>
-            <input type="text" id="nick-input" placeholder="Seu Nick aqui..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc">
-        </div>
+        <div class="alert-body">IDENTIFICAÇÃO<input type="text" id="nick-input" placeholder="Seu Nick" style="width:100%; padding:12px; margin-top:15px; background:#000; color:#fff; border:1px solid #333"></div>
         <div class="alert-footer">
-            <button class="btn-modal" onclick="closeModal('modal-nick')">CANCELAR</button>
-            <button class="btn-modal" style="background:var(--secondary); color:white" onclick="confirmCheckout()">FINALIZAR</button>
+            <button class="btn-modal" style="background:#333; color:#fff" onclick="closeModal('modal-nick')">X</button>
+            <button class="btn-modal" onclick="confirmCheckout()">ABRIR TICKET</button>
         </div>
     </div>
 </div>
 
 <div id="top-fixed">
-    <div id="news-bar"><div style="width:100%" class="marquee" id="marquee-text">BEM-VINDO AO QUEBREI O SISTEMA!</div></div>
+    <div id="news-bar"><div class="marquee" id="marquee-text">QUEBREI O SISTEMA # SISTEMA HACKEADO</div></div>
     <header>
         <div style="display:flex; align-items:center; gap:10px">
             <span class="logo-hash">#</span>
-            <div style="line-height:1"><span style="font-weight:900">QUEBREI O</span><br><span style="color:var(--primary); font-weight:bold">SISTEMA</span></div>
+            <div style="line-height:1"><span style="font-weight:900; font-size:1.2rem">QUEBREI O</span><br><span style="color:var(--primary); font-weight:bold">SISTEMA</span></div>
         </div>
         <div style="display:flex; gap:10px">
-            <button class="btn" style="background:var(--primary); color:#000; padding:8px 15px" onclick="openCart()">
-                <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
-            </button>
-            <button class="btn" style="background:#fff; color:#000" onclick="openMyTickets()">
-                <i class="fas fa-headset"></i>
-            </button>
+            <button class="btn" style="background:var(--primary); color:#000; padding:8px 15px" onclick="openCart()"><i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span></button>
+            <button class="btn" style="background:#fff; color:#000" onclick="openMyTickets()"><i class="fas fa-comment-alt"></i></button>
         </div>
     </header>
 </div>
@@ -121,54 +110,68 @@
     <div id="shop-content"></div>
 </div>
 
-<div id="admin-page" class="container" style="display:none">
-    <div class="card" style="text-align:left; max-width:800px; margin:0 auto">
-        <h2 style="color:var(--primary)">SISTEMA ADM #</h2>
-        <button class="btn" style="background:red; color:white; margin-bottom:20px" onclick="location.reload()">SAIR DA ADMIN</button>
-        
+<div id="admin-page" class="container" style="display:none; padding-top:100px">
+    <div class="card" style="text-align:left; background:#000">
+        <h2 style="color:var(--primary)">ADMIN PANEL</h2>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">
             <div>
                 <h4>CATEGORIAS</h4>
-                <input type="text" id="new-cat" placeholder="Nome Categoria" style="width:100%; padding:10px; margin-bottom:5px">
+                <input type="text" id="new-cat" placeholder="Nome" style="width:100%; padding:10px; margin-bottom:5px; background:#111; color:#fff; border:1px solid #333">
                 <button class="btn btn-buy" onclick="addCat()">CRIAR</button>
-                <div id="admin-cat-list" style="margin-top:15px"></div>
+                <div id="admin-cat-list" style="margin-top:10px"></div>
             </div>
             <div>
                 <h4>PRODUTO</h4>
-                <input type="text" id="p-name" placeholder="Nome" style="width:100%; padding:10px; margin-bottom:5px">
-                <input type="number" id="p-price" placeholder="R$" style="width:100%; padding:10px; margin-bottom:5px">
-                <input type="text" id="p-img" placeholder="Link Imagem" style="width:100%; padding:10px; margin-bottom:5px">
-                <select id="p-cat-select" style="width:100%; padding:10px; margin-bottom:10px"></select>
-                <button class="btn btn-buy" onclick="saveProduct()">LANÇAR</button>
+                <input type="text" id="p-name" placeholder="Nome" style="width:100%; padding:10px; margin-bottom:5px; background:#111; color:#fff; border:1px solid #333">
+                <input type="number" id="p-price" placeholder="R$" style="width:100%; padding:10px; margin-bottom:5px; background:#111; color:#fff; border:1px solid #333">
+                <input type="text" id="p-img" placeholder="Link Imagem" style="width:100%; padding:10px; margin-bottom:5px; background:#111; color:#fff; border:1px solid #333">
+                <select id="p-cat-select" style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff"></select>
+                <button class="btn btn-buy" onclick="saveProduct()">POSTAR</button>
             </div>
         </div>
-        <h4 style="margin-top:30px">TICKETS EM ABERTO</h4>
+        <h4 style="margin-top:30px">TICKETS</h4>
         <div id="admin-tickets-list"></div>
     </div>
 </div>
 
 <footer>
-    <div style="color:var(--primary); font-weight:bold; margin-bottom:15px"><i class="fab fa-pix"></i> PAGAMENTO VIA PIX</div>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="col-title"><i class="fas fa-user-secret"></i> SOBRE A HUB</div>
+            <p>Especialistas em derrubar preços. O QUEBREI O SISTEMA oferece as melhores contas e serviços digitais com segurança criptografada.</p>
+        </div>
+        <div class="footer-col">
+            <div class="col-title"><i class="fas fa-file-contract"></i> TERMOS E REGRAS</div>
+            <li>• Pagamentos via PIX são processados na hora.</li>
+            <li>• Garantia de 7 dias para contas inativas.</li>
+            <li>• Suporte humano via Ticket das 08h às 22h.</li>
+            <li>• Respeite os prazos de entrega do sistema.</li>
+        </div>
+        <div class="footer-col">
+            <div class="col-title"><i class="fas fa-shield-virus"></i> SEGURANÇA</div>
+            <p><i class="fas fa-check-circle check-icon"></i> Conexão SSL 256-bits</p>
+            <p><i class="fas fa-check-circle check-icon"></i> Proteção Anti-Fraude</p>
+            <p><i class="fas fa-check-circle check-icon"></i> Transação PIX Segura</p>
+        </div>
+    </div>
     <div class="by-leal" onclick="openAdminLogin()">BY LE4L</div>
-    <p style="font-size:0.7rem; opacity:0.4; margin-top:10px">QUEBREI O SISTEMA # 2026</p>
+    <div class="copy">QUEBREI O SISTEMA # VIP HUB © 2026</div>
 </footer>
 
 <div id="ticket-modal" class="modal-overlay">
-    <div class="alert-box" style="max-width:450px; background:#111; border: 1px solid var(--primary)">
-        <div class="alert-body" style="border-top:none; color:#fff; padding:15px">
-            <h3 style="color:var(--primary); margin:0 0 10px 0">SUPORTE ONLINE #</h3>
-            <div id="user-chat-area"></div>
-            <button class="btn" style="background:none; color:gray; width:100%; margin-top:10px" onclick="closeModal('ticket-modal')">VOLTAR</button>
+    <div class="alert-box" style="max-width:500px; height:auto; background:#0a0a0a">
+        <div style="padding:20px; border-bottom:1px solid #111">
+            <h2 style="color:var(--primary); margin:0; font-size:1.5rem">CHAT DE SUPORTE #</h2>
+        </div>
+        <div id="user-chat-area"></div>
+        <div style="padding:20px; text-align:center">
+            <button class="btn" style="background:none; color:#fff; font-weight:bold; width:100%; border:none" onclick="closeModal('ticket-modal')">VOLTAR À LOJA</button>
         </div>
     </div>
 </div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8",
-        databaseURL: "https://quebrei-o-sistema-default-rtdb.firebaseio.com",
-        projectId: "quebrei-o-sistema",
-    };
+    const firebaseConfig = { apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8", databaseURL: "https://quebrei-o-sistema-default-rtdb.firebaseio.com", projectId: "quebrei-o-sistema" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -176,20 +179,18 @@
     let myId = localStorage.getItem('qs_id') || 'u' + Date.now();
     localStorage.setItem('qs_id', myId);
 
-    // FUNÇÕES DE MODAL (SUBSTITUTOS DO ALERT)
     function showMsg(txt) { document.getElementById('msg-text').innerText = txt; document.getElementById('modal-msg').style.display='flex'; }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
     function openAdminLogin() { document.getElementById('modal-login').style.display='flex'; }
-    
+    function openMyTickets() { document.getElementById('ticket-modal').style.display='flex'; }
+
     function tryAdmin() {
         if(document.getElementById('admin-pass').value === "270712") {
             closeModal('modal-login');
             document.getElementById('site-wrapper').style.display='none';
             document.querySelector('footer').style.display='none';
             document.getElementById('admin-page').style.display='block';
-        } else {
-            showMsg("SENHA INCORRETA!");
-        }
+        } else { showMsg("SENHA INVÁLIDA"); }
     }
 
     db.ref('/').on('value', snap => {
@@ -197,7 +198,7 @@
         renderShop(data.categorias, data.produtos);
         renderAdminUI(data.categorias, data.tickets);
         renderUserChat(data.tickets);
-        document.getElementById('marquee-text').innerText = data.aviso || "PROMOÇÕES ATIVAS! ⚡";
+        document.getElementById('marquee-text').innerText = data.aviso || "SISTEMA HACKEADO... PROMOÇÕES ATIVAS!";
     });
 
     function renderShop(cats, prods) {
@@ -206,65 +207,63 @@
             let html = `<h3 style="margin:30px 0 15px; color:var(--primary)">// ${cats[id].name.toUpperCase()}</h3><div class="grid">`;
             for(let p in prods) {
                 if(prods[p].cat === cats[id].name) {
-                    const img = prods[p].img ? `<img src="${prods[p].img}" class="prod-img">` : ``;
-                    html += `<div class="card">${img}<b>${prods[p].name}</b><div style="color:var(--primary); font-weight:bold; margin:10px 0">R$ ${prods[p].price}</div><button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button></div>`;
+                    html += `<div class="card"><img src="${prods[p].img || ''}" style="width:100%; height:120px; object-fit:contain; margin-bottom:10px"><b>${prods[p].name}</b><div style="color:var(--primary); font-weight:bold; margin:10px 0">R$ ${prods[p].price}</div><button class="btn btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">ADICIONAR</button></div>`;
                 }
             }
             cont.innerHTML += html + `</div>`;
         }
     }
 
-    function addToCart(n, p) { cart.push({name:n, price:p}); document.getElementById('cart-count').innerText = cart.length; showMsg(n + " adicionado!"); }
+    function addToCart(n, p) { cart.push({name:n, price:p}); document.getElementById('cart-count').innerText = cart.length; showMsg(n + " NO CARRINHO!"); }
     function openCart() { if(cart.length === 0) return showMsg("CARRINHO VAZIO!"); document.getElementById('modal-nick').style.display='flex'; }
 
     function confirmCheckout() {
         const nick = document.getElementById('nick-input').value;
-        if(!nick) return showMsg("DIGITE SEU NICK!");
-        db.ref('tickets').push({ 
-            clienteId: myId, nick: nick, 
-            chat: { m1: {sender:'admin', txt:'Olá! Realize o PIX e envie o comprovante de: ' + cart.map(i=>i.name).join(', ')} } 
-        });
+        if(!nick) return showMsg("DIGITE SEU NICK");
+        // TIREI A MENSAGEM AUTOMÁTICA AQUI
+        db.ref('tickets').push({ clienteId: myId, nick: nick, chat: {} });
         cart = []; document.getElementById('cart-count').innerText = "0";
         closeModal('modal-nick');
-        document.getElementById('ticket-modal').style.display='flex';
+        openMyTickets();
+    }
+
+    function renderUserChat(tickets) {
+        const cont = document.getElementById('user-chat-area'); cont.innerHTML = "";
+        let found = false;
+        for(let id in tickets) {
+            if(tickets[id].clienteId === myId) {
+                found = true;
+                cont.innerHTML = `<div class="chat-container">
+                    <div class="chat-messages" id="ubox-${id}">${renderMsgs(tickets[id].chat)}</div>
+                    <div style="padding:15px; display:flex; gap:10px; background:#000; border-top:1px solid #111">
+                        <input type="text" id="in-${id}" placeholder="Escreva aqui..." style="flex:1; padding:12px; background:#111; color:#fff; border:none; border-radius:5px" onkeypress="if(event.key==='Enter') sendChat('${id}','user')">
+                        <button class="btn" style="background:var(--primary); color:#000" onclick="sendChat('${id}','user')"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>`;
+            }
+        }
+        if(!found) cont.innerHTML = `<div class="empty-ticket"><p>Nenhum ticket aberto.</p></div>`;
     }
 
     function renderAdminUI(cats, tickets) {
-        const catList = document.getElementById('admin-cat-list'); catList.innerHTML = "";
+        const clist = document.getElementById('admin-cat-list'); clist.innerHTML = "";
         const sel = document.getElementById('p-cat-select'); sel.innerHTML = "";
         for(let id in cats) {
-            catList.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px"><span>${cats[id].name}</span><button onclick="db.ref('categorias/${id}').remove()" style="color:red; background:none; border:none">X</button></div>`;
+            clist.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px"><span>${cats[id].name}</span><button onclick="db.ref('categorias/${id}').remove()" style="color:red; background:none; border:none">X</button></div>`;
             sel.innerHTML += `<option value="${cats[id].name}">${cats[id].name}</option>`;
         }
-        const tList = document.getElementById('admin-tickets-list'); tList.innerHTML = "";
+        const tlist = document.getElementById('admin-tickets-list'); tlist.innerHTML = "";
         for(let id in tickets) {
-            tList.innerHTML += `<div class="card" style="margin-bottom:15px; text-align:left">
+            tlist.innerHTML += `<div class="card" style="text-align:left; margin-bottom:10px">
                 <b>👤 ${tickets[id].nick}</b>
-                <div class="chat-messages" id="abox-${id}" style="height:150px; background:#000; margin:10px 0">${renderMsgs(tickets[id].chat)}</div>
+                <div class="chat-messages" style="height:150px; background:#000; margin:10px 0">${renderMsgs(tickets[id].chat)}</div>
                 <div style="display:flex; gap:5px">
-                    <input type="text" id="in-${id}" placeholder="Responder..." style="flex:1; padding:8px" onkeypress="if(event.key==='Enter') sendChat('${id}','admin')">
+                    <input type="text" id="in-${id}" placeholder="Resposta..." style="flex:1; padding:8px" onkeypress="if(event.key==='Enter') sendChat('${id}','admin')">
                     <button class="btn btn-buy" style="width:auto" onclick="sendChat('${id}','admin')">OK</button>
                     <button class="btn" style="background:red; color:white" onclick="db.ref('tickets/${id}').remove()">X</button>
                 </div>
             </div>`;
         }
-    }
-
-    function renderUserChat(tickets) {
-        const cont = document.getElementById('user-chat-area'); cont.innerHTML = "";
-        for(let id in tickets) {
-            if(tickets[id].clienteId === myId) {
-                cont.innerHTML = `<div class="chat-container">
-                    <div class="chat-messages" id="ubox-${id}">${renderMsgs(tickets[id].chat)}</div>
-                    <div style="padding:10px; display:flex; gap:5px; background:#222">
-                        <input type="text" id="in-${id}" placeholder="Mensagem..." style="flex:1; padding:10px; border:none" onkeypress="if(event.key==='Enter') sendChat('${id}','user')">
-                        <button class="btn" style="background:var(--primary); color:#000" onclick="sendChat('${id}','user')"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>`;
-                setTimeout(() => { let b = document.getElementById('ubox-'+id); if(b) b.scrollTop = b.scrollHeight; }, 100);
-            }
-        }
-        if(!cont.innerHTML) cont.innerHTML = "<p style='opacity:0.5'>NENHUM TICKET ATIVO.</p>";
     }
 
     function sendChat(tId, role) {
@@ -273,7 +272,6 @@
     }
 
     function renderMsgs(chat) { return chat ? Object.values(chat).map(m => `<div class="msg ${m.sender}">${m.txt}</div>`).join('') : ""; }
-    function openMyTickets() { document.getElementById('ticket-modal').style.display='flex'; }
     function addCat() { const n = document.getElementById('new-cat').value; if(n) db.ref('categorias').push({name:n}); }
     function saveProduct() {
         const n = document.getElementById('p-name').value, p = document.getElementById('p-price').value, i = document.getElementById('p-img').value, c = document.getElementById('p-cat-select').value;
