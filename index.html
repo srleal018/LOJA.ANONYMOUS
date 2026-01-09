@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Hospedagem do Bot</title>
+</head>
+<body>
+
+<h1>Painel de Hospedagem</h1>
+<p>Este painel apenas inicia ou para o bot já configurado no servidor.</p>
+
+<h2>JavaScript</h2>
+<button onclick="start('js')">Iniciar Bot JS</button>
+
+<h2>Python</h2>
+<button onclick="start('python')">Iniciar Bot Python</button>
+
+<br><br>
+<button onclick="stop()">Parar Bot</button>
+
+<pre id="output"></pre>
+
+<script>
+async function start(lang) {
+  const res = await fetch(`/start/${lang}`, { method: "POST" });
+  const data = await res.json();
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+}
+
+async function stop() {
+  const res = await fetch("/stop", { method: "POST" });
+  const data = await res.json();
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
+
