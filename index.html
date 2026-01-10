@@ -1,161 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bot Runner Web</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e2e;
-            color: #cdd6f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+const { Client, GatewayIntentBits } = require('discord.js');
 
-        .container {
-            background-color: #313244;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            width: 400px;
-            text-align: center;
-        }
+// Configuração das permissões do bot
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 
-        h2 { margin-bottom: 20px; color: #89b4fa; }
+// Quando o bot ligar
+client.once('ready', () => {
+    console.log(`✅ Bot online como: ${client.user.tag}`);
+    client.user.setActivity('Estou 24/7 Online!');
+});
 
-        input {
-            width: 90%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: 1px solid #45475a;
-            background-color: #181825;
-            color: white;
-        }
+// Quando receber uma mensagem
+client.on('messageCreate', (message) => {
+    // Evita que o bot responda a si mesmo
+    if (message.author.bot) return;
 
-        .btn-group { display: flex; gap: 10px; justify-content: center; }
+    // Comando de teste
+    if (message.content === '!ping') {
+        message.reply('🏓 Pong! Estou funcionando perfeitamente.');
+    }
+});
 
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        #startBtn { background-color: #a6e3a1; color: #1e1e2e; }
-        #startBtn:hover { background-color: #94e2d5; }
-
-        #stopBtn { background-color: #f38ba8; color: #1e1e2e; }
-        #stopBtn:hover { background-color: #eba0ac; }
-
-        .status-box {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #11111b;
-            border-radius: 5px;
-            height: 150px;
-            overflow-y: auto;
-            text-align: left;
-            font-family: monospace;
-            font-size: 0.9em;
-            border: 1px solid #45475a;
-        }
-
-        .log-entry { margin: 5px 0; border-bottom: 1px solid #313244; padding-bottom: 2px;}
-        .log-success { color: #a6e3a1; }
-        .log-error { color: #f38ba8; }
-        .log-info { color: #89b4fa; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h2>🤖 Painel do Bot</h2>
-        <p style="font-size: 0.8rem; opacity: 0.7;">Mantenha esta aba aberta para o bot rodar.</p>
-        
-        <input type="password" id="botToken" placeholder="Insira o Token do Bot aqui">
-        
-        <div class="btn-group">
-            <button id="startBtn" onclick="iniciarBot()">Iniciar Bot</button>
-            <button id="stopBtn" onclick="pararBot()" disabled>Parar</button>
-        </div>
-
-        <div class="status-box" id="consoleLogs">
-            <div class="log-entry log-info">> Aguardando token...</div>
-        </div>
-    </div>
-
-    <script>
-        let botInterval;
-        let isRunning = false;
-
-        function log(message, type = 'info') {
-            const consoleBox = document.getElementById('consoleLogs');
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            
-            const time = new Date().toLocaleTimeString();
-            entry.innerText = `[${time}] ${message}`;
-            
-            consoleBox.appendChild(entry);
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-        }
-
-        function iniciarBot() {
-            const token = document.getElementById('botToken').value;
-
-            if (!token) {
-                log("Erro: O campo de token está vazio.", "error");
-                return;
-            }
-
-            if (isRunning) return;
-
-            // Simulação de conexão (Aqui entraria a lógica real do bot.js se fosse Node)
-            isRunning = true;
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('stopBtn').disabled = false;
-            document.getElementById('botToken').disabled = true;
-
-            log("Tentando conectar aos servidores...", "info");
-
-            setTimeout(() => {
-                log("Autenticado com sucesso!", "success");
-                log("Bot está online e escutando eventos.", "success");
-                
-                // Loop "Fake" para manter a atividade visível
-                botInterval = setInterval(() => {
-                    log("Ping... Heartbeat recebido (24ms)", "info");
-                }, 5000); // Executa a cada 5 segundos
-
-                // AQUI VOCÊ COLOCARIA A LÓGICA DE CONEXÃO REAL (WebSocket)
-                // Exemplo: const client = new Discord.Client(...)
-                
-            }, 1500);
-        }
-
-        function pararBot() {
-            if (!isRunning) return;
-
-            clearInterval(botInterval);
-            isRunning = false;
-            
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('stopBtn').disabled = true;
-            document.getElementById('botToken').disabled = false;
-
-            log("Desconectando...", "error");
-            setTimeout(() => {
-                log("Bot desligado.", "error");
-            }, 1000);
-        }
-    </script>
-</body>
-</html>
-data, 
+// Ligar o bot (MTQ1ODY0MTA4MTU5OTAwNDcxMg.GugKow.A8a6vpWKsCw5IxKLmU9ql9lYLPEc2EbJHzPKg0)
+client.login('MTQ1ODY0MTA4MTU5OTAwNDcxMg.GugKow.A8a6vpWKsCw5IxKLmU9ql9lYLPEc2EbJHzPKg0'); 
