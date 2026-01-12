@@ -1,189 +1,238 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Loja Online</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOJA DO RIO | OFICIAL</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --header: #111111;
+            --card: #151515;
+            --accent: #00ff88;
+            --text: #ffffff;
+            --text-dim: #777777;
+            --border: #222222;
+        }
 
-<style>
-:root{
---bg:#0d0d0d;
---card:#161616;
---accent:#00ff88;
---text:#eaeaea;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; background-size: cover; background-position: center; }
 
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
-header{background:#000;padding:15px;display:flex;justify-content:space-between}
-button{padding:8px;border:none;border-radius:5px;cursor:pointer}
-.container{max-width:1200px;margin:auto;padding:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
-.card{background:var(--card);padding:15px;border-radius:8px}
-h2,h3{color:var(--accent)}
-input{width:100%;padding:8px;margin-top:5px;background:#222;color:#fff;border:none;border-radius:5px}
-.hidden{display:none}
-.delete{background:#ff4444;margin-top:5px}
-</style>
+        /* HEADER */
+        header {
+            background: var(--header);
+            height: 65px;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+        }
+        .logo { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .search-bar { flex: 1; max-width: 450px; margin: 0 20px; position: relative; }
+        .search-bar input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 10px 10px 10px 35px; border-radius: 8px; color: #fff; outline: none; font-size: 13px; }
+        .search-bar i { position: absolute; left: 12px; top: 12px; color: #555; }
+        .btn-header { background: #fff; color: #000; padding: 8px 15px; border-radius: 6px; font-weight: 700; border: none; cursor: pointer; font-size: 12px; }
+
+        /* SCROLL HORIZONTAL CATEGORIAS */
+        .cat-scroll-container { margin-top: 85px; padding: 20px 5% 10px; }
+        .cat-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
+        .cat-scroll::-webkit-scrollbar { display: none; }
+        .cat-item { min-width: 140px; height: 180px; border-radius: 12px; position: relative; overflow: hidden; cursor: pointer; border: 1px solid var(--border); transition: 0.3s; }
+        .cat-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+        .cat-item span { position: absolute; bottom: 15px; width: 100%; text-align: center; font-weight: 800; font-size: 11px; text-transform: uppercase; }
+        .cat-item:hover { border-color: var(--accent); transform: scale(1.02); }
+
+        /* GRID PRODUTOS */
+        .container { padding: 0 5% 50px; }
+        .cat-title { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 40px 0 15px; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 15px; }
+        
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+        .p-img { width: 100%; height: 115px; object-fit: cover; background: #000; }
+        .p-info { padding: 12px; }
+        .p-name { font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #eee; }
+        .p-price { font-size: 16px; font-weight: 800; color: #fff; }
+        .p-actions { display: flex; gap: 6px; margin-top: 15px; }
+        .btn-buy { flex: 1; background: #fff; color: #000; border: none; padding: 9px; border-radius: 6px; font-weight: 800; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+        .btn-cart-icon { background: #222; color: #fff; border: none; padding: 9px 12px; border-radius: 6px; cursor: pointer; }
+
+        /* AVALIAÇÕES */
+        .reviews-section { background: #080808; padding: 60px 5%; border-top: 1px solid var(--border); }
+        .review-card { background: #111; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .stars { color: #f1c40f; font-size: 12px; margin-bottom: 10px; }
+
+        /* FOOTER */
+        footer { padding: 60px 5%; background: #050505; border-top: 1px solid var(--border); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+        .footer-col h4 { color: var(--accent); font-size: 13px; margin-bottom: 20px; text-transform: uppercase; }
+        .footer-col p { font-size: 12px; color: #555; margin-bottom: 10px; line-height: 1.6; }
+
+        /* ADMIN AREA */
+        #admin-panel { display: none; padding: 100px 5%; background: #000; min-height: 100vh; }
+        .admin-box { background: #111; padding: 30px; border-radius: 15px; border: 1px solid var(--accent); margin-bottom: 20px; }
+        input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; margin-bottom: 15px; }
+        .btn-admin { background: var(--accent); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; }
+
+        /* SUPORTE FIXO */
+        .support-btn { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: #000; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,136,0.3); z-index: 999; }
+    </style>
 </head>
-
 <body>
 
 <header>
-  <strong>🛒 Minha Loja</strong>
-  <button onclick="abrirAdmin()">Admin</button>
+    <div class="logo">LOJA DO RIO</div>
+    <div class="search-bar"><i class="fas fa-search"></i><input type="text" placeholder="Pesquisar produto..."></div>
+    <div class="nav-btns">
+        <button class="btn-header" onclick="openAdmin()">ENTRAR</button>
+    </div>
 </header>
 
-<!-- ================= LOJA ================= -->
-<div id="loja" class="container">
+<div id="shop-view">
+    <div class="cat-scroll-container">
+        <div class="cat-scroll" id="cat-scroll-list">
+            </div>
+    </div>
 
-<h2>Avisos</h2>
-<div id="avisos"></div>
+    <main class="container" id="shop-content">
+        </main>
 
-<h2>Categorias</h2>
-<div id="categorias" class="grid"></div>
+    <section class="reviews-section">
+        <div class="cat-title">Avaliações de Clientes</div>
+        <div class="review-card">
+            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p style="font-size: 13px; font-weight: 600;">"Entrega muito rápida, recomendo a todos!"</p>
+            <p style="font-size: 11px; color: #444; margin-top: 10px;">Enviado por: @cliente_vip</p>
+        </div>
+    </section>
 
-<h2>Produtos</h2>
-<div id="produtos" class="grid"></div>
-
-<h2>Avaliações</h2>
-<div id="avaliacoes"></div>
-
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col"><h4>SOBRE A HUB</h4><p>Especialistas em derrubar preços. Oferecemos as melhores contas com segurança criptografada.</p></div>
+            <div class="footer-col"><h4>POLÍTICAS</h4><p>Termos de Serviço</p><p>Privacidade</p><p>Reembolso</p></div>
+            <div class="footer-col"><h4>PAGAMENTO</h4><p><i class="fas fa-qrcode"></i> PIX Automático</p><p><i class="fas fa-bolt"></i> Entrega Instantânea</p></div>
+        </div>
+        <p style="text-align:center; margin-top:50px; font-size:11px; color:#222">VIP HUB © 2026 | Powered by Ereemby</p>
+    </footer>
 </div>
 
-<!-- ================= ADMIN ================= -->
-<div id="admin" class="container hidden">
-
-<div id="login" class="card">
-<h2>Login Admin</h2>
-<input id="senha" type="password" placeholder="Senha">
-<button onclick="loginSenha()">Entrar</button>
-<hr>
-<button onclick="loginGoogle()">Google</button>
+<div id="admin-panel">
+    <h2 style="color:var(--accent); margin-bottom:30px">PAINEL STAFF</h2>
+    <div class="admin-box">
+        <h4>CADASTRAR PRODUTO</h4>
+        <input type="text" id="p-name" placeholder="Nome do Produto">
+        <input type="number" id="p-price" placeholder="Preço">
+        <input type="text" id="p-img" placeholder="URL da Imagem">
+        <select id="p-cat-select"></select>
+        <button class="btn-admin" onclick="addProd()">POSTAR PRODUTO</button>
+    </div>
+    <div class="admin-box">
+        <h4>GERENCIAR CATEGORIAS</h4>
+        <input type="text" id="cat-name" placeholder="Nome da Categoria">
+        <input type="text" id="cat-img" placeholder="URL da Imagem de Fundo (140x180)">
+        <button class="btn-admin" onclick="addCat()">CRIAR CATEGORIA</button>
+    </div>
+    <div class="admin-box">
+        <h4>AVISOS E FUNDO</h4>
+        <input type="text" id="site-bg" placeholder="URL da Imagem de Fundo do Site">
+        <button class="btn-admin" onclick="updateBg()">SALVAR FUNDO</button>
+    </div>
+    <button class="btn-admin" style="background:#444; color:#fff" onclick="location.reload()">VOLTAR PARA LOJA</button>
 </div>
 
-<div id="painel" class="hidden">
-
-<button onclick="fecharAdmin()">Voltar à loja</button>
-
-<div class="card">
-<h3>Categorias</h3>
-<input id="cat"><button onclick="add('categorias',{nome:cat.value})">Add</button>
-<div id="listaCategorias"></div>
-</div>
-
-<div class="card">
-<h3>Produtos</h3>
-<input id="pn" placeholder="Nome">
-<input id="pp" placeholder="Preço">
-<input id="pc" placeholder="Categoria">
-<button onclick="add('produtos',{nome:pn.value,preco:pp.value,categoria:pc.value})">Add</button>
-<div id="listaProdutos"></div>
-</div>
-
-<div class="card">
-<h3>Cupons</h3>
-<input id="cn" placeholder="Código">
-<input id="cv" placeholder="%">
-<button onclick="add('cupons',{codigo:cn.value,desconto:cv.value})">Add</button>
-<div id="listaCupons"></div>
-</div>
-
-<div class="card">
-<h3>Avisos</h3>
-<input id="av">
-<button onclick="add('avisos',{texto:av.value})">Add</button>
-<div id="listaAvisos"></div>
-</div>
-
-<div class="card">
-<h3>Avaliações</h3>
-<input id="an" placeholder="Nome">
-<input id="ant" placeholder="Nota">
-<input id="at" placeholder="Comentário">
-<button onclick="add('avaliacoes',{nome:an.value,nota:ant.value,texto:at.value})">Add</button>
-<div id="listaAvaliacoes"></div>
-</div>
-
-</div>
-</div>
+<div class="support-btn" onclick="alert('Ticket iniciado no Firebase!')"><i class="fas fa-headset"></i></div>
 
 <script>
-/* FIREBASE */
-firebase.initializeApp({
- apiKey:"AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8",
- databaseURL:"https://quebrei-o-sistema-default-rtdb.firebaseio.com",
- projectId:"quebrei-o-sistema"
-});
-const db=firebase.database(),auth=firebase.auth();
+    // CONFIGURAÇÃO FIREBASE
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8", 
+        databaseURL: "https://quebrei-o-sistema-default-rtdb.firebaseio.com", 
+        projectId: "quebrei-o-sistema" 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-/* LOJA */
-db.ref("avisos").on("value",s=>{
- avisos.innerHTML="";
- s.forEach(i=>avisos.innerHTML+=`<div class=card>${i.val().texto}</div>`);
-});
-db.ref("categorias").on("value",s=>{
- categorias.innerHTML="";
- s.forEach(i=>categorias.innerHTML+=`<div class=card>${i.val().nome}</div>`);
-});
-db.ref("produtos").on("value",s=>{
- produtos.innerHTML="";
- s.forEach(i=>{
-  let p=i.val();
-  produtos.innerHTML+=`<div class=card><h3>${p.nome}</h3><p>R$ ${p.preco}</p><small>${p.categoria}</small></div>`;
- });
-});
-db.ref("avaliacoes").on("value",s=>{
- avaliacoes.innerHTML="";
- s.forEach(i=>{
-  let a=i.val();
-  avaliacoes.innerHTML+=`<div class=card>⭐ ${a.nota} - ${a.nome}<br>${a.texto}</div>`;
- });
-});
+    // SEGURANÇA ADMIN
+    function openAdmin() {
+        const pass = prompt("Digite a senha administrativa:");
+        if(pass === "270712") {
+            document.getElementById('shop-view').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+        } else { alert("Senha incorreta!"); }
+    }
 
-/* ADMIN */
-function abrirAdmin(){loja.classList.add("hidden");admin.classList.remove("hidden")}
-function fecharAdmin(){admin.classList.add("hidden");loja.classList.remove("hidden")}
+    // LISTENER EM TEMPO REAL
+    db.ref('/').on('value', snap => {
+        const data = snap.val() || {};
+        renderShop(data.categorias, data.produtos);
+        updateSiteStyle(data.config);
+    });
 
-function loginSenha(){
- if(senha.value==="270712"){login.classList.add("hidden");painel.classList.remove("hidden");listarTudo();}
- else alert("Senha errada");
-}
-function loginGoogle(){
- auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
- .then(()=>{login.classList.add("hidden");painel.classList.remove("hidden");listarTudo();});
-}
+    function renderShop(cats, prods) {
+        const scroll = document.getElementById('cat-scroll-list');
+        const content = document.getElementById('shop-content');
+        const select = document.getElementById('p-cat-select');
+        
+        scroll.innerHTML = ""; content.innerHTML = ""; select.innerHTML = "";
 
-function add(p,o){db.ref(p).push(o)}
+        for(let id in cats) {
+            // Scroll Horizontal
+            scroll.innerHTML += `<div class="cat-item"><img src="${cats[id].img}"><span>${cats[id].name}</span></div>`;
+            select.innerHTML += `<option value="${cats[id].name}">${cats[id].name}</option>`;
 
-function listar(p,el){
- db.ref(p).on("value",s=>{
-  el.innerHTML="";
-  s.forEach(i=>{
-   let d=document.createElement("div");
-   d.className="card";
-   d.textContent=JSON.stringify(i.val());
-   let b=document.createElement("button");
-   b.textContent="Remover";
-   b.className="delete";
-   b.onclick=()=>db.ref(p+"/"+i.key).remove();
-   d.appendChild(b);
-   el.appendChild(d);
-  });
- });
-}
-function listarTudo(){
- listar("categorias",listaCategorias);
- listar("produtos",listaProdutos);
- listar("cupons",listaCupons);
- listar("avisos",listaAvisos);
- listar("avaliacoes",listaAvaliacoes);
-}
+            // Seção de Produtos
+            let p_html = `<div class="cat-title">${cats[id].name}</div><div class="grid">`;
+            for(let p in prods) {
+                if(prods[p].cat === cats[id].name) {
+                    p_html += `
+                    <div class="card">
+                        <img src="${prods[p].img}" class="p-img">
+                        <div class="p-info">
+                            <div class="p-name">${prods[p].name}</div>
+                            <div class="p-price">R$ ${parseFloat(prods[p].price).toFixed(2)}</div>
+                            <div class="p-actions">
+                                <button class="btn-buy">COMPRAR</button>
+                                <button class="btn-cart-icon"><i class="fas fa-shopping-basket"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            }
+            content.innerHTML += p_html + `</div>`;
+        }
+    }
+
+    // FUNÇÕES ADMIN
+    function addCat() {
+        const name = document.getElementById('cat-name').value;
+        const img = document.getElementById('cat-img').value;
+        if(name && img) db.ref('categorias').push({name, img});
+    }
+
+    function addProd() {
+        const name = document.getElementById('p-name').value;
+        const price = document.getElementById('p-price').value;
+        const img = document.getElementById('p-img').value;
+        const cat = document.getElementById('p-cat-select').value;
+        if(name && price) db.ref('produtos').push({name, price, img, cat});
+    }
+
+    function updateBg() {
+        const url = document.getElementById('site-bg').value;
+        db.ref('config').update({bg: url});
+    }
+
+    function updateSiteStyle(config) {
+        if(config && config.bg) document.body.style.backgroundImage = `url('${config.bg}')`;
+    }
 </script>
 
 </body>
-</html>
+  </html>
