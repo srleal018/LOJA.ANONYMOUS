@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP HUB # - PREMIUM SERVICES</title>
+    <title>LOJA DO RIO - VIP HUB</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,103 +12,279 @@
     <style>
         :root { 
             --primary: #00ff88; 
-            --bg: #050505; 
-            --card-bg: rgba(20, 20, 20, 0.6); 
-            --border: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-dim: #a1a1a1;
+            --bg-dark: #0a0a0a;
+            --card-bg: #121212;
+            --header-bg: #161616;
+            --input-bg: #1e1e1e;
+            --text-white: #ffffff;
+            --text-gray: #a0a0a0;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         
-        body { 
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% -20%, #1a3a2a 0%, #050505 45%);
-            color: var(--text-main); 
-            font-family: 'Inter', sans-serif;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
+        body { background: var(--bg-dark); color: var(--text-white); }
 
-        /* HEADER GLASS */
+        /* HEADER ESTILO RIORP */
         header { 
-            height: 80px; 
+            background: var(--header-bg); 
+            padding: 12px 5%; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 0 6%; 
-            position: fixed; 
-            top: 0; width: 100%; z-index: 1000;
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            border-bottom: 1px solid #222;
         }
 
-        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.5px; text-transform: uppercase; }
-        .logo span { color: var(--primary); }
-
-        .nav-actions { display: flex; gap: 12px; }
-
-        /* HERO SECTION */
-        .hero { 
-            padding: 160px 20px 80px;
-            text-align: center;
-        }
-
-        .hero .badge {
-            background: rgba(0, 255, 136, 0.1);
-            color: var(--primary);
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-
-        .hero h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; }
-        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto 40px; }
-
-        /* GRID IGUAL RIORP */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 5% 100px; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo-img { width: 32px; height: 32px; border-radius: 6px; }
         
-        .grid { 
+        .search-bar { 
+            background: var(--input-bg); 
+            border-radius: 6px; 
+            padding: 8px 15px; 
+            display: flex; 
+            align-items: center; 
+            width: 400px;
+            border: 1px solid #333;
+        }
+        .search-bar input { background: transparent; border: none; color: #fff; width: 100%; margin-left: 10px; outline: none; }
+
+        .header-actions { display: flex; gap: 10px; }
+        .btn-header { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+        .btn-header.outline { background: #222; color: #fff; }
+
+        /* LAYOUT DE CARDS */
+        .main-container { margin-top: 80px; padding: 20px 5%; }
+        
+        .category-title { font-size: 14px; text-transform: uppercase; color: var(--text-gray); margin: 30px 0 15px; font-weight: bold; letter-spacing: 1px; }
+        
+        .product-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 24px; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 15px; 
         }
 
-        .card { 
+        .product-card { 
             background: var(--card-bg); 
-            border-radius: 24px; 
-            padding: 40px; 
-            border: 1px solid var(--border); 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(5px);
+            border-radius: 10px; 
+            overflow: hidden; 
+            border: 1px solid #222; 
+            transition: 0.2s;
         }
+        .product-card:hover { border-color: var(--primary); transform: translateY(-3px); }
 
-        .card:hover { 
-            border-color: rgba(0, 255, 136, 0.4);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        .product-img { width: 100%; height: 130px; object-fit: cover; background: #000; }
+        
+        .product-info { padding: 12px; }
+        .product-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #eee; }
+        .product-price { font-size: 16px; font-weight: bold; color: #fff; }
+        .product-pix { font-size: 11px; color: var(--text-gray); margin-top: 2px; }
+
+        .card-actions { display: flex; gap: 5px; margin-top: 12px; }
+        .btn-buy { flex: 1; background: #fff; color: #000; border: none; padding: 7px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .btn-cart-add { background: #222; color: #fff; border: none; padding: 7px 10px; border-radius: 4px; cursor: pointer; }
+
+        /* MODAIS ESTILO RIORP (PRETO E VERDE) */
+        .modal-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; 
         }
-
-        .card-tag {
-            position: absolute; top: 20px; right: 20px;
-            background: var(--primary); color: #000;
-            font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 6px;
+        .modal-box { 
+            background: #111; width: 90%; max-width: 400px; border-radius: 12px; 
+            border: 1px solid var(--primary); overflow: hidden;
         }
+        .modal-body { padding: 30px; text-align: center; }
+        .modal-footer { padding: 15px; display: flex; gap: 10px; background: #000; }
+        
+        /* CHAT SUPORTE */
+        .chat-area { height: 350px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #0a0a0a; }
+        .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; max-width: 85%; line-height: 1.4; }
+        .msg.admin { align-self: flex-start; background: #1a1a1a; color: var(--primary); }
+        .msg.user { align-self: flex-end; background: var(--primary); color: #000; font-weight: bold; }
 
-        .card h3 { font-size: 1.5rem; margin-bottom: 10px; font-weight: 700; }
-        .card .price { font-size: 2.5rem; font-weight: 800; margin: 20px 0; display: flex; align-items: baseline; gap: 4px; }
-        .card .price span { font-size: 1rem; color: var(--text-dim); }
+        /* RODAPÉ IGUAL AO PRINT */
+        footer { background: #050505; padding: 60px 5%; border-top: 1px solid #111; margin-top: 50px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+        .footer-title { color: var(--primary); font-weight: bold; margin-bottom: 20px; font-size: 14px; text-transform: uppercase; }
+        .footer-text { font-size: 13px; color: var(--text-gray); line-height: 1.6; }
+        .footer-list { list-style: none; }
+        .footer-list li { margin-bottom: 10px; color: var(--text-gray); font-size: 13px; display: flex; align-items: center; gap: 8px; }
 
-        .features-list { margin-bottom: 30px; flex-grow: 1; }
-        .features-list li { list-style: none; color: var(--text-dim); font-size: 0.95rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-        .features-list li i { color: var(--primary); font-size: 0.8rem; }
+        @media (max-width: 768px) {
+            .search-bar { display: none; }
+            .product-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="modal-nick" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-body">
+            <h3 style="color:var(--primary); margin-bottom:15px">SUPORTE</h3>
+            <p style="font-size:14px; margin-bottom:20px">Informe seu nick para iniciar o atendimento.</p>
+            <input type="text" id="nick-input" placeholder="Seu Nick" style="width:100%; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:6px">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-buy" style="background:#222; color:#fff" onclick="closeModal('modal-nick')">CANCELAR</button>
+            <button class="btn-buy" style="background:var(--primary)" onclick="confirmCheckout()">INICIAR TICKET</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="header-left">
+        <img src="https://cdn-icons-png.flaticon.com/512/8014/8014787.png" class="logo-img">
+        <span style="font-weight:bold; font-size:14px">LOJA DO RIO</span>
+    </div>
+    <div class="search-bar">
+        <i class="fas fa-search" style="color:#555"></i>
+        <input type="text" placeholder="Pesquisar produto...">
+    </div>
+    <div class="header-actions">
+        <button class="btn-header outline" onclick="openMyTickets()"><i class="fas fa-headset"></i></button>
+        <button class="btn-header" onclick="openCart()"><i class="fas fa-shopping-cart"></i> Carrinho (<span id="cart-count">0</span>)</button>
+    </div>
+</header>
+
+<div class="main-container">
+    <div id="shop-content">
+        </div>
+</div>
+
+<div id="ticket-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:500px">
+        <div style="padding:15px; background:var(--header-bg); border-bottom:1px solid #222; display:flex; justify-content:space-between; align-items:center">
+            <span style="color:var(--primary); font-weight:bold">CHAT DE SUPORTE #</span>
+            <button onclick="closeModal('ticket-modal')" style="background:none; border:none; color:#fff; cursor:pointer">X</button>
+        </div>
+        <div id="user-chat-area"></div>
+        <div style="padding:15px; text-align:center">
+            <button class="btn-buy" style="background:none; color:var(--text-gray); border:none" onclick="closeModal('ticket-modal')">VOLTAR À LOJA</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="footer-title">SOBRE A HUB</div>
+            <p class="footer-text">Especialistas em derrubar preços. Oferecemos as melhores contas e serviços digitais com segurança criptografada e entrega garantida.</p>
+        </div>
+        <div>
+            <div class="footer-title">TERMOS E REGRAS</div>
+            <ul class="footer-list">
+                <li>• Pagamentos via PIX processados na hora.</li>
+                <li>• Garantia de 7 dias para contas inativas.</li>
+                <li>• Suporte Ticket das 08h às 22h.</li>
+            </ul>
+        </div>
+        <div>
+            <div class="footer-title">SEGURANÇA</div>
+            <ul class="footer-list">
+                <li><i class="fas fa-check-circle" style="color:var(--primary)"></i> Conexão SSL 256-bits</li>
+                <li><i class="fas fa-check-circle" style="color:var(--primary)"></i> Proteção Anti-Fraude</li>
+                <li><i class="fas fa-check-circle" style="color:var(--primary)"></i> Transação PIX Segura</li>
+            </ul>
+        </div>
+    </div>
+    <div style="text-align:center; margin-top:50px; opacity:0.3; font-size:11px">
+        QUEBREI O SISTEMA # VIP HUB © 2026 | Powered by Erby Style
+    </div>
+</footer>
+
+<script>
+    // CONFIGURAÇÃO FIREBASE
+    const firebaseConfig = { apiKey: "AIzaSyCYzx7TPmAghFcGuKYzBDIYRW0SjrMJ_r8", databaseURL: "https://quebrei-o-sistema-default-rtdb.firebaseio.com", projectId: "quebrei-o-sistema" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let cart = [];
+    let myId = localStorage.getItem('qs_id') || 'u' + Date.now();
+    localStorage.setItem('qs_id', myId);
+
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    function openMyTickets() { document.getElementById('ticket-modal').style.display='flex'; }
+
+    // RENDERIZAR LOJA ESTILO RIORP
+    db.ref('/').on('value', snap => {
+        const data = snap.val() || {};
+        renderShop(data.categorias, data.produtos);
+        renderUserChat(data.tickets);
+    });
+
+    function renderShop(cats, prods) {
+        const cont = document.getElementById('shop-content'); cont.innerHTML = "";
+        for(let id in cats) {
+            let html = `<div class="category-title">${cats[id].name}</div><div class="product-grid">`;
+            for(let p in prods) {
+                if(prods[p].cat === cats[id].name) {
+                    html += `
+                    <div class="product-card">
+                        <img src="${prods[p].img || 'https://via.placeholder.com/200x130/111/00ff88?text=VIP+HUB'}" class="product-img">
+                        <div class="product-info">
+                            <div class="product-name">${prods[p].name}</div>
+                            <div class="product-price">R$ ${prods[p].price.toFixed(2)}</div>
+                            <div class="product-pix">À vista no PIX</div>
+                            <div class="card-actions">
+                                <button class="btn-buy" onclick="addToCart('${prods[p].name}', ${prods[p].price})">Comprar</button>
+                                <button class="btn-cart-add" onclick="addToCart('${prods[p].name}', ${prods[p].price})"><i class="fas fa-shopping-basket"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            }
+            cont.innerHTML += html + `</div>`;
+        }
+    }
+
+    function addToCart(n, p) { 
+        cart.push({name:n, price:p}); 
+        document.getElementById('cart-count').innerText = cart.length; 
+    }
+    
+    function openCart() { 
+        if(cart.length === 0) return alert("Seu carrinho está vazio!"); 
+        document.getElementById('modal-nick').style.display='flex'; 
+    }
+
+    function confirmCheckout() {
+        const nick = document.getElementById('nick-input').value;
+        if(!nick) return alert("Digite seu nick!");
+        db.ref('tickets').push({ clienteId: myId, nick: nick, chat: {} });
+        cart = []; document.getElementById('cart-count').innerText = "0";
+        closeModal('modal-nick');
+        openMyTickets();
+    }
+
+    function renderUserChat(tickets) {
+        const cont = document.getElementById('user-chat-area'); cont.innerHTML = "";
+        let found = false;
+        for(let id in tickets) {
+            if(tickets[id].clienteId === myId) {
+                found = true;
+                cont.innerHTML = `
+                <div class="chat-area" id="ubox-${id}">${renderMsgs(tickets[id].chat)}</div>
+                <div style="padding:15px; display:flex; gap:10px; background:#111">
+                    <input type="text" id="in-${id}" placeholder="Mensagem..." style="flex:1; padding:12px; background:#000; border:none; color:#fff; border-radius:6px">
+                    <button class="btn-buy" style="width:50px; background:var(--primary)" onclick="sendChat('${id}','user')"><i class="fas fa-paper-plane"></i></button>
+                </div>`;
+            }
+        }
+        if(!found) cont.innerHTML = `<div style="padding:60px; text-align:center; color:#555">Nenhum ticket aberto.</div>`;
+    }
+
+    function sendChat(tId, role) {
+        const input = document.getElementById('in-' + tId);
+        if(input.value.trim()) { db.ref(`tickets/${tId}/chat`).push({ sender: role, txt: input.value }); input.value = ""; }
+    }
+
+    function renderMsgs(chat) { 
+        return chat ? Object.values(chat).map(m => `<div class="msg ${m.sender}">${m.txt}</div>`).join('') : ""; 
+    }
+</script>
+</body>
+</html>        .features-list li i { color: var(--primary); font-size: 0.8rem; }
 
         /* BUTTONS */
         .btn { 
