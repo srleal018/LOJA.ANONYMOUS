@@ -3,517 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bahamas Roleplay Store</title>
+    <title>Bahamas Store | Painel VIP</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
-            --primary: #FFD700; /* Amarelo Ouro */
-            --primary-dark: #c7a500;
-            --bg-dark: #121212;
-            --bg-card: #1e1e1e;
-            --text-light: #f5f5f5;
-            --text-gray: #b0b0b0;
+            --primary: #FFD700;
+            --bg-body: #1a1d23;
+            --bg-card: #252932;
+            --bg-input: #2d323c;
+            --text-main: #ffffff;
+            --text-dim: #aeb5c0;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Roboto', sans-serif;
-            overflow-x: hidden;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
         }
 
-        h1, h2, h3, h4, .navbar-brand, .btn {
-            font-family: 'Rajdhani', sans-serif;
-            text-transform: uppercase;
-        }
-
-        /* --- UI COMPONENTS --- */
-        
-        /* Navbar */
+        /* --- NAVBAR --- */
         .navbar {
-            background: rgba(18, 18, 18, 0.95);
-            border-bottom: 2px solid var(--primary);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
+            background: var(--bg-card);
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.8rem;
-            color: var(--primary) !important;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        }
-        .nav-link { color: var(--text-gray) !important; transition: 0.3s; font-weight: 600; }
-        .nav-link:hover, .nav-link.active { color: var(--primary) !important; }
+        .navbar-brand { font-weight: 800; color: var(--primary) !important; letter-spacing: 2px; }
 
-        /* Hero */
-        .hero {
-            background: linear-gradient(0deg, var(--bg-dark) 0%, rgba(255, 215, 0, 0.1) 100%);
-            padding: 60px 0 40px;
-            text-align: center;
+        /* --- CATEGORIAS SCROLL --- */
+        .category-scroll-wrapper {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 20px 0;
+            scrollbar-width: none; /* Firefox */
         }
+        .category-scroll-wrapper::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
-        /* Categoria Cards (Estilo Referência) */
-        .category-card {
-            height: 180px;
+        .cat-item {
+            min-width: 200px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
             border-radius: 12px;
-            overflow: hidden;
             position: relative;
             cursor: pointer;
-            border: 1px solid #333;
-            transition: all 0.3s;
+            border: 2px solid transparent;
+            transition: 0.3s;
+            flex-shrink: 0;
         }
-        .category-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.5s;
-            filter: brightness(0.4);
-        }
-        .category-content {
+        .cat-item::after {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 100%;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
+        .cat-item.active { border-color: var(--primary); transform: scale(1.05); }
+        .cat-item span {
+            position: absolute;
             z-index: 2;
-        }
-        .category-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-        }
-        .category-card:hover img {
-            transform: scale(1.1);
-            filter: brightness(0.6);
-        }
-        .category-title {
-            font-size: 1.8rem;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
             font-weight: 800;
-            color: #fff;
+            text-transform: uppercase;
             text-shadow: 2px 2px 4px #000;
         }
 
-        /* Product Cards */
+        /* --- PRODUTOS --- */
         .product-card {
             background: var(--bg-card);
-            border: 1px solid #333;
-            border-radius: 8px;
+            border-radius: 15px;
+            border: 1px solid #363b46;
+            overflow: hidden;
             transition: 0.3s;
         }
-        .product-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-        }
-        .product-img {
-            height: 200px;
-            width: 100%;
-            object-fit: cover;
-            border-bottom: 1px solid #333;
-        }
-        .price-tag {
-            color: var(--primary);
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-
-        /* Buttons */
-        .btn-primary-custom {
-            background-color: var(--primary);
-            color: #000;
-            font-weight: 800;
-            border: none;
-            transition: 0.3s;
-        }
-        .btn-primary-custom:hover {
-            background-color: var(--primary-dark);
-            color: #000;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
-        .btn-outline-custom {
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        .btn-outline-custom:hover {
+        .product-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .price-badge {
             background: var(--primary);
             color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 800;
         }
 
-        /* Chat System */
-        .chat-box {
-            height: 300px;
+        /* --- CHAT SYSTEM --- */
+        .chat-container {
+            height: 400px;
+            background: #121418;
+            border-radius: 10px;
+            padding: 20px;
             overflow-y: auto;
-            background: #0f0f0f;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .msg {
-            margin-bottom: 10px;
-            padding: 8px 12px;
+        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; }
+        .bubble.user { background: var(--primary); color: #000; align-self: flex-end; }
+        .bubble.admin { background: #363b46; color: #fff; align-self: flex-start; }
+        .bubble.system { background: rgba(255,215,0,0.1); color: var(--primary); align-self: center; font-size: 0.8rem; }
+
+        /* --- ADMIN DASHBOARD --- */
+        .admin-sidebar { background: var(--bg-card); border-radius: 15px; padding: 20px; }
+        .admin-nav-btn {
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin-bottom: 5px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
             border-radius: 8px;
-            max-width: 80%;
-            font-size: 0.9rem;
+            font-weight: 600;
         }
-        .msg.admin { background: #333; color: #fff; margin-right: auto; }
-        .msg.user { background: var(--primary); color: #000; margin-left: auto; text-align: right; }
-        .msg.system { background: #1a3c40; color: #4dd0e1; text-align: center; margin: 10px auto; width: 100%; }
+        .admin-nav-btn.active { background: var(--primary); color: #000; }
+        .admin-card-header { font-weight: 800; border-bottom: 2px solid var(--primary); margin-bottom: 20px; padding-bottom: 10px; }
 
-        /* Utilities */
-        .view-section { display: none; animation: fadeIn 0.4s; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }}
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Floating Cart */
         .cart-float {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 20px;
             background: var(--primary);
-            color: #000;
             width: 60px;
             height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255,215,0,0.4);
-            z-index: 1000;
-        }
-        .cart-count {
-            position: absolute;
-            top: 0; right: 0;
-            background: red;
-            color: white;
-            font-size: 12px;
-            border-radius: 50%;
-            padding: 2px 6px;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg sticky-top navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#" onclick="nav('home')"><i class="fas fa-crown me-2"></i>BAHAMAS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navContent">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link active" onclick="nav('home')" href="#">Loja</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="nav('tickets')" href="#">Meus Tickets</a></li>
-                    <li class="nav-item"><a class="nav-link" onclick="openAdminAuth()" href="#">Admin</a></li>
-                </ul>
+            <a class="navbar-brand" href="#" onclick="showView('home')">BAHAMAS STORE</a>
+            <div class="ms-auto d-flex align-items-center">
+                <button class="btn text-white me-2" onclick="showView('my-tickets')"><i class="fas fa-ticket-alt"></i> Tickets</button>
+                <button class="btn btn-sm btn-outline-warning" onclick="authAdmin()">PAINEL ADMIN</button>
             </div>
         </div>
     </nav>
 
-    <div id="home" class="view-section active">
-        <div class="hero">
-            <div class="container">
-                <h1>Bem-vindo a Bahamas</h1>
-                <p class="text-gray">Selecione uma categoria abaixo para começar</p>
+    <div id="home" class="view-section active container py-4">
+        <h5 class="text-uppercase fw-bold text-dim mb-3">Categorias</h5>
+        <div class="category-scroll-wrapper" id="cat-scroll">
             </div>
-        </div>
-        <div class="container mb-5">
-            <div class="row g-4" id="categories-container">
-                </div>
-            
-            <div id="products-area" class="mt-5 d-none">
-                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-3 mb-4">
-                    <h3 id="selected-category-title" class="text-primary">Produtos</h3>
-                    <button class="btn btn-outline-secondary btn-sm" onclick="nav('home')">Voltar</button>
-                </div>
-                <div class="row g-4" id="products-container"></div>
+
+        <h4 class="fw-bold mt-4 mb-3" id="display-title">Todos os Produtos</h4>
+        <div class="row g-4" id="products-grid">
             </div>
-        </div>
     </div>
 
-    <div id="tickets" class="view-section container my-5">
-        <h2 class="mb-4 text-primary">Meus Pedidos & Tickets</h2>
+    <div id="my-tickets" class="view-section container py-5">
         <div class="row">
-            <div class="col-md-4 mb-3">
-                <div class="list-group bg-dark" id="user-ticket-list">
-                    </div>
+            <div class="col-md-4">
+                <h4 class="fw-bold mb-4">Meus Pedidos</h4>
+                <div id="user-ticket-list" class="list-group"></div>
             </div>
             <div class="col-md-8">
-                <div id="chat-panel" class="card bg-card d-none">
-                    <div class="card-header border-secondary d-flex justify-content-between">
-                        <span id="chat-title">Ticket #000</span>
-                        <span id="chat-status" class="badge bg-warning">Aberto</span>
+                <div id="chat-window" class="d-none">
+                    <div class="admin-card-header d-flex justify-content-between">
+                        <span id="chat-id-label">Ticket #0000</span>
+                        <button class="btn btn-sm btn-danger" onclick="closeTicketUser()">Finalizar Suporte</button>
                     </div>
-                    <div class="card-body">
-                        <div class="chat-box mb-3" id="chat-messages"></div>
-                        <form onsubmit="sendUserMessage(event)">
-                            <div class="input-group">
-                                <input type="text" id="user-msg-input" class="form-control bg-dark text-light border-secondary" placeholder="Digite sua mensagem..." required>
-                                <button class="btn btn-primary-custom">Enviar</button>
-                            </div>
+                    <div class="chat-container mb-3" id="chat-msgs-user"></div>
+                    <form onsubmit="sendMessageUser(event)" class="d-flex gap-2">
+                        <input type="text" id="input-msg-user" class="form-control bg-input border-0 text-white" placeholder="Mensagem...">
+                        <button class="btn btn-warning fw-bold">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="view-section container-fluid py-4">
+        <div class="row px-lg-5">
+            <div class="col-md-3">
+                <div class="admin-sidebar">
+                    <h5 class="fw-bold text-primary mb-4"><i class="fas fa-user-shield"></i> Dashboard</h5>
+                    <button class="admin-nav-btn active" onclick="showAdminTab('adm-cats', this)"><i class="fas fa-tags me-2"></i> Categorias</button>
+                    <button class="admin-nav-btn" onclick="showAdminTab('adm-prods', this)"><i class="fas fa-box me-2"></i> Produtos</button>
+                    <button class="admin-nav-btn" onclick="showAdminTab('adm-tickets', this)"><i class="fas fa-comments me-2"></i> Tickets & Chat</button>
+                    <button class="admin-nav-btn" onclick="showAdminTab('adm-coupons', this)"><i class="fas fa-ticket-simple me-2"></i> Cupons</button>
+                    <button class="admin-nav-btn" onclick="showAdminTab('adm-revs', this)"><i class="fas fa-star me-2"></i> Avaliações</button>
+                    <hr>
+                    <button class="btn btn-danger w-100" onclick="showView('home')">Sair do Painel</button>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div id="adm-cats" class="adm-tab">
+                    <h4 class="admin-card-header">Gerenciar Categorias</h4>
+                    <div class="bg-card p-3 rounded mb-3">
+                        <form onsubmit="addCat(event)" class="row g-2">
+                            <div class="col-md-5"><input type="text" id="ac-name" class="form-control bg-input border-0 text-white" placeholder="Nome da Categoria" required></div>
+                            <div class="col-md-5"><input type="text" id="ac-img" class="form-control bg-input border-0 text-white" placeholder="URL da Imagem de Fundo" required></div>
+                            <div class="col-md-2"><button class="btn btn-warning w-100">Criar</button></div>
                         </form>
                     </div>
+                    <div id="adm-cat-list"></div>
                 </div>
-                <div id="chat-placeholder" class="text-center text-muted py-5">
-                    <i class="fas fa-comments fa-3x mb-3"></i>
-                    <p>Selecione um ticket ao lado para ver detalhes e conversar.</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div id="admin" class="view-section container-fluid my-4">
-        <div class="d-flex justify-content-between align-items-center mb-4 px-3">
-            <h2 class="text-primary"><i class="fas fa-user-shield"></i> Painel Bahamas</h2>
-            <button class="btn btn-danger btn-sm" onclick="nav('home')">Sair</button>
-        </div>
-
-        <div class="row px-3">
-            <div class="col-md-2 mb-3">
-                <div class="list-group">
-                    <button class="list-group-item list-group-item-action active" onclick="switchAdminTab('adm-cats', this)">Categorias</button>
-                    <button class="list-group-item list-group-item-action" onclick="switchAdminTab('adm-prods', this)">Produtos</button>
-                    <button class="list-group-item list-group-item-action" onclick="switchAdminTab('adm-coupons', this)">Cupons</button>
-                    <button class="list-group-item list-group-item-action" onclick="switchAdminTab('adm-reviews', this)">Avaliações</button>
-                    <button class="list-group-item list-group-item-action" onclick="switchAdminTab('adm-tickets', this)">Tickets (Chat)</button>
-                </div>
-            </div>
-
-            <div class="col-md-10">
-                <div id="adm-cats" class="admin-tab">
-                    <div class="card bg-card border-secondary mb-3">
-                        <div class="card-body">
-                            <h5>Nova Categoria</h5>
-                            <form onsubmit="addCategory(event)" class="d-flex gap-2">
-                                <input type="text" id="new-cat-name" class="form-control" placeholder="Nome" required>
-                                <input type="text" id="new-cat-img" class="form-control" placeholder="URL Imagem" required>
-                                <button class="btn btn-success">Criar</button>
-                            </form>
-                        </div>
+                <div id="adm-prods" class="adm-tab d-none">
+                    <h4 class="admin-card-header">Gerenciar Produtos</h4>
+                    <div class="bg-card p-3 rounded mb-3">
+                        <form onsubmit="addProd(event)" class="row g-2">
+                            <div class="col-md-3"><select id="ap-cat" class="form-select bg-input border-0 text-white"></select></div>
+                            <div class="col-md-3"><input type="text" id="ap-name" class="form-control bg-input border-0 text-white" placeholder="Nome" required></div>
+                            <div class="col-md-2"><input type="number" id="ap-price" class="form-control bg-input border-0 text-white" placeholder="Preço" required></div>
+                            <div class="col-md-3"><input type="text" id="ap-img" class="form-control bg-input border-0 text-white" placeholder="Link Imagem" required></div>
+                            <div class="col-md-1"><button class="btn btn-warning w-100">+</button></div>
+                        </form>
                     </div>
-                    <table class="table table-dark table-hover">
-                        <thead><tr><th>Img</th><th>Nome</th><th>Ação</th></tr></thead>
-                        <tbody id="adm-cat-list"></tbody>
-                    </table>
+                    <div id="adm-prod-list"></div>
                 </div>
 
-                <div id="adm-prods" class="admin-tab d-none">
-                    <div class="card bg-card border-secondary mb-3">
-                        <div class="card-body">
-                            <h5>Novo Produto</h5>
-                            <form onsubmit="addProduct(event)" class="row g-2">
-                                <div class="col-md-3"><select id="new-prod-cat" class="form-select" required></select></div>
-                                <div class="col-md-3"><input type="text" id="new-prod-name" class="form-control" placeholder="Nome" required></div>
-                                <div class="col-md-2"><input type="number" id="new-prod-price" class="form-control" placeholder="Preço" required></div>
-                                <div class="col-md-3"><input type="text" id="new-prod-img" class="form-control" placeholder="URL Imagem" required></div>
-                                <div class="col-md-1"><button class="btn btn-success w-100">+</button></div>
-                            </form>
-                        </div>
-                    </div>
-                    <table class="table table-dark table-hover">
-                        <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Ação</th></tr></thead>
-                        <tbody id="adm-prod-list"></tbody>
-                    </table>
-                </div>
-
-                <div id="adm-coupons" class="admin-tab d-none">
-                    <div class="card bg-card border-secondary mb-3">
-                        <div class="card-body">
-                            <form onsubmit="addCoupon(event)" class="d-flex gap-2">
-                                <input type="text" id="new-coupon-code" class="form-control" placeholder="Código (Ex: BAHAMAS10)" required>
-                                <input type="number" id="new-coupon-val" class="form-control" placeholder="% Desconto" required>
-                                <button class="btn btn-success">Criar</button>
-                            </form>
-                        </div>
-                    </div>
-                    <ul class="list-group" id="adm-coupon-list"></ul>
-                </div>
-
-                <div id="adm-reviews" class="admin-tab d-none">
-                    <p class="text-muted">Remova avaliações impróprias.</p>
-                    <div class="row" id="adm-review-list"></div>
-                </div>
-
-                <div id="adm-tickets" class="admin-tab d-none">
+                <div id="adm-tickets" class="adm-tab d-none">
+                    <h4 class="admin-card-header">Central de Atendimento</h4>
                     <div class="row">
-                        <div class="col-4">
-                            <div class="list-group" id="adm-ticket-list-sidebar" style="max-height: 500px; overflow-y: auto;"></div>
-                        </div>
-                        <div class="col-8">
-                            <div id="adm-chat-panel" class="card bg-card d-none">
-                                <div class="card-header">Conversando com Cliente</div>
-                                <div class="card-body">
-                                    <div class="chat-box mb-3" id="adm-chat-msgs"></div>
-                                    <form onsubmit="sendAdminMessage(event)">
-                                        <div class="input-group">
-                                            <input type="text" id="adm-msg-input" class="form-control" required>
-                                            <button class="btn btn-primary">Responder</button>
-                                        </div>
-                                    </form>
-                                </div>
+                        <div class="col-md-4"><div id="adm-ticket-list" class="list-group"></div></div>
+                        <div class="col-md-8">
+                            <div id="adm-chat-window" class="d-none">
+                                <div class="chat-container mb-2" id="adm-chat-msgs"></div>
+                                <form onsubmit="sendMessageAdmin(event)" class="d-flex gap-2">
+                                    <input type="text" id="input-msg-admin" class="form-control bg-input border-0 text-white" placeholder="Responder...">
+                                    <button class="btn btn-warning">Enviar</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="modal fade" id="cartModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-card border border-warning">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title text-primary">Carrinho de Compras</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <ul class="list-group list-group-flush" id="cart-list"></ul>
-                    <div class="mt-3">
-                        <div class="input-group mb-2">
-                            <input type="text" id="coupon-input" class="form-control bg-dark text-white border-secondary" placeholder="Cupom de Desconto">
-                            <button class="btn btn-outline-warning" onclick="applyCoupon()">Aplicar</button>
-                        </div>
-                        <div class="d-flex justify-content-between fs-5 fw-bold mt-3">
-                            <span>Total:</span>
-                            <span class="text-primary" id="cart-total">R$ 0,00</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button class="btn btn-primary-custom w-100" onclick="checkout()">FINALIZAR COMPRA</button>
+                <div id="adm-coupons" class="adm-tab d-none">
+                    <h4 class="admin-card-header">Cupons de Desconto</h4>
+                    <form onsubmit="addCoupon(event)" class="d-flex gap-2 mb-3">
+                        <input type="text" id="coup-code" class="form-control bg-input border-0 text-white" placeholder="CÓDIGO">
+                        <input type="number" id="coup-val" class="form-control bg-input border-0 text-white" placeholder="% Desconto">
+                        <button class="btn btn-warning">Adicionar</button>
+                    </form>
+                    <div id="adm-coupon-list"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="cart-float" onclick="openCart()">
-        <i class="fas fa-shopping-cart"></i>
-        <span class="cart-count" id="cart-count-badge">0</span>
+        <i class="fas fa-shopping-cart text-dark"></i>
+        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-card text-white">
+                <div class="modal-header border-0">
+                    <h5 class="fw-bold">Meu Carrinho</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cart-items" class="mb-3"></div>
+                    <div class="input-group mb-3">
+                        <input type="text" id="apply-coupon-input" class="form-control bg-input border-0 text-white" placeholder="Cupom">
+                        <button class="btn btn-warning" onclick="applyCoupon()">Aplicar</button>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total:</span>
+                        <span id="total-price" class="text-primary">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button class="btn btn-warning w-100 fw-bold" onclick="finalizarCompra()">FINALIZAR E ABRIR TICKET</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- 1. BANCO DE DADOS (LOCALSTORAGE) ---
-        const db = {
-            cats: JSON.parse(localStorage.getItem('bhm_cats')) || [
-                {id: 1, name: "VIPs", img: "https://i.pinimg.com/originals/94/a3/52/94a3525287535b2a0c4515569424c56e.jpg"},
-                {id: 2, name: "Veículos", img: "https://i.pinimg.com/736x/87/03/49/87034960d75a31a90d89886754025178.jpg"},
-                {id: 3, name: "Dinheiro", img: "https://i.pinimg.com/736x/7d/53/56/7d53562479e4962b9213123891823177.jpg"}
+        // --- DATA SYSTEM ---
+        let db = JSON.parse(localStorage.getItem('bahamas_db')) || {
+            categories: [
+                {id: 1, name: "VIPs", img: "https://i.imgur.com/3QZ9Q0a.png"},
+                {id: 2, name: "Veículos", img: "https://i.imgur.com/3QZ9Q0a.png"}
             ],
-            prods: JSON.parse(localStorage.getItem('bhm_prods')) || [
-                {id: 1, catId: 1, name: "VIP Gold", price: 50, img: "https://via.placeholder.com/300/FFD700/000?text=VIP+GOLD"},
-                {id: 2, catId: 2, name: "Lamborghini", price: 150, img: "https://via.placeholder.com/300/333/fff?text=Lambo"},
-                {id: 3, catId: 3, name: "1 Milhão", price: 20, img: "https://via.placeholder.com/300/006400/fff?text=Dinheiro"}
+            products: [
+                {id: 101, catId: 1, name: "VIP Prata", price: 30, img: "https://via.placeholder.com/300"},
+                {id: 102, catId: 2, name: "Fusca Tunado", price: 150, img: "https://via.placeholder.com/300"}
             ],
-            coupons: JSON.parse(localStorage.getItem('bhm_coupons')) || [
-                {code: "BAHAMAS10", val: 10}
-            ],
-            tickets: JSON.parse(localStorage.getItem('bhm_tickets')) || [],
-            reviews: JSON.parse(localStorage.getItem('bhm_reviews')) || []
+            tickets: [],
+            coupons: [{code: "BAHAMAS", val: 10}],
+            reviews: []
         };
 
         let cart = [];
-        let currentDiscount = 0;
-        let activeTicketId = null; // Para o chat
-        let adminActiveTicketId = null;
+        let discount = 0;
+        let activeTicket = null;
 
-        function saveDB() {
-            localStorage.setItem('bhm_cats', JSON.stringify(db.cats));
-            localStorage.setItem('bhm_prods', JSON.stringify(db.prods));
-            localStorage.setItem('bhm_coupons', JSON.stringify(db.coupons));
-            localStorage.setItem('bhm_tickets', JSON.stringify(db.tickets));
-            localStorage.setItem('bhm_reviews', JSON.stringify(db.reviews));
+        function save() { localStorage.setItem('bahamas_db', JSON.stringify(db)); }
+
+        // --- NAVIGATION ---
+        function showView(id) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'home') renderStore();
+            if(id === 'my-tickets') renderUserTickets();
         }
 
-        // --- 2. NAVEGAÇÃO & UI ---
-        function nav(section) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(section).classList.add('active');
-            
-            if(section === 'tickets') renderUserTickets();
-        }
-
-        function openAdminAuth() {
-            Swal.fire({
-                title: 'Acesso Administrativo',
-                input: 'password',
-                background: '#1e1e1e', color: '#fff',
-                confirmButtonColor: '#FFD700', confirmButtonText: '<span style="color:black">Entrar</span>'
-            }).then((res) => {
-                if(res.value === 'admin') { // SENHA DO ADMIN AQUI
-                    nav('admin');
-                    renderAdminCats();
-                } else if(res.isConfirmed) Swal.fire('Erro', 'Senha Incorreta', 'error');
-            });
-        }
-
-        function switchAdminTab(tabId, btn) {
-            document.querySelectorAll('.admin-tab').forEach(el => el.classList.add('d-none'));
-            document.getElementById(tabId).classList.remove('d-none');
-            document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+        function showAdminTab(id, btn) {
+            document.querySelectorAll('.adm-tab').forEach(t => t.classList.add('d-none'));
+            document.getElementById(id).classList.remove('d-none');
+            document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            if(tabId === 'adm-cats') renderAdminCats();
-            if(tabId === 'adm-prods') renderAdminProds();
-            if(tabId === 'adm-coupons') renderAdminCoupons();
-            if(tabId === 'adm-reviews') renderAdminReviews();
-            if(tabId === 'adm-tickets') renderAdminTicketsList();
+            if(id === 'adm-cats') renderAdminCats();
+            if(id === 'adm-prods') renderAdminProds();
+            if(id === 'adm-tickets') renderAdminTickets();
+            if(id === 'adm-coupons') renderAdminCoupons();
         }
 
-        // --- 3. LOJA (HOME) ---
-        function initStore() {
-            const catContainer = document.getElementById('categories-container');
-            catContainer.innerHTML = '';
-            
-            db.cats.forEach(cat => {
-                catContainer.innerHTML += `
-                    <div class="col-md-4">
-                        <div class="category-card" onclick="loadProducts(${cat.id}, '${cat.name}')">
-                            <img src="${cat.img}" onerror="this.src='https://via.placeholder.com/400x200'">
-                            <div class="category-content">
-                                <h3 class="category-title">${cat.name}</h3>
-                            </div>
-                        </div>
+        // --- STORE LOGIC ---
+        function renderStore(filterId = null) {
+            const scroll = document.getElementById('cat-scroll');
+            scroll.innerHTML = `<div class="cat-item ${filterId === null ? 'active' : ''}" onclick="renderStore(null)" style="background-image: url('https://i.imgur.com/3QZ9Q0a.png')"><span>Todos</span></div>`;
+            db.categories.forEach(c => {
+                scroll.innerHTML += `
+                    <div class="cat-item ${filterId == c.id ? 'active' : ''}" onclick="renderStore(${c.id})" style="background-image: url('${c.img}')">
+                        <span>${c.name}</span>
                     </div>
                 `;
             });
-        }
 
-        function loadProducts(catId, catName) {
-            const area = document.getElementById('products-area');
-            const container = document.getElementById('products-container');
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            const filtered = filterId ? db.products.filter(p => p.catId == filterId) : db.products;
             
-            // UI Transition
-            document.getElementById('categories-container').classList.add('d-none');
-            area.classList.remove('d-none');
-            document.getElementById('selected-category-title').innerText = catName;
-            
-            container.innerHTML = '';
-            const filtered = db.prods.filter(p => p.catId == catId);
-
-            if(filtered.length === 0) {
-                container.innerHTML = '<p class="text-center text-muted">Sem produtos nesta categoria.</p>';
-                return;
-            }
-
             filtered.forEach(p => {
-                container.innerHTML += `
-                    <div class="col-md-3 col-sm-6">
+                grid.innerHTML += `
+                    <div class="col-md-3">
                         <div class="product-card">
-                            <img src="${p.img}" class="product-img">
+                            <img src="${p.img}" class="w-100" style="height:160px; object-fit:cover">
                             <div class="p-3">
-                                <h5 class="text-white">${p.name}</h5>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="price-tag">R$ ${p.price}</span>
-                                    <button class="btn btn-sm btn-primary-custom" onclick="addToCart(${p.id})">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                <h6 class="fw-bold mb-2">${p.name}</h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="price-badge">R$ ${p.price}</span>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="addToCart(${p.id})"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -522,316 +365,154 @@
             });
         }
 
-        // --- 4. CARRINHO & CHECKOUT (TICKET) ---
+        // --- CART SYSTEM ---
         function addToCart(id) {
-            const prod = db.prods.find(p => p.id === id);
-            cart.push(prod);
-            updateCartUI();
-            const Toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1000});
-            Toast.fire({icon: 'success', title: 'Adicionado!'});
-        }
-
-        function updateCartUI() {
-            document.getElementById('cart-count-badge').innerText = cart.length;
+            const p = db.products.find(x => x.id == id);
+            cart.push(p);
+            document.getElementById('cart-count').innerText = cart.length;
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Adicionado!', showConfirmButton: false, timer: 1000 });
         }
 
         function openCart() {
-            const list = document.getElementById('cart-list');
-            list.innerHTML = '';
+            const itemsDiv = document.getElementById('cart-items');
+            itemsDiv.innerHTML = '';
             let total = 0;
-            
             cart.forEach((item, idx) => {
                 total += parseFloat(item.price);
-                list.innerHTML += `
-                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
-                        <span>${item.name}</span>
-                        <span>R$ ${item.price} <i class="fas fa-trash text-danger ms-2" style="cursor:pointer" onclick="removeFromCart(${idx})"></i></span>
-                    </li>
-                `;
+                itemsDiv.innerHTML += `<div class="d-flex justify-content-between mb-2"><span>${item.name}</span><span>R$ ${item.price} <i class="fas fa-times text-danger ms-2" onclick="cart.splice(${idx},1);openCart();"></i></span></div>`;
             });
-
-            // Desconto
-            if(currentDiscount > 0) {
-                const discVal = (total * currentDiscount) / 100;
-                total -= discVal;
-                document.getElementById('cart-total').innerHTML = `R$ ${total.toFixed(2)} <small class="text-success">(-${currentDiscount}%)</small>`;
-            } else {
-                document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2)}`;
-            }
-
+            total = total - (total * (discount/100));
+            document.getElementById('total-price').innerText = `R$ ${total.toFixed(2)}`;
             new bootstrap.Modal(document.getElementById('cartModal')).show();
         }
 
-        function removeFromCart(idx) {
-            cart.splice(idx, 1);
-            // Reabrir modal (hack simples)
-            document.querySelector('#cartModal .btn-close').click();
-            setTimeout(openCart, 200);
-        }
-
         function applyCoupon() {
-            const code = document.getElementById('coupon-input').value.toUpperCase();
-            const cupom = db.coupons.find(c => c.code === code);
-            if(cupom) {
-                currentDiscount = cupom.val;
-                Swal.fire('Sucesso', `Desconto de ${cupom.val}% aplicado!`, 'success');
-                document.querySelector('#cartModal .btn-close').click();
-                setTimeout(openCart, 200);
-            } else {
-                Swal.fire('Erro', 'Cupom inválido', 'error');
-            }
+            const code = document.getElementById('apply-coupon-input').value;
+            const c = db.coupons.find(x => x.code === code);
+            if(c) { discount = c.val; openCart(); Swal.fire('Cupom Aplicado!', '', 'success'); }
+            else { Swal.fire('Inválido', '', 'error'); }
         }
 
-        function checkout() {
+        function finalizarCompra() {
             if(cart.length === 0) return;
-
-            // 1. Criar Resumo
-            let total = 0;
-            let itemsText = "";
-            cart.forEach(i => { total += parseFloat(i.price); itemsText += `${i.name}, `; });
-            if(currentDiscount > 0) total = total - (total * currentDiscount / 100);
-
-            const orderId = Date.now();
-            
-            // 2. Criar Ticket
-            const newTicket = {
-                id: orderId,
-                date: new Date().toLocaleString(),
-                total: total.toFixed(2),
+            const ticket = {
+                id: Math.floor(1000 + Math.random() * 9000),
+                items: [...cart],
                 status: 'aberto',
-                msgs: [
-                    {sender: 'system', text: `<b>NOVO PEDIDO:</b><br>Itens: ${itemsText}<br>Total: R$ ${total.toFixed(2)}<br>Aguarde atendimento.`}
-                ]
+                msgs: [{sender: 'system', text: 'Pedido recebido! Aguarde um administrador para prosseguir com a entrega.'}]
             };
-            db.tickets.push(newTicket);
-            saveDB();
-
-            // 3. Limpar e Fechar Carrinho
+            db.tickets.push(ticket);
             cart = [];
-            currentDiscount = 0;
-            updateCartUI();
-            document.querySelector('#cartModal .btn-close').click();
-
-            // 4. Solicitar Avaliação (Pós-Venda)
-            Swal.fire({
-                title: 'Compra Realizada!',
-                text: 'Seu pedido gerou um Ticket. Por favor, avalie nossa loja antes de continuar.',
-                icon: 'success',
-                input: 'select',
-                inputOptions: { '5': '⭐⭐⭐⭐⭐', '4': '⭐⭐⭐⭐', '3': '⭐⭐⭐', '2': '⭐⭐', '1': '⭐' },
-                inputPlaceholder: 'Selecione uma nota',
-                showCancelButton: false,
-                confirmButtonColor: '#FFD700',
-                allowOutsideClick: false
-            }).then((res) => {
-                if(res.value) {
-                    Swal.fire({
-                        title: 'Comentário (Opcional)',
-                        input: 'text',
-                        placeholder: 'O que achou?'
-                    }).then((commentRes) => {
-                        db.reviews.push({
-                            rating: res.value,
-                            text: commentRes.value || "Sem comentário",
-                            date: new Date().toLocaleDateString()
-                        });
-                        saveDB();
-                        // 5. Redirecionar para Tickets
-                        nav('tickets');
-                    });
-                }
+            discount = 0;
+            document.getElementById('cart-count').innerText = 0;
+            save();
+            bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+            
+            Swal.fire('Pedido Criado!', 'Seu ticket de suporte foi aberto.', 'success').then(() => {
+                showView('my-tickets');
+                // Pedir avaliação
+                Swal.fire({
+                    title: 'Avalie nossa loja',
+                    input: 'select',
+                    inputOptions: {5: '⭐⭐⭐⭐⭐', 4: '⭐⭐⭐⭐', 1: '⭐'},
+                    showCancelButton: true
+                }).then(res => {
+                    if(res.value) { db.reviews.push({nota: res.value, data: new Date().toLocaleDateString()}); save(); }
+                });
             });
         }
 
-        // --- 5. SISTEMA DE TICKETS (CHAT) ---
+        // --- CHAT LOGIC ---
         function renderUserTickets() {
             const list = document.getElementById('user-ticket-list');
             list.innerHTML = '';
-            
-            if(db.tickets.length === 0) {
-                list.innerHTML = '<div class="p-3 text-muted">Você não tem pedidos ainda.</div>';
-                return;
-            }
-
             db.tickets.forEach(t => {
-                list.innerHTML += `
-                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white border-secondary" onclick="openUserChat(${t.id})">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">Pedido #${t.id.toString().substr(-4)}</h6>
-                            <small>${t.date}</small>
-                        </div>
-                        <small class="text-primary">R$ ${t.total}</small>
-                    </a>
-                `;
+                list.innerHTML += `<button onclick="openChatUser(${t.id})" class="list-group-item list-group-item-action bg-card text-white mb-2 border-0 rounded">Ticket #${t.id} <span class="badge bg-warning text-dark float-end">${t.status}</span></button>`;
             });
         }
 
-        function openUserChat(id) {
-            activeTicketId = id;
-            document.getElementById('chat-placeholder').classList.add('d-none');
-            document.getElementById('chat-panel').classList.remove('d-none');
-            
-            const ticket = db.tickets.find(t => t.id === id);
-            document.getElementById('chat-title').innerText = `Pedido #${id.toString().substr(-4)}`;
-            
-            renderChatMsgs('chat-messages', ticket.msgs);
-        }
-
-        function sendUserMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('user-msg-input');
-            if(!input.value.trim()) return;
-
-            const ticket = db.tickets.find(t => t.id === activeTicketId);
-            ticket.msgs.push({ sender: 'user', text: input.value });
-            saveDB();
-            
-            renderChatMsgs('chat-messages', ticket.msgs);
-            input.value = '';
-        }
-
-        function renderChatMsgs(containerId, msgs) {
-            const box = document.getElementById(containerId);
+        function openChatUser(id) {
+            activeTicket = db.tickets.find(t => t.id == id);
+            document.getElementById('chat-window').classList.remove('d-none');
+            document.getElementById('chat-id-label').innerText = `Ticket #${id}`;
+            const box = document.getElementById('chat-msgs-user');
             box.innerHTML = '';
-            msgs.forEach(m => {
-                box.innerHTML += `<div class="msg ${m.sender}">${m.text}</div>`;
-            });
+            activeTicket.msgs.forEach(m => { box.innerHTML += `<div class="bubble ${m.sender}">${m.text}</div>`; });
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- 6. ADMIN PAINEL LOGIC ---
-        
-        // Categorias
-        function renderAdminCats() {
-            const list = document.getElementById('adm-cat-list');
-            list.innerHTML = '';
-            db.cats.forEach((c, idx) => {
-                list.innerHTML += `
-                    <tr>
-                        <td><img src="${c.img}" style="width:30px; height:30px; object-fit:cover; border-radius:4px;"></td>
-                        <td>${c.name}</td>
-                        <td><button class="btn btn-sm btn-danger" onclick="delCat(${idx})"><i class="fas fa-trash"></i></button></td>
-                    </tr>`;
-            });
-        }
-        function addCategory(e) {
+        function sendMessageUser(e) {
             e.preventDefault();
-            db.cats.push({
-                id: Date.now(),
-                name: document.getElementById('new-cat-name').value,
-                img: document.getElementById('new-cat-img').value
-            });
-            saveDB(); renderAdminCats(); e.target.reset();
-        }
-        function delCat(idx) { db.cats.splice(idx, 1); saveDB(); renderAdminCats(); }
-
-        // Produtos
-        function renderAdminProds() {
-            const list = document.getElementById('adm-prod-list');
-            const select = document.getElementById('new-prod-cat');
-            list.innerHTML = '';
-            select.innerHTML = '';
-            
-            db.cats.forEach(c => select.innerHTML += `<option value="${c.id}">${c.name}</option>`);
-
-            db.prods.forEach((p, idx) => {
-                const catName = db.cats.find(c => c.id == p.catId)?.name || 'N/A';
-                list.innerHTML += `
-                    <tr>
-                        <td>${p.name}</td>
-                        <td><span class="badge bg-secondary">${catName}</span></td>
-                        <td>R$ ${p.price}</td>
-                        <td><button class="btn btn-sm btn-danger" onclick="delProd(${idx})"><i class="fas fa-trash"></i></button></td>
-                    </tr>`;
-            });
-        }
-        function addProduct(e) {
-            e.preventDefault();
-            db.prods.push({
-                id: Date.now(),
-                catId: document.getElementById('new-prod-cat').value,
-                name: document.getElementById('new-prod-name').value,
-                price: document.getElementById('new-prod-price').value,
-                img: document.getElementById('new-prod-img').value
-            });
-            saveDB(); renderAdminProds(); e.target.reset();
-        }
-        function delProd(idx) { db.prods.splice(idx, 1); saveDB(); renderAdminProds(); }
-
-        // Cupons
-        function renderAdminCoupons() {
-            const list = document.getElementById('adm-coupon-list');
-            list.innerHTML = '';
-            db.coupons.forEach((c, idx) => {
-                list.innerHTML += `<li class="list-group-item bg-dark text-white d-flex justify-content-between">
-                    <span>${c.code} (${c.val}%)</span>
-                    <button class="btn btn-sm btn-danger" onclick="delCoupon(${idx})">X</button>
-                </li>`;
-            });
-        }
-        function addCoupon(e) {
-            e.preventDefault();
-            db.coupons.push({ code: document.getElementById('new-coupon-code').value.toUpperCase(), val: document.getElementById('new-coupon-val').value });
-            saveDB(); renderAdminCoupons(); e.target.reset();
-        }
-        function delCoupon(idx) { db.coupons.splice(idx, 1); saveDB(); renderAdminCoupons(); }
-
-        // Avaliações
-        function renderAdminReviews() {
-            const list = document.getElementById('adm-review-list');
-            list.innerHTML = '';
-            db.reviews.forEach((r, idx) => {
-                let stars = '⭐'.repeat(r.rating);
-                list.innerHTML += `
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-dark border-warning">
-                            <div class="card-body">
-                                <div>${stars}</div>
-                                <p class="small text-muted mb-2">${r.date}</p>
-                                <p>"${r.text}"</p>
-                                <button class="btn btn-sm btn-outline-danger w-100" onclick="delReview(${idx})">Remover</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-        }
-        function delReview(idx) { db.reviews.splice(idx, 1); saveDB(); renderAdminReviews(); }
-
-        // Tickets (Admin Chat)
-        function renderAdminTicketsList() {
-            const list = document.getElementById('adm-ticket-list-sidebar');
-            list.innerHTML = '';
-            db.tickets.forEach(t => {
-                list.innerHTML += `
-                    <button class="list-group-item list-group-item-action bg-dark text-white" onclick="openAdminChat(${t.id})">
-                        Ticket #${t.id.toString().substr(-4)} <br> <span class="badge bg-primary text-dark">R$ ${t.total}</span>
-                    </button>
-                `;
-            });
-        }
-        function openAdminChat(id) {
-            adminActiveTicketId = id;
-            document.getElementById('adm-chat-panel').classList.remove('d-none');
-            const ticket = db.tickets.find(t => t.id === id);
-            renderChatMsgs('adm-chat-msgs', ticket.msgs);
-        }
-        function sendAdminMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('adm-msg-input');
-            const ticket = db.tickets.find(t => t.id === adminActiveTicketId);
-            ticket.msgs.push({ sender: 'admin', text: input.value });
-            saveDB();
-            renderChatMsgs('adm-chat-msgs', ticket.msgs);
+            const input = document.getElementById('input-msg-user');
+            if(!input.value) return;
+            activeTicket.msgs.push({sender: 'user', text: input.value});
+            save();
+            openChatUser(activeTicket.id);
             input.value = '';
         }
 
-        // Inicialização
-        initStore();
+        // --- ADMIN FUNCTIONS ---
+        function authAdmin() {
+            Swal.fire({ title: 'Senha Admin', input: 'password' }).then(res => {
+                if(res.value === 'admin') showView('admin-panel');
+            });
+        }
 
-        // Hack para voltar a Home se clicar no 'Voltar' do navegador no reload
-        if(!window.location.hash) nav('home');
+        function renderAdminCats() {
+            const list = document.getElementById('adm-cat-list');
+            list.innerHTML = '';
+            db.categories.forEach((c, idx) => {
+                list.innerHTML += `<div class="d-flex justify-content-between bg-input p-2 rounded mb-2"><span>${c.name}</span><button class="btn btn-sm btn-danger" onclick="db.categories.splice(${idx},1);save();renderAdminCats();">Remover</button></div>`;
+            });
+        }
 
+        function addCat(e) {
+            e.preventDefault();
+            db.categories.push({id: Date.now(), name: document.getElementById('ac-name').value, img: document.getElementById('ac-img').value});
+            save(); renderAdminCats(); e.target.reset();
+        }
+
+        function renderAdminProds() {
+            const list = document.getElementById('adm-prod-list');
+            const sel = document.getElementById('ap-cat');
+            list.innerHTML = ''; sel.innerHTML = '';
+            db.categories.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+            db.products.forEach((p, idx) => {
+                list.innerHTML += `<div class="d-flex justify-content-between bg-input p-2 rounded mb-2"><span>${p.name} (R$ ${p.price})</span><button class="btn btn-sm btn-danger" onclick="db.products.splice(${idx},1);save();renderAdminProds();">Remover</button></div>`;
+            });
+        }
+
+        function addProd(e) {
+            e.preventDefault();
+            db.products.push({id: Date.now(), catId: document.getElementById('ap-cat').value, name: document.getElementById('ap-name').value, price: document.getElementById('ap-price').value, img: document.getElementById('ap-img').value});
+            save(); renderAdminProds(); e.target.reset();
+        }
+
+        function renderAdminTickets() {
+            const list = document.getElementById('adm-ticket-list');
+            list.innerHTML = '';
+            db.tickets.forEach(t => {
+                list.innerHTML += `<button onclick="openChatAdmin(${t.id})" class="list-group-item list-group-item-action bg-input text-white mb-1 border-0">Ticket #${t.id}</button>`;
+            });
+        }
+
+        function openChatAdmin(id) {
+            activeTicket = db.tickets.find(t => t.id == id);
+            document.getElementById('adm-chat-window').classList.remove('d-none');
+            const box = document.getElementById('adm-chat-msgs');
+            box.innerHTML = '';
+            activeTicket.msgs.forEach(m => { box.innerHTML += `<div class="bubble ${m.sender}">${m.text}</div>`; });
+        }
+
+        function sendMessageAdmin(e) {
+            e.preventDefault();
+            const input = document.getElementById('input-msg-admin');
+            activeTicket.msgs.push({sender: 'admin', text: input.value});
+            save(); openChatAdmin(activeTicket.id); input.value = '';
+        }
+
+        // Init
+        renderStore();
     </script>
 </body>
 </html>
-
