@@ -1,3 +1,4 @@
+import os
 import discord
 from discord.ext import commands
 
@@ -28,30 +29,16 @@ class TicketView(discord.ui.View):
             }
         )
 
-        await channel.send(
-            f"🎫 Ticket de {user.mention}",
-            view=FecharView()
-        )
-
-        await interaction.response.send_message(
-            "✅ Ticket criado!",
-            ephemeral=True
-        )
-
-class FecharView(discord.ui.View):
-    @discord.ui.button(label="🔒 Fechar Ticket", style=discord.ButtonStyle.red)
-    async def fechar(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.channel.delete()
+        await channel.send(f"🎫 Ticket de {user.mention}")
+        await interaction.response.send_message("✅ Ticket criado!", ephemeral=True)
 
 @bot.command()
 async def ticket(ctx):
-    await ctx.send(
-        "Clique no botão para abrir um ticket:",
-        view=TicketView()
-    )
-
-import os
+    await ctx.send("Clique no botão:", view=TicketView())
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-bot.run(TOKEN)
 
+if not TOKEN:
+    raise RuntimeError("DISCORD_TOKEN não definido")
+
+bot.run(TOKEN)
